@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Telegram Web Editor</title>
+    <style>
+        :root {
+            --bg-color: #f4f4f5; --surface-color: #ffffff; --text-primary: #000000;
+            --text-secondary: #707579; --accent-color: #3390ec; --accent-hover: #297ecf;
+            --border-color: #dfe1e5; --toolbar-bg: #ffffff; --toolbar-hover: #f4f4f5;
+            --spoiler-bg: #e4e4e5; --danger-color: #e53935; --danger-hover: #ffebee;
+            --tab-bg: #f4f4f5; --scroll-thumb: rgba(0,0,0,0.2); --shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+        [data-theme="dark"] {
+            --bg-color: #0f161e; --surface-color: #18222d; --text-primary: #ffffff;
+            --text-secondary: #8b9eb0; --accent-color: #2aabee; --accent-hover: #2298d4;
+            --border-color: #2b3a4a; --toolbar-bg: #18222d; --toolbar-hover: #202b36;
+            --spoiler-bg: #2b3a4a; --danger-color: #ef5350; --danger-hover: rgba(239, 83, 80, 0.1);
+            --tab-bg: #0f161e; --scroll-thumb: rgba(255,255,255,0.2); --shadow: 0 8px 24px rgba(0,0,0,0.3);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg-color); color: var(--text-primary); height: 100vh; overflow: hidden; display: flex; justify-content: center; transition: 0.3s; }
+        button, input { font-family: inherit; }
+        .main-wrapper { display: flex; gap: 20px; width: 100%; max-width: 1200px; padding: 20px; height: 100%; }
+        
+        .editor-section { flex: 1; background: var(--surface-color); border-radius: 12px; box-shadow: var(--shadow); display: flex; flex-direction: column; position: relative; overflow: hidden; border: 1px solid var(--border-color); }
+        .editor-header { padding: 15px 20px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
+        .editor-header-left { display: flex; align-items: center; gap: 15px; }
+        .editor-header h2 { font-size: 18px; font-weight: 600; }
+        
+        .theme-toggle { background: transparent; border: none; color: var(--text-secondary); cursor: pointer; display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%; transition: 0.2s; }
+        .theme-toggle:hover { background: var(--toolbar-hover); color: var(--text-primary); }
+        .btn-primary { background: var(--accent-color); color: white; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 14px; transition: 0.2s; display: flex; align-items: center; gap: 6px; }
+        .btn-primary:hover { background: var(--accent-hover); }
+        .btn-primary.success { background: #4caf50; }
+
+        .toolbar { display: flex; gap: 4px; padding: 10px 20px; flex-wrap: wrap; background: var(--surface-color); border-bottom: 1px solid var(--border-color); }
+        .toolbar button { width: 32px; height: 32px; border: none; background: transparent; cursor: pointer; border-radius: 6px; color: var(--text-secondary); display: flex; align-items: center; justify-content: center; transition: 0.2s; }
+        .toolbar button:hover { background: var(--toolbar-hover); color: var(--accent-color); }
+        .toolbar svg { width: 18px; height: 18px; }
+        .toolbar-divider { width: 1px; height: 20px; background: var(--border-color); margin: auto 5px; }
+        
+        .editor { flex: 1; padding: 20px; outline: none; font-size: 16px; line-height: 1.5; overflow-y: auto; color: var(--text-primary); }
+        .editor img { width: 24px; height: 24px; vertical-align: middle; margin: 0 2px; }
+        .editor[placeholder]:empty:before { content: attr(placeholder); color: var(--text-secondary); pointer-events: none; }
+        .tg-spoiler { background-color: var(--spoiler-bg); color: transparent; border-radius: 4px; padding: 0 2px; }
+        .editor blockquote { border-left: 3px solid var(--accent-color); padding-left: 10px; margin: 5px 0; color: var(--text-secondary); }
+        .editor code { font-family: monospace; background: var(--toolbar-hover); padding: 2px 4px; border-radius: 4px; color: #ef5350; }
+        
+        .emoji-picker-wrapper { width: 360px; background: var(--surface-color); border-radius: 12px; display: flex; flex-direction: column; overflow: hidden; box-shadow: var(--shadow); flex-shrink: 0; border: 1px solid var(--border-color); }
+        .picker-header { padding: 15px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; font-size: 15px; font-weight: 600; }
+        .clear-btn { font-size: 13px; font-weight: 600; cursor: pointer; color: var(--danger-color); background: transparent; border: none; padding: 6px 10px; border-radius: 6px; transition: 0.2s; }
+        .clear-btn:hover { background: var(--danger-hover); }
+        
+        .add-pack-section { padding: 12px 15px; display: flex; gap: 8px; border-bottom: 1px solid var(--border-color); }
+        .add-pack-section input { flex: 1; padding: 10px 14px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary); outline: none; font-size: 14px; }
+        .add-pack-section input:focus { border-color: var(--accent-color); }
+        
+        .picker-body { flex: 1; overflow-y: auto; padding: 12px; scroll-behavior: smooth; }
+        .pack-section { margin-bottom: 24px; }
+        .pack-title-bar { display: flex; justify-content: space-between; align-items: center; position: sticky; top: -12px; background: var(--surface-color); padding: 5px 0; z-index: 2; margin-bottom: 12px; }
+        .pack-title { color: var(--text-secondary); font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+        .remove-pack-btn { color: var(--danger-color); background: transparent; border: none; cursor: pointer; font-size: 12px; font-weight: bold; padding: 4px 8px; border-radius: 4px; }
+        .remove-pack-btn:hover { background: var(--danger-hover); }
+
+        .emoji-grid { display: grid; grid-template-columns: repeat(8, 1fr); gap: 6px; }
+        .emoji-item { width: 100%; aspect-ratio: 1; cursor: pointer; object-fit: contain; border-radius: 6px; transition: 0.15s; display: flex; justify-content: center; align-items: center; padding: 2px; }
+        .emoji-item:hover { transform: scale(1.15); background: var(--toolbar-hover); }
+        
+        .picker-tabs { display: flex; overflow-x: auto; background: var(--tab-bg); padding: 8px 12px; gap: 10px; align-items: center; border-top: 1px solid var(--border-color); }
+        .picker-tabs::-webkit-scrollbar { display: none; } 
+        .pack-tab { width: 36px; height: 36px; border-radius: 8px; cursor: pointer; opacity: 0.6; transition: 0.2s; display: flex; justify-content: center; align-items: center; background: var(--surface-color); color: var(--text-primary); font-size: 14px; font-weight: bold; flex-shrink: 0; border: 2px solid transparent; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .pack-tab:hover { opacity: 1; }
+        .pack-tab.active { opacity: 1; border-color: var(--accent-color); color: var(--accent-color); }
+        .recent-tab { font-size: 18px; }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--scroll-thumb); border-radius: 10px; }
+        .status-text { color: var(--text-secondary); font-size: 14px; text-align: center; margin-top: 30px; }
+
+        @media (max-width: 768px) {
+            .main-wrapper { flex-direction: column; padding: 0; gap: 0; }
+            .editor-section { flex: 0 0 45vh; border-radius: 0; border: none; border-bottom: 1px solid var(--border-color); }
+            .emoji-picker-wrapper { width: 100%; flex: 1; border-radius: 0; border: none; }
+            .emoji-grid { grid-template-columns: repeat(7, 1fr); gap: 4px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="main-wrapper">
+    <div class="editor-section">
+        <div class="editor-header">
+            <div class="editor-header-left">
+                <h2>Web Editor</h2>
+                <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()">
+                    <svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"></svg>
+                </button>
+            </div>
+            <button class="btn-primary" id="copyBtn" onclick="copyAndGenerateHTML()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                Copy HTML
+            </button>
+        </div>
+        
+        <div class="toolbar">
+            <button onclick="execCmd('bold')" title="Bold (Ctrl+B)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4h8a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"></path><path d="M6 12h9a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"></path></svg></button>
+            <button onclick="execCmd('italic')" title="Italic (Ctrl+I)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="4" x2="10" y2="4"></line><line x1="14" y1="20" x2="5" y2="20"></line><line x1="15" y1="4" x2="9" y2="20"></line></svg></button>
+            <button onclick="execCmd('underline')" title="Underline (Ctrl+U)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3v7a6 6 0 0 0 6 6 6 6 0 0 0 6-6V3"></path><line x1="4" y1="21" x2="20" y2="21"></line></svg></button>
+            <button onclick="execCmd('strikeThrough')" title="Strikethrough (Ctrl+Shift+X)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4H9a3 3 0 0 0-2.83 4"></path><path d="M14 12a4 4 0 0 1 0 8H6"></path><line x1="4" y1="12" x2="20" y2="12"></line></svg></button>
+            <div class="toolbar-divider"></div>
+            <button onclick="toggleCustomFormat('blockquote')" title="Quote (Ctrl+Shift+.)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 11h-4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1zm0 0l-2 6h-2l2-6m10 0h-4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1zm0 0l-2 6h-2l2-6"></path></svg></button>
+            <button onclick="toggleCustomFormat('code')" title="Monospace (Ctrl+Shift+M)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
+            <button onclick="toggleCustomFormat('tg-spoiler')" title="Spoiler (Ctrl+Shift+P)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle><line x1="3" y1="3" x2="21" y2="21"></line></svg></button>
+            <div class="toolbar-divider"></div>
+            <button onclick="insertLink()" title="Create Link (Ctrl+K)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></button>
+            <button onclick="insertDate()" title="Date (Ctrl+Shift+D)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg></button>
+            <button onclick="execCmd('removeFormat'); removeCustomFormats();" title="Clear Formatting (Ctrl+Shift+N)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="4" x2="20" y2="20"></line><path d="M14.5 4H20v5.5"></path><path d="M9.5 20H4v-5.5"></path></svg></button>
+        </div>
+        <div class="editor" id="editor" contenteditable="true" placeholder="Type your message here..."></div>
+    </div>
+
+    <div class="emoji-picker-wrapper">
+        <div class="picker-header">
+            <span>Stickers & Emojis</span>
+            <button class="clear-btn" onclick="clearAllData()">Clear All Data</button>
+        </div>
+        <div class="add-pack-section">
+            <input type="text" id="packInput" placeholder="Add pack name or link..." onkeypress="if(event.key === 'Enter') addNewPack()">
+            <button class="btn-primary" onclick="addNewPack()">Add</button>
+        </div>
+        <div class="picker-body" id="pickerBody">
+            <div id="welcomeText" class="status-text">No packs added yet. <br> Type a Telegram pack name above!</div>
+        </div>
+        <div class="picker-tabs" id="pickerTabs"></div>
+    </div>
+</div>
+
+<script>
+    // Theme Logic
+    const sunIcon = '<circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>';
+    const moonIcon = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>';
+    function initTheme() {
+        const savedTheme = localStorage.getItem('tg_theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        document.getElementById('themeIcon').innerHTML = savedTheme === 'dark' ? sunIcon : moonIcon;
+    }
+    function toggleTheme() {
+        const newTheme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', newTheme);
+        localStorage.setItem('tg_theme', newTheme);
+        document.getElementById('themeIcon').innerHTML = newTheme === 'dark' ? sunIcon : moonIcon;
+    }
+    initTheme();
+
+    // Editor Logic
+    const editor = document.getElementById('editor');
+    function execCmd(command) { document.execCommand(command, false, null); editor.focus(); }
+    function insertLink() { const url = prompt("Enter URL:"); if (url) document.execCommand('createLink', false, url); }
+    function insertDate() { document.execCommand('insertText', false, new Date().toLocaleString()); editor.focus(); }
+    
+    function toggleCustomFormat(formatType) {
+        editor.focus();
+        const selection = window.getSelection();
+        if (!selection.rangeCount) return;
+        let node = selection.anchorNode;
+        while (node && node !== editor) {
+            if (node.nodeType === 1 && ((formatType === 'tg-spoiler' && node.classList.contains('tg-spoiler')) || (formatType === 'code' && node.tagName === 'CODE') || (formatType === 'blockquote' && node.tagName === 'BLOCKQUOTE'))) {
+                const parent = node.parentNode;
+                while (node.firstChild) parent.insertBefore(node.firstChild, node);
+                parent.removeChild(node);
+                return;
+            }
+            node = node.parentNode;
+        }
+        const range = selection.getRangeAt(0);
+        let wrapper = document.createElement(formatType === 'tg-spoiler' ? 'span' : formatType);
+        if (formatType === 'tg-spoiler') wrapper.className = 'tg-spoiler';
+        try { range.surroundContents(wrapper); } catch (e) {
+            const html = range.toString();
+            if(html) document.execCommand('insertHTML', false, `<${wrapper.tagName.toLowerCase()} class="${wrapper.className}">${html}</${wrapper.tagName.toLowerCase()}>`);
+        }
+    }
+    function removeCustomFormats() {
+        const selection = window.getSelection();
+        if(!selection.isCollapsed) document.execCommand('insertText', false, selection.toString());
+    }
+
+    editor.addEventListener('keydown', (e) => {
+        if (e.ctrlKey) {
+            const key = e.key.toLowerCase();
+            if (e.shiftKey) {
+                if (key === 'x') { e.preventDefault(); execCmd('strikeThrough'); }
+                if (key === '>' || e.key === '.') { e.preventDefault(); toggleCustomFormat('blockquote'); }
+                if (key === 'm') { e.preventDefault(); toggleCustomFormat('code'); }
+                if (key === 'p') { e.preventDefault(); toggleCustomFormat('tg-spoiler'); }
+                if (key === 'd') { e.preventDefault(); insertDate(); }
+                if (key === 'n') { e.preventDefault(); execCmd('removeFormat'); removeCustomFormats(); }
+            } else {
+                if (key === 'b') { e.preventDefault(); execCmd('bold'); }
+                if (key === 'i') { e.preventDefault(); execCmd('italic'); }
+                if (key === 'u') { e.preventDefault(); execCmd('underline'); }
+                if (key === 'k') { e.preventDefault(); insertLink(); }
+            }
+        }
+    });
+
+    function copyAndGenerateHTML() {
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = editor.innerHTML;
+        function parseNode(node) {
+            if (node.nodeType === 3) return node.textContent;
+            let innerText = Array.from(node.childNodes).map(parseNode).join('');
+            switch (node.nodeName) {
+                case 'B': case 'STRONG': return `<b>${innerText}</b>`;
+                case 'I': case 'EM': return `<i>${innerText}</i>`;
+                case 'U': return `<u>${innerText}</u>`;
+                case 'S': case 'STRIKE': return `<s>${innerText}</s>`;
+                case 'A': return `<a href="${node.href}">${innerText}</a>`;
+                case 'CODE': return `<code>${innerText}</code>`;
+                case 'BLOCKQUOTE': return `<blockquote>${innerText}</blockquote>`;
+                case 'SPAN': return node.classList.contains('tg-spoiler') ? `<tg-spoiler>${innerText}</tg-spoiler>` : innerText;
+                case 'IMG':
+                    const tgId = node.getAttribute('data-tg-id');
+                    return tgId ? `<tg-emoji emoji-id="${tgId}">${node.getAttribute('data-tg-fallback')||'😀'}</tg-emoji>` : ''; 
+                case 'DIV': case 'P': return `\n${innerText}`;
+                case 'BR': return `\n`;
+                default: return innerText;
+            }
+        }
+        let html = Array.from(tempDiv.childNodes).map(parseNode).join('').replace(/^\n/, '').trim();
+        if (!html) return alert("Editor is empty!");
+        const ta = document.createElement('textarea'); ta.value = html; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+        const btn = document.getElementById('copyBtn'); const orig = btn.innerHTML;
+        btn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> Copied!`;
+        btn.classList.add('success'); setTimeout(() => { btn.innerHTML = orig; btn.classList.remove('success'); }, 2000);
+    }
+
+    // Emoji System (Using Vercel API)
+    let savedPacks = JSON.parse(localStorage.getItem('tg_saved_packs')) || [];
+    let recentEmojis = JSON.parse(localStorage.getItem('tg_recent_emojis')) || [];
+    let loadedPacks = new Set(); 
+
+    window.onload = () => {
+        if(savedPacks.length > 0 || recentEmojis.length > 0) {
+            document.getElementById('welcomeText').style.display = 'none';
+            renderTabs();
+            if(recentEmojis.length > 0) loadRecentEmojis();
+            else if(savedPacks.length > 0) loadPackData(savedPacks[0]);
+        }
+    };
+
+    function addNewPack() {
+        const input = document.getElementById('packInput').value.trim();
+        const packName = input.split('/').pop(); 
+        if (!packName) return alert("Please enter a pack name.");
+        document.getElementById('welcomeText').style.display = 'none';
+        if (!savedPacks.includes(packName)) { savedPacks.push(packName); localStorage.setItem('tg_saved_packs', JSON.stringify(savedPacks)); renderTabs(); }
+        document.getElementById('packInput').value = '';
+        loadPackData(packName);
+    }
+
+    function removePack(packName) {
+        if(confirm(`Remove "${packName}" pack?`)) {
+            savedPacks = savedPacks.filter(p => p !== packName);
+            localStorage.setItem('tg_saved_packs', JSON.stringify(savedPacks));
+            loadedPacks.delete(packName);
+            const section = document.getElementById(`section-${packName}`);
+            if(section) section.remove();
+            renderTabs();
+            if(savedPacks.length === 0 && recentEmojis.length === 0) document.getElementById('welcomeText').style.display = 'block';
+        }
+    }
+
+    function clearAllData() {
+        if(confirm("Remove all saved packs and recent emojis?")) {
+            savedPacks = []; recentEmojis = []; loadedPacks.clear();
+            localStorage.removeItem('tg_saved_packs'); localStorage.removeItem('tg_recent_emojis');
+            renderTabs(); document.getElementById('pickerBody').innerHTML = '<div id="welcomeText" class="status-text">No packs added yet. <br> Type a Telegram pack name above!</div>';
+        }
+    }
+
+    function addToRecent(emojiData) {
+        recentEmojis = recentEmojis.filter(e => e.id !== emojiData.id);
+        recentEmojis.unshift(emojiData);
+        if(recentEmojis.length > 24) recentEmojis.pop();
+        localStorage.setItem('tg_recent_emojis', JSON.stringify(recentEmojis));
+        if(document.getElementById('grid-recent')) loadRecentEmojis();
+    }
+
+    function renderTabs() {
+        const tabsContainer = document.getElementById('pickerTabs');
+        tabsContainer.innerHTML = ''; 
+        const recentTab = document.createElement('div');
+        recentTab.className = `pack-tab recent-tab`; recentTab.id = `tab-recent`; recentTab.innerText = '🕒'; recentTab.onclick = () => loadRecentEmojis();
+        tabsContainer.appendChild(recentTab);
+
+        savedPacks.forEach(packName => {
+            const tab = document.createElement('div');
+            tab.className = `pack-tab`; tab.id = `tab-${packName}`; tab.innerText = packName.substring(0, 2).toUpperCase(); tab.title = packName;
+            tab.onclick = () => { document.querySelectorAll('.pack-tab').forEach(t => t.classList.remove('active')); tab.classList.add('active'); loadPackData(packName); };
+            tabsContainer.appendChild(tab);
+        });
+    }
+
+    function loadRecentEmojis() {
+        document.querySelectorAll('.pack-tab').forEach(t => t.classList.remove('active'));
+        const tab = document.getElementById('tab-recent'); if(tab) tab.classList.add('active');
+        const pickerBody = document.getElementById('pickerBody');
+        let section = document.getElementById('section-recent');
+
+        if (!section) {
+            section = document.createElement('div'); section.className = 'pack-section'; section.id = `section-recent`;
+            section.innerHTML = `<div class="pack-title-bar"><div class="pack-title">Recently Used</div></div><div class="emoji-grid" id="grid-recent"></div>`;
+            pickerBody.prepend(section); 
+        }
+
+        const grid = document.getElementById('grid-recent'); grid.innerHTML = '';
+        if(recentEmojis.length === 0) grid.innerHTML = '<span style="color:var(--text-secondary); font-size:13px; grid-column: span 8;">No recent emojis.</span>';
+
+        recentEmojis.forEach(item => {
+            let mediaEl = document.createElement(item.url.includes('.webm') ? 'video' : 'img');
+            mediaEl.src = item.url; mediaEl.className = 'emoji-item'; mediaEl.title = item.fallback || 'Emoji';
+            if(item.url.includes('.webm')) { mediaEl.autoplay = true; mediaEl.loop = true; mediaEl.muted = true; mediaEl.playsInline = true; }
+            
+            mediaEl.onclick = () => {
+                editor.focus();
+                document.execCommand('insertHTML', false, `<img src="${item.url}" alt="${item.fallback}" data-tg-id="${item.id}" data-tg-fallback="${item.fallback}" style="width: 24px; height: 24px; vertical-align: middle; margin: 0 2px;">`);
+                addToRecent(item); 
+            };
+            grid.appendChild(mediaEl);
+        });
+        section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    async function loadPackData(packName) {
+        document.querySelectorAll('.pack-tab').forEach(t => t.classList.remove('active'));
+        const activeTab = document.getElementById(`tab-${packName}`); if(activeTab) activeTab.classList.add('active');
+
+        const pickerBody = document.getElementById('pickerBody');
+        if (loadedPacks.has(packName)) return document.getElementById(`section-${packName}`).scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+        const sectionDiv = document.createElement('div'); sectionDiv.className = 'pack-section'; sectionDiv.id = `section-${packName}`;
+        sectionDiv.innerHTML = `
+            <div class="pack-title-bar">
+                <div class="pack-title">${packName}</div>
+                <button class="remove-pack-btn" onclick="removePack('${packName}')">✕ Remove</button>
+            </div>
+            <div class="emoji-grid" id="grid-${packName}"></div>
+        `;
+        pickerBody.appendChild(sectionDiv);
+        sectionDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+        const gridDiv = document.getElementById(`grid-${packName}`);
+        
+        try {
+            // Call our new Vercel backend!
+            const packResponse = await fetch(`/api/getPack?name=${packName}`);
+            const packData = await packResponse.json();
+
+            if (!packData.ok) { gridDiv.innerHTML = `<span style="color:var(--danger-color); font-size:13px; grid-column: span 8;">Error: ${packData.description}</span>`; return; }
+
+            const fragment = document.createDocumentFragment();
+            
+            packData.result.stickers.forEach(sticker => {
+                let targetFileId = sticker.file_id;
+                let isVideo = sticker.is_video;
+
+                if (sticker.is_animated && sticker.thumbnail) {
+                    targetFileId = sticker.thumbnail.file_id;
+                    isVideo = false;
+                }
+
+                // Generate the secure URL pointing to our Vercel API
+                const secureUrl = `/api/image?file_id=${targetFileId}`;
+                
+                let mediaEl = document.createElement(isVideo ? 'video' : 'img');
+                mediaEl.src = secureUrl; mediaEl.className = 'emoji-item'; mediaEl.title = sticker.emoji || 'Custom Emoji';
+                if(isVideo) { mediaEl.autoplay = true; mediaEl.loop = true; mediaEl.muted = true; mediaEl.playsInline = true; }
+                
+                mediaEl.onclick = () => {
+                    editor.focus();
+                    document.execCommand('insertHTML', false, `<img src="${secureUrl}" alt="${sticker.emoji}" data-tg-id="${sticker.custom_emoji_id}" data-tg-fallback="${sticker.emoji}" style="width: 24px; height: 24px; vertical-align: middle; margin: 0 2px;">`);
+                    addToRecent({ id: sticker.custom_emoji_id, url: secureUrl, fallback: sticker.emoji });
+                };
+                fragment.appendChild(mediaEl);
+            });
+
+            gridDiv.appendChild(fragment);
+            loadedPacks.add(packName);
+
+        } catch (error) {
+            gridDiv.innerHTML = `<span style="color:var(--danger-color); font-size:13px; grid-column: span 8;">Network Error.</span>`;
+        }
+    }
+</script>
+
+</body>
+</html>
