@@ -3,112 +3,169 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Telegram Postly Editor</title>
+    <title>Poozter Web Editor</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
-            /* Light Theme (Default) */
-            --bg-color: #f4f4f5; --surface-color: #ffffff; --text-primary: #000000;
-            --text-secondary: #707579; --accent-color: #3390ec; --accent-hover: #297ecf;
-            --border-color: #dfe1e5; --toolbar-bg: #ffffff; --toolbar-hover: #f4f4f5;
-            --spoiler-bg: #e4e4e5; --danger-color: #e53935; --danger-hover: #ffebee;
-            --tab-bg: #f4f4f5; --scroll-thumb: rgba(0,0,0,0.2); --shadow: 0 4px 15px rgba(0,0,0,0.05);
-            /* User profile panel color in light mode (matching image layout style but not full black) */
-            --profile-bg: #e1e7ec; 
+            /* Light Theme Palette */
+            --bg-color: #f0f2f5;
+            --surface-color: #ffffff;
+            --text-primary: #1d2129;
+            --text-secondary: #606770;
+            --accent-color: #3390ec;
+            --accent-hover: #297ecf;
+            --border-color: #e4e6eb;
+            --toolbar-bg: #f5f7f8;
+            --toolbar-hover: #e4e6eb;
+            --spoiler-bg: #e4e6eb;
+            --danger-color: #e53935;
+            --danger-hover: #ffebee;
+            --tab-bg: #f5f7f8;
+            --scroll-thumb: rgba(0,0,0,0.2);
+            --shadow: 0 4px 12px rgba(0,0,0,0.05);
+            --header-bg: #ffffff;
         }
 
         [data-theme="dark"] {
-            /* Dark Theme (Telegram Night) */
-            --bg-color: #0f161e; --surface-color: #18222d; --text-primary: #ffffff;
-            --text-secondary: #8b9eb0; --accent-color: #2aabee; --accent-hover: #2298d4;
-            --border-color: #2b3a4a; --toolbar-bg: #18222d; --toolbar-hover: #202b36;
-            --spoiler-bg: #2b3a4a; --danger-color: #ef5350; --danger-hover: rgba(239, 83, 80, 0.1);
-            --tab-bg: #0f161e; --scroll-thumb: rgba(255,255,255,0.2); --shadow: 0 8px 24px rgba(0,0,0,0.3);
-            /* User profile panel color in dark mode (matching full black background from image) */
-            --profile-bg: #000000; 
+            /* Dark Theme Palette (TMA match) */
+            --bg-color: #0f161e;
+            --surface-color: #111721;
+            --text-primary: #ffffff;
+            --text-secondary: #8b9eb0;
+            --accent-color: #2aabee;
+            --accent-hover: #2298d4;
+            --border-color: #2b3a4a;
+            --toolbar-bg: #18222d;
+            --toolbar-hover: #2b3a4a;
+            --spoiler-bg: #2b3a4a;
+            --danger-color: #ef5350;
+            --danger-hover: rgba(239, 83, 80, 0.15);
+            --tab-bg: #0f161e;
+            --scroll-thumb: rgba(255,255,255,0.2);
+            --shadow: 0 8px 24px rgba(0,0,0,0.3);
+            --header-bg: #111721;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg-color); color: var(--text-primary); height: 100vh; overflow: hidden; display: flex; justify-content: center; transition: background-color 0.3s ease; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: var(--bg-color); color: var(--text-primary); height: 100vh; overflow: hidden; display: flex; justify-content: center; transition: background-color 0.3s ease; }
         button, input { font-family: inherit; }
         
-        .main-wrapper { display: flex; gap: 20px; width: 100%; max-width: 1200px; padding: 20px; height: 100%; position: relative; }
+        .main-wrapper { display: flex; gap: 24px; width: 100%; max-width: 1200px; padding: 24px; height: 100%; position: relative; }
         
         /* ==========================================
-           1. User Profile Block (New Section)
+           Redesigned Left Column (Header + Editor)
            ========================================== */
-        .user-profile-block {
-            background-color: var(--profile-bg);
-            color: #fff; /* Text always white inside this panel */
-            padding: 15px 20px;
-            border-radius: 12px;
+        .left-column { flex: 1; display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+
+        /* Unified Top Header Card */
+        .top-header-card {
+            background-color: var(--header-bg);
+            border-radius: 16px;
+            padding: 16px 24px;
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            gap: 15px;
-            margin-bottom: 20px;
-            position: relative;
-            overflow: hidden;
             border: 1px solid var(--border-color);
             box-shadow: var(--shadow);
-            transition: background-color 0.3s ease;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
         }
 
-        .user-avatar { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; border: 2px solid #fff; flex-shrink: 0; }
-        .user-text-info { display: flex; flex-direction: column; flex: 1; overflow: hidden; }
-        .greeting-text { font-size: 14px; color: rgba(255,255,255,0.8); margin-bottom: 2px; }
-        .user-name-text { font-size: 18px; font-weight: 700; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        /* User Info Section inside Header */
+        .header-user-info { display: flex; align-items: center; gap: 16px; overflow: hidden; }
+        .user-avatar-wrapper { position: relative; }
+        .user-avatar { width: 48px; height: 48px; border-radius: 50%; object-fit: cover; border: 2px solid var(--bg-color); flex-shrink: 0; }
+        .user-avatar-placeholder { width: 48px; height: 48px; border-radius: 50%; background-color: var(--accent-color); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 600; text-transform: uppercase; border: 2px solid var(--bg-color); flex-shrink: 0; }
         
-        /* Placeholder styling when no avatar */
-        .user-avatar-placeholder { width: 50px; height: 50px; border-radius: 50%; background-color: var(--accent-color); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: bold; text-transform: uppercase; border: 2px solid #fff; flex-shrink: 0; }
+        .header-text-block { display: flex; flex-direction: column; justify-content: center; overflow: hidden; }
+        .app-title { font-size: 13px; font-weight: 600; color: var(--accent-color); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px; }
+        .greeting-line { font-size: 16px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; gap: 4px; }
+        .greeting-text { color: var(--text-secondary); font-weight: 500; }
+        .user-name-text { color: var(--text-primary); }
 
-        /* ==========================================
-           Existing Editor UI (slightly updated)
-           ========================================== */
-        .editor-section { flex: 1; background: var(--surface-color); border-radius: 12px; box-shadow: var(--shadow); display: flex; flex-direction: column; position: relative; overflow: hidden; border: 1px solid var(--border-color); }
-        .editor-header { padding: 10px 20px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; background: var(--surface-color); z-index: 10; }
-        .editor-header h2 { font-size: 16px; font-weight: 600; }
+        /* Global Actions inside Header */
+        .header-actions { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+
+        .theme-toggle-btn {
+            background: var(--toolbar-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            transition: all 0.2s ease;
+        }
+        .theme-toggle-btn:hover { background: var(--toolbar-hover); color: var(--text-primary); transform: translateY(-1px); }
+        .theme-toggle-btn svg { width: 20px; height: 20px; }
+
+        .btn-copy-html {
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 0 20px;
+            height: 40px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 2px 6px rgba(51, 144, 236, 0.3);
+        }
+        .btn-copy-html:hover { background: var(--accent-hover); transform: translateY(-1px); box-shadow: 0 4px 8px rgba(51, 144, 236, 0.4); }
+        .btn-copy-html.success { background: #4caf50; box-shadow: 0 2px 6px rgba(76, 175, 80, 0.3); }
+
+        /* Editor Section */
+        .editor-container { flex: 1; background: var(--surface-color); border-radius: 16px; box-shadow: var(--shadow); display: flex; flex-direction: column; position: relative; overflow: hidden; border: 1px solid var(--border-color); }
         
-        .theme-toggle { background: transparent; border: none; color: var(--text-secondary); cursor: pointer; display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%; }
-        .theme-toggle:hover { background: var(--toolbar-hover); color: var(--text-primary); }
-
-        .btn-primary { background: var(--accent-color); color: white; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 14px; transition: 0.2s; display: flex; align-items: center; gap: 6px; }
-        .btn-primary:hover { background: var(--accent-hover); }
-        .btn-primary.success { background: #4caf50; }
-
-        .toolbar { display: flex; gap: 4px; padding: 8px 20px; flex-wrap: wrap; background: var(--surface-color); border-bottom: 1px solid var(--border-color); }
-        .toolbar button { width: 32px; height: 32px; border: none; background: transparent; cursor: pointer; border-radius: 6px; color: var(--text-secondary); display: flex; align-items: center; justify-content: center; transition: 0.2s; position: relative; }
+        .toolbar { display: flex; gap: 6px; padding: 12px 20px; flex-wrap: wrap; background: var(--surface-color); border-bottom: 1px solid var(--border-color); align-items: center; }
+        .toolbar button { width: 36px; height: 36px; border: none; background: var(--toolbar-bg); cursor: pointer; border-radius: 8px; color: var(--text-secondary); display: flex; align-items: center; justify-content: center; transition: all 0.2s ease; position: relative; }
         .toolbar button:hover { background: var(--toolbar-hover); color: var(--accent-color); }
         .toolbar svg { width: 18px; height: 18px; }
-        .toolbar-divider { width: 1px; height: 20px; background: var(--border-color); margin: auto 5px; }
+        .toolbar-divider { width: 1px; height: 24px; background: var(--border-color); margin: 0 6px; }
         
-        .editor { flex: 1; padding: 20px; outline: none; font-size: 16px; line-height: 1.5; overflow-y: auto; color: var(--text-primary); }
+        .editor { flex: 1; padding: 24px; outline: none; font-size: 16px; line-height: 1.6; overflow-y: auto; color: var(--text-primary); }
         .editor img { width: 24px; height: 24px; vertical-align: middle; margin: 0 2px; }
         .editor[placeholder]:empty:before { content: attr(placeholder); color: var(--text-secondary); pointer-events: none; display: block; }
         .tg-spoiler { background-color: var(--spoiler-bg); color: transparent; border-radius: 4px; padding: 0 2px; }
-        .editor blockquote { border-left: 3px solid var(--accent-color); padding-left: 10px; margin: 5px 0; color: var(--text-secondary); }
-        .editor code { font-family: monospace; background: var(--toolbar-hover); padding: 2px 4px; border-radius: 4px; color: #ef5350; }
+        .editor blockquote { border-left: 3px solid var(--accent-color); padding-left: 12px; margin: 8px 0; color: var(--text-secondary); font-style: italic; }
+        .editor code { font-family: monospace; background: var(--toolbar-bg); padding: 2px 6px; border-radius: 4px; color: var(--danger-color); font-size: 0.9em; border: 1px solid var(--border-color); }
         
-        .emoji-picker-wrapper { width: 360px; background: var(--surface-color); border-radius: 12px; display: flex; flex-direction: column; overflow: hidden; box-shadow: var(--shadow); flex-shrink: 0; border: 1px solid var(--border-color); }
-        .picker-header { padding: 15px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; font-size: 15px; font-weight: 600; }
-        .clear-btn { font-size: 13px; font-weight: 600; cursor: pointer; color: var(--danger-color); background: transparent; border: none; padding: 6px 10px; border-radius: 6px; }
+        /* ==========================================
+           Right Column (Emoji Picker)
+           ========================================== */
+        .emoji-picker-wrapper { width: 380px; background: var(--surface-color); border-radius: 16px; display: flex; flex-direction: column; overflow: hidden; box-shadow: var(--shadow); flex-shrink: 0; border: 1px solid var(--border-color); }
+        .picker-header { padding: 16px 20px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; font-size: 15px; font-weight: 600; }
+        .clear-btn { font-size: 13px; font-weight: 600; cursor: pointer; color: var(--danger-color); background: transparent; border: none; padding: 6px 10px; border-radius: 6px; transition: 0.2s; }
+        .clear-btn:hover { background: var(--danger-hover); }
         
-        .add-pack-section { padding: 12px 15px; display: flex; gap: 8px; border-bottom: 1px solid var(--border-color); }
-        .add-pack-section input { flex: 1; padding: 10px 14px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary); outline: none; font-size: 14px; }
-        
-        .picker-body { flex: 1; overflow-y: auto; padding: 12px; scroll-behavior: smooth; }
+        .add-pack-section { padding: 16px 20px; display: flex; gap: 10px; border-bottom: 1px solid var(--border-color); background: var(--surface-color); }
+        .add-pack-section input { flex: 1; padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary); outline: none; font-size: 14px; transition: border-color 0.2s; }
+        .add-pack-section input:focus { border-color: var(--accent-color); }
+        .btn-add { background: var(--accent-color); color: white; border: none; padding: 0 16px; border-radius: 10px; cursor: pointer; font-weight: 600; font-size: 14px; transition: 0.2s; }
+        .btn-add:hover { background: var(--accent-hover); }
+
+        .picker-body { flex: 1; overflow-y: auto; padding: 16px; scroll-behavior: smooth; }
         .pack-section { margin-bottom: 24px; }
-        .pack-title-bar { display: flex; justify-content: space-between; align-items: center; position: sticky; top: -12px; background: var(--surface-color); padding: 5px 0; z-index: 2; margin-bottom: 12px; }
-        .pack-title { color: var(--text-secondary); font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
-        .remove-pack-btn { color: var(--danger-color); background: transparent; border: none; cursor: pointer; font-size: 12px; font-weight: bold; padding: 4px 8px; border-radius: 4px; }
+        .pack-title-bar { display: flex; justify-content: space-between; align-items: center; position: sticky; top: -16px; background: var(--surface-color); padding: 8px 0; z-index: 2; margin-bottom: 12px; }
+        .pack-title { color: var(--text-secondary); font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+        .remove-pack-btn { color: var(--danger-color); background: transparent; border: none; cursor: pointer; font-size: 12px; font-weight: bold; padding: 4px 8px; border-radius: 6px; transition: 0.2s; }
+        .remove-pack-btn:hover { background: var(--danger-hover); }
 
         .emoji-grid { display: grid; grid-template-columns: repeat(8, 1fr); gap: 6px; }
-        .emoji-item { width: 100%; aspect-ratio: 1; cursor: pointer; object-fit: contain; border-radius: 6px; transition: 0.15s; display: flex; justify-content: center; align-items: center; padding: 2px; }
-        .emoji-item:hover { transform: scale(1.15); background: var(--toolbar-hover); }
+        .emoji-item { width: 100%; aspect-ratio: 1; cursor: pointer; object-fit: contain; border-radius: 8px; transition: all 0.15s; display: flex; justify-content: center; align-items: center; padding: 4px; }
+        .emoji-item:hover { transform: scale(1.15); background: var(--toolbar-bg); box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
         
-        .picker-tabs { display: flex; overflow-x: auto; background: var(--tab-bg); padding: 8px 12px; gap: 10px; align-items: center; border-top: 1px solid var(--border-color); }
+        .picker-tabs { display: flex; overflow-x: auto; background: var(--tab-bg); padding: 10px 16px; gap: 12px; align-items: center; border-top: 1px solid var(--border-color); }
         .picker-tabs::-webkit-scrollbar { display: none; } 
-        .pack-tab { width: 36px; height: 36px; border-radius: 8px; cursor: pointer; opacity: 0.6; transition: 0.2s; display: flex; justify-content: center; align-items: center; background: var(--surface-color); color: var(--text-primary); font-size: 14px; font-weight: bold; flex-shrink: 0; border: 2px solid transparent; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-        .pack-tab.active { opacity: 1; border-color: var(--accent-color); color: var(--accent-color); }
+        .pack-tab { width: 40px; height: 40px; border-radius: 10px; cursor: pointer; opacity: 0.6; transition: 0.2s; display: flex; justify-content: center; align-items: center; background: var(--surface-color); color: var(--text-primary); font-size: 14px; font-weight: bold; flex-shrink: 0; border: 2px solid transparent; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .pack-tab:hover { opacity: 1; transform: translateY(-1px); }
+        .pack-tab.active { opacity: 1; border-color: var(--accent-color); color: var(--accent-color); box-shadow: 0 2px 6px rgba(51, 144, 236, 0.2); }
         .recent-tab { font-size: 18px; }
 
         ::-webkit-scrollbar { width: 6px; }
@@ -116,45 +173,59 @@
         ::-webkit-scrollbar-thumb { background: var(--scroll-thumb); border-radius: 10px; }
         .status-text { color: var(--text-secondary); font-size: 14px; text-align: center; margin-top: 30px; }
 
+        /* Responsive Layout */
         @media (max-width: 768px) {
             .main-wrapper { flex-direction: column; padding: 0; gap: 0; height: 100vh; }
-            .user-profile-block { border-radius: 0; margin-bottom: 0; border: none; border-bottom: 1px solid var(--border-color); padding: 10px 15px; }
-            .user-avatar, .user-avatar-placeholder { width: 40px; height: 40px; font-size: 18px; }
-            .editor-section { flex: 0 0 45vh; border-radius: 0; border: none; border-bottom: 1px solid var(--border-color); box-shadow: none; }
-            .emoji-picker-wrapper { width: 100%; flex: 1; border-radius: 0; border: none; }
+            .left-column { flex: 0 0 auto; gap: 0; }
+            .top-header-card { border-radius: 0; border: none; border-bottom: 1px solid var(--border-color); padding: 12px 16px; }
+            .user-avatar, .user-avatar-placeholder { width: 40px; height: 40px; font-size: 16px; }
+            .app-title { display: none; } /* Hide app title on mobile for space */
+            .greeting-line { font-size: 15px; }
+            .btn-copy-html span { display: none; } /* Hide text, keep icon */
+            .btn-copy-html { padding: 0 12px; }
+            
+            .editor-container { flex: 0 0 35vh; border-radius: 0; border: none; border-bottom: 1px solid var(--border-color); box-shadow: none; }
+            .toolbar { padding: 8px 16px; gap: 4px; overflow-x: auto; flex-wrap: nowrap; }
+            .toolbar::-webkit-scrollbar { display: none; }
+            
+            .emoji-picker-wrapper { width: 100%; flex: 1; border-radius: 0; border: none; box-shadow: none; }
             .emoji-grid { grid-template-columns: repeat(7, 1fr); gap: 4px; }
+            .add-pack-section { padding: 12px 16px; }
         }
     </style>
 </head>
 <body>
 
 <div class="main-wrapper">
-    <div style="flex: 1; display: flex; flex-direction: column;">
+    <div class="left-column">
         
-        <div class="user-profile-block">
-            <img id="user-avatar" class="user-avatar" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="User Avatar" style="display: none;">
-            <div id="user-avatar-placeholder" class="user-avatar-placeholder">U</div>
-            
-            <div class="user-text-info">
-                <span id="greeting-text" class="greeting-text">Welcome,</span>
-                <span id="user-name" class="user-name-text">TELEGRAM USER</span>
+        <div class="top-header-card">
+            <div class="header-user-info">
+                <div class="user-avatar-wrapper">
+                    <img id="user-avatar" class="user-avatar" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="User Avatar" style="display: none;">
+                    <div id="user-avatar-placeholder" class="user-avatar-placeholder">U</div>
+                </div>
+                <div class="header-text-block">
+                    <span class="app-title">Poozter Web Editor</span>
+                    <div class="greeting-line">
+                        <span id="greeting-text" class="greeting-text">Welcome,</span>
+                        <span id="user-name" class="user-name-text">Creator</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="header-actions">
+                <button class="theme-toggle-btn" id="themeToggle" onclick="toggleTheme()" title="Toggle Theme">
+                    <svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></svg>
+                </button>
+                <button class="btn-copy-html" id="copyBtn" onclick="copyAndGenerateHTML()" title="Copy HTML">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                    <span>Copy HTML</span>
+                </button>
             </div>
         </div>
 
-        <div class="editor-section">
-            <div class="editor-header">
-                <div class="editor-header-left">
-                    <h2>Web Editor</h2>
-                    <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Toggle Theme">
-                        <svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"></svg>
-                    </button>
-                </div>
-                <button class="btn-primary" id="copyBtn" onclick="copyAndGenerateHTML()">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-                    Copy HTML
-                </button>
-            </div>
-            
+        <div class="editor-container">
             <div class="toolbar">
                 <button onclick="execCmd('bold')" title="Bold (Ctrl+B)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4h8a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"></path><path d="M6 12h9a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"></path></svg></button>
                 <button onclick="execCmd('italic')" title="Italic (Ctrl+I)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="4" x2="10" y2="4"></line><line x1="14" y1="20" x2="5" y2="20"></line><line x1="15" y1="4" x2="9" y2="20"></line></svg></button>
@@ -176,11 +247,11 @@
     <div class="emoji-picker-wrapper">
         <div class="picker-header">
             <span>Stickers & Emojis</span>
-            <button class="clear-btn" onclick="clearAllData()">Clear Data</button>
+            <button class="clear-btn" onclick="clearAllData()" title="Clear saved packs & history">Clear Data</button>
         </div>
         <div class="add-pack-section">
             <input type="text" id="packInput" placeholder="Add pack name or link..." onkeypress="if(event.key === 'Enter') addNewPack()">
-            <button class="btn-primary" onclick="addNewPack()">Add</button>
+            <button class="btn-add" onclick="addNewPack()">Add</button>
         </div>
         <div class="picker-body" id="pickerBody">
             <div id="welcomeText" class="status-text">No packs added yet. <br> Type a Telegram pack name above!</div>
@@ -191,14 +262,11 @@
 
 <script>
     // ==========================================
-    // 2. Telegram Mini App Logic (New Section)
+    // Telegram Mini App Logic
     // ==========================================
     const webApp = window.Telegram.WebApp;
-
-    // SDK එක initialize කරලා page එක ලෑස්ති බව Telegram එකට කියන්න
     webApp.ready();
     
-    // UI එක populating කිරීම
     function initTelegramUserInfo() {
         const user = webApp.initDataUnsafe.user;
         const avatarImg = document.getElementById('user-avatar');
@@ -206,52 +274,40 @@
         const nameText = document.getElementById('user-name');
         const greetingText = document.getElementById('greeting-text');
 
-        // user data තියෙනවා නම් විතරක් load කරන්න
         if (user) {
-            // නම set කිරීම (Capitalize standard fixed style from image)
             const fullName = (user.first_name + ' ' + (user.last_name || '')).trim();
-            nameText.innerText = fullName.toUpperCase();
+            nameText.innerText = fullName; // Kept normal casing, removed uppercase force
 
-            // වේලාව අනුව Greeting එක set කිරීම
             const hours = new Date().getHours();
             if (hours < 12) greetingText.innerText = "Good morning,";
             else if (hours < 18) greetingText.innerText = "Good afternoon,";
             else greetingText.innerText = "Good evening,";
 
-            // Profile Picture එක set කිරීම
             if (user.photo_url) {
                 avatarImg.src = user.photo_url;
                 avatarImg.style.display = 'block';
                 placeholder.style.display = 'none';
             } else {
-                // Profile pic එකක් නැත්නම්, නමේ මුල් අකුර placeholder එකේ පෙන්නන්න
-                placeholder.innerText = user.first_name.substring(0, 1);
+                placeholder.innerText = user.first_name.substring(0, 1).toUpperCase();
                 avatarImg.style.display = 'none';
                 placeholder.style.display = 'flex';
             }
         }
     }
-
-    // Load වෙද්දීම user info populate කරන්න
     initTelegramUserInfo();
 
     // ==========================================
-    // Core Editor & Formatting Logic
+    // Theme Logic
     // ==========================================
     const sunIcon = '<circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>';
     const moonIcon = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>';
 
-    // Telegram's internal theme පාවිච්චි කිරීම (Auto-switch on TMA)
     const isDark = webApp.themeParams.bg_color && getLuminance(webApp.themeParams.bg_color) < 128;
-
     function getLuminance(hex) {
         if (!hex.startsWith('#')) return 255;
         const c = hex.substring(1);
         const rgb = parseInt(c, 16);
-        const r = (rgb >> 16) & 0xff;
-        const g = (rgb >> 8) & 0xff;
-        const b = (rgb >> 0) & 0xff;
-        return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+        return 0.2126 * ((rgb >> 16) & 0xff) + 0.7152 * ((rgb >> 8) & 0xff) + 0.0722 * ((rgb >> 0) & 0xff);
     }
 
     function initTheme() {
@@ -269,6 +325,9 @@
     }
     initTheme();
 
+    // ==========================================
+    // Editor Logic
+    // ==========================================
     const editor = document.getElementById('editor');
     function execCmd(command) { document.execCommand(command, false, null); editor.focus(); }
     function insertLink() { const url = prompt("Enter URL:"); if (url) document.execCommand('createLink', false, url); }
@@ -346,17 +405,21 @@
         let html = Array.from(tempDiv.childNodes).map(parseNode).join('').replace(/^\n/, '').trim();
         if (!html) return alert("Editor is empty!");
         const ta = document.createElement('textarea'); ta.value = html; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
-        const btn = document.getElementById('copyBtn'); const orig = btn.innerHTML;
-        btn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> Copied!`;
-        btn.classList.add('success'); setTimeout(() => { btn.innerHTML = orig; btn.classList.remove('success'); }, 2000);
+        
+        const btn = document.getElementById('copyBtn'); 
+        const originalContent = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><span>Copy HTML</span>`;
+        btn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg><span>Copied!</span>`;
+        btn.classList.add('success'); 
+        setTimeout(() => { btn.innerHTML = originalContent; btn.classList.remove('success'); }, 2000);
     }
 
-    // Emoji System (Using Vercel API, same as before)
+    // ==========================================
+    // Emoji System
+    // ==========================================
     let savedPacks = JSON.parse(localStorage.getItem('tg_saved_packs')) || [];
     let recentEmojis = JSON.parse(localStorage.getItem('tg_recent_emojis')) || [];
     let loadedPacks = new Set(); 
 
-    // Initial load handling
     if(savedPacks.length > 0 || recentEmojis.length > 0) {
         document.getElementById('welcomeText').style.display = 'none';
         renderTabs();
@@ -466,10 +529,10 @@
         sectionDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
         const gridDiv = document.getElementById(`grid-${packName}`);
-        gridDiv.innerHTML = `<span style="color:var(--accent-color); font-size:13px; grid-column: span 8;">Loading...</span>`;
+        gridDiv.innerHTML = `<span style="color:var(--accent-color); font-size:13px; grid-column: span 8; font-weight:500;">Loading...</span>`;
         
         try {
-            // Call our Vercel backend! (Proxy hides token)
+            // Using Vercel backend proxy
             const packResponse = await fetch(`/api/getPack?name=${packName}`);
             const packData = await packResponse.json();
             gridDiv.innerHTML = "";
@@ -487,7 +550,6 @@
                     isVideo = false;
                 }
 
-                // Generate the secure URL pointing to our Vercel API proxy
                 const secureUrl = `/api/image?file_id=${targetFileId}`;
                 
                 let mediaEl = document.createElement(isVideo ? 'video' : 'img');
