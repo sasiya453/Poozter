@@ -631,7 +631,7 @@
         }
 
         /* ============================================
-           Modal
+           Modals
            ============================================ */
         .modal-overlay {
             position: fixed;
@@ -834,7 +834,6 @@
 <div class="main-wrapper">
     <div class="left-column">
 
-        <!-- Header -->
         <div class="top-header-card">
             <div class="header-user-info">
                 <div class="user-avatar-wrapper">
@@ -862,10 +861,8 @@
             </div>
         </div>
 
-        <!-- Editor -->
         <div class="editor-container">
             <div class="toolbar">
-                <!-- Text formatting -->
                 <button class="toolbar-btn" onclick="execCmd('bold')" title="Bold (Ctrl+B)">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4h8a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"/><path d="M6 12h9a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"/></svg>
                 </button>
@@ -893,7 +890,7 @@
 
                 <div class="toolbar-divider"></div>
 
-                <button class="toolbar-btn" onclick="insertLink()" title="Insert Link (Ctrl+K)">
+                <button class="toolbar-btn" onclick="openLinkModal()" title="Insert Link (Ctrl+K)">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
                 </button>
                 <button class="toolbar-btn" onclick="insertDate()" title="Insert Date (Ctrl+Shift+D)">
@@ -907,7 +904,6 @@
         </div>
     </div>
 
-    <!-- Emoji Picker -->
     <div class="emoji-picker-wrapper">
         <div class="picker-header">
             <div class="picker-header-title">
@@ -937,15 +933,14 @@
     </div>
 </div>
 
-<!-- Add Pack Modal -->
-<div class="modal-overlay" id="addPackModal" onclick="handleOverlayClick(event)">
+<div class="modal-overlay" id="addPackModal" onclick="handleOverlayClick(event, 'addPackModal')">
     <div class="modal-content">
         <div class="modal-header">
             <h3>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
                 Add Emoji Pack
             </h3>
-            <button class="close-modal-btn" onclick="closeAddModal()">
+            <button class="close-modal-btn" onclick="closeModal('addPackModal')">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
             </button>
         </div>
@@ -953,7 +948,7 @@
         <div class="modal-body">
             <div class="input-group">
                 <input class="pack-input" type="text" id="packInput" placeholder="e.g. NewsEmoji or t.me/addemoji/…" onkeypress="if(event.key==='Enter') addNewPack()">
-                <button class="paste-btn" onclick="pasteFromClipboard()" title="Paste">
+                <button class="paste-btn" onclick="pasteFromClipboard('packInput')" title="Paste">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>
                 </button>
             </div>
@@ -962,7 +957,30 @@
     </div>
 </div>
 
-<!-- Toast -->
+<div class="modal-overlay" id="addLinkModal" onclick="handleOverlayClick(event, 'addLinkModal')">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+                Insert Link
+            </h3>
+            <button class="close-modal-btn" onclick="closeModal('addLinkModal')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
+        <p class="modal-subtitle">Enter the URL for your selected text</p>
+        <div class="modal-body">
+            <div class="input-group">
+                <input class="pack-input" type="url" id="linkInput" placeholder="https://..." onkeypress="if(event.key==='Enter') confirmInsertLink()">
+                <button class="paste-btn" onclick="pasteFromClipboard('linkInput')" title="Paste">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>
+                </button>
+            </div>
+            <button class="btn-full" onclick="confirmInsertLink()">Insert</button>
+        </div>
+    </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -1041,10 +1059,37 @@
 
     function execCmd(cmd) { document.execCommand(cmd, false, null); editor.focus(); }
 
-    function insertLink() {
+    let savedSelectionRange = null;
+
+    // Fixed Insert Link Logic (Bug Fix for Desktop)
+    function openLinkModal() {
         editor.focus();
-        const url = prompt('Enter URL:');
-        if (url) document.execCommand('createLink', false, url);
+        const sel = window.getSelection();
+        if (sel.rangeCount) savedSelectionRange = sel.getRangeAt(0);
+
+        const modal = document.getElementById('addLinkModal');
+        modal.style.display = 'flex';
+        requestAnimationFrame(() => {
+            modal.classList.add('active');
+            requestAnimationFrame(() => {
+                modal.classList.add('visible');
+                setTimeout(() => document.getElementById('linkInput').focus(), 80);
+            });
+        });
+    }
+
+    function confirmInsertLink() {
+        const url = document.getElementById('linkInput').value.trim();
+        closeModal('addLinkModal');
+        if (url) {
+            setTimeout(() => {
+                editor.focus();
+                const sel = window.getSelection();
+                sel.removeAllRanges();
+                if (savedSelectionRange) sel.addRange(savedSelectionRange);
+                document.execCommand('createLink', false, url);
+            }, 300); // Wait for modal to close before executing
+        }
     }
 
     function insertDate() {
@@ -1112,7 +1157,7 @@
             if (key === 'b') { e.preventDefault(); execCmd('bold'); }
             else if (key === 'i') { e.preventDefault(); execCmd('italic'); }
             else if (key === 'u') { e.preventDefault(); execCmd('underline'); }
-            else if (key === 'k') { e.preventDefault(); insertLink(); }
+            else if (key === 'k') { e.preventDefault(); openLinkModal(); }
         }
     });
 
@@ -1199,7 +1244,33 @@
     else if (savedPacks.length > 0) loadPackData(savedPacks[0]);
     else document.getElementById('welcomeText').style.display = 'block';
 
-    // ---- Modal ----
+    // ---- General Modals Logic ----
+    function closeModal(modalId) {
+        const modal = document.getElementById(modalId);
+        modal.classList.remove('visible');
+        setTimeout(() => {
+            modal.classList.remove('active');
+            modal.style.display = 'none';
+            const inputs = modal.getElementsByTagName('input');
+            if(inputs.length > 0) inputs[0].value = '';
+            editor.focus(); // Return focus to editor
+        }, 250);
+    }
+
+    function handleOverlayClick(e, modalId) {
+        if (e.target === document.getElementById(modalId)) closeModal(modalId);
+    }
+
+    async function pasteFromClipboard(inputId) {
+        try {
+            const text = await navigator.clipboard.readText();
+            document.getElementById(inputId).value = text;
+        } catch {
+            showToast('⚠️ Clipboard access denied — paste manually');
+        }
+    }
+
+    // ---- Add Pack Modal ----
     function openAddModal() {
         const modal = document.getElementById('addPackModal');
         modal.style.display = 'flex';
@@ -1210,29 +1281,6 @@
                 setTimeout(() => document.getElementById('packInput').focus(), 80);
             });
         });
-    }
-
-    function closeAddModal() {
-        const modal = document.getElementById('addPackModal');
-        modal.classList.remove('visible');
-        setTimeout(() => {
-            modal.classList.remove('active');
-            modal.style.display = 'none';
-            document.getElementById('packInput').value = '';
-        }, 250);
-    }
-
-    function handleOverlayClick(e) {
-        if (e.target === document.getElementById('addPackModal')) closeAddModal();
-    }
-
-    async function pasteFromClipboard() {
-        try {
-            const text = await navigator.clipboard.readText();
-            document.getElementById('packInput').value = text;
-        } catch {
-            showToast('⚠️ Clipboard access denied — paste manually');
-        }
     }
 
     function viewPackInTelegram(packName) {
@@ -1252,28 +1300,54 @@
             localStorage.setItem('tg_saved_packs', JSON.stringify(savedPacks));
             renderTabs();
         }
-        closeAddModal();
+        closeModal('addPackModal');
         loadPackData(packName);
     }
 
+    // ==========================================
+    // BUG FIX: Telegram WebApp Confirm API
+    // ==========================================
     function removePack(packName) {
-        if (!confirm(`Remove "${packName}" pack?`)) return;
+        const msg = `Remove "${packName}" pack?`;
+        if (webApp && webApp.showConfirm) {
+            webApp.showConfirm(msg, function(agreed) {
+                if (agreed) executeRemovePack(packName);
+            });
+        } else {
+            if (confirm(msg)) executeRemovePack(packName);
+        }
+    }
+
+    function executeRemovePack(packName) {
         savedPacks = savedPacks.filter(p => p !== packName);
         localStorage.setItem('tg_saved_packs', JSON.stringify(savedPacks));
         loadedPacks.delete(packName);
         const section = document.getElementById(`section-${packName}`);
         if (section) section.remove();
         renderTabs();
-        if (savedPacks.length === 0 && recentEmojis.length === 0)
+        if (savedPacks.length === 0 && recentEmojis.length === 0) {
             document.getElementById('welcomeText').style.display = 'block';
+        }
+        setTimeout(() => editor.focus(), 100);
     }
 
     function clearAllData() {
-        if (!confirm('Remove all custom packs and recent emojis?')) return;
+        const msg = 'Remove all custom packs and recent emojis?';
+        if (webApp && webApp.showConfirm) {
+            webApp.showConfirm(msg, function(agreed) {
+                if (agreed) executeClearData();
+            });
+        } else {
+            if (confirm(msg)) executeClearData();
+        }
+    }
+
+    function executeClearData() {
         savedPacks = []; recentEmojis = []; loadedPacks.clear();
         localStorage.setItem('tg_saved_packs', '[]');
         localStorage.removeItem('tg_recent_emojis');
         renderTabs();
+        
         const body = document.getElementById('pickerBody');
         body.innerHTML = '';
         const welcome = document.createElement('div');
@@ -1281,8 +1355,8 @@
         welcome.className = 'status-text';
         welcome.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>No packs added yet.<br>Tap <strong>Add Pack</strong> to get started.`;
         body.appendChild(welcome);
-        // BUG FIX: keep editor focusable after clear
-        editor.focus();
+        
+        setTimeout(() => editor.focus(), 100);
         showToast('🗑️ All data cleared');
     }
 
@@ -1440,8 +1514,13 @@
         }
     }
 
-    // Close modal on Escape
-    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeAddModal(); });
+    // Close modals on Escape
+    document.addEventListener('keydown', e => { 
+        if (e.key === 'Escape') {
+            closeModal('addPackModal');
+            closeModal('addLinkModal');
+        }
+    });
 </script>
 </body>
 </html>
