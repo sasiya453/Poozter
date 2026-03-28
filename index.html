@@ -29,6 +29,7 @@
             --danger: #ef4444;
             --danger-bg: rgba(239,68,68,0.08);
             --success: #22c55e;
+            --warning: #f59e0b;
             --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
             --shadow-md: 0 4px 16px rgba(0,0,0,0.07), 0 2px 6px rgba(0,0,0,0.04);
             --shadow-lg: 0 20px 40px rgba(0,0,0,0.1), 0 8px 16px rgba(0,0,0,0.06);
@@ -60,6 +61,7 @@
             --danger: #f87171;
             --danger-bg: rgba(248,113,113,0.1);
             --success: #4ade80;
+            --warning: #fbbf24;
             --shadow-sm: 0 1px 3px rgba(0,0,0,0.3), 0 1px 2px rgba(0,0,0,0.2);
             --shadow-md: 0 4px 16px rgba(0,0,0,0.35), 0 2px 6px rgba(0,0,0,0.2);
             --shadow-lg: 0 20px 60px rgba(0,0,0,0.5), 0 8px 24px rgba(0,0,0,0.3);
@@ -195,7 +197,6 @@
 
         .header-actions { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
 
-        /* Icon Buttons */
         .icon-btn {
             background: var(--toolbar-btn);
             border: 1px solid var(--border);
@@ -208,19 +209,9 @@
             position: relative;
             overflow: hidden;
         }
-        .icon-btn::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: var(--accent);
-            opacity: 0;
-            transition: opacity var(--transition);
-            border-radius: inherit;
-        }
         .icon-btn:hover { color: var(--accent); border-color: var(--accent); transform: translateY(-1px); box-shadow: 0 4px 12px var(--accent-glow); }
         .icon-btn svg { width: 18px; height: 18px; position: relative; z-index: 1; }
 
-        /* Copy Button */
         .btn-copy-html {
             background: linear-gradient(135deg, var(--accent), var(--accent-2));
             color: white;
@@ -238,17 +229,7 @@
             overflow: hidden;
             letter-spacing: 0.2px;
         }
-        .btn-copy-html::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(135deg, rgba(255,255,255,0.15), transparent);
-            opacity: 0;
-            transition: opacity var(--transition);
-        }
         .btn-copy-html:hover { transform: translateY(-1px); box-shadow: 0 6px 20px var(--accent-glow); }
-        .btn-copy-html:hover::after { opacity: 1; }
-        .btn-copy-html:active { transform: translateY(0); }
         .btn-copy-html.success {
             background: linear-gradient(135deg, var(--success), #16a34a);
             box-shadow: 0 4px 12px rgba(34,197,94,0.3);
@@ -279,7 +260,6 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Toolbar */
         .toolbar {
             display: flex;
             gap: 4px;
@@ -318,7 +298,6 @@
             border-radius: 2px;
         }
 
-        /* Format indicator tooltips */
         .toolbar-btn[title]:hover::after {
             content: attr(title);
             position: absolute;
@@ -338,7 +317,6 @@
             box-shadow: var(--shadow-sm);
         }
 
-        /* Editor Area */
         .editor {
             flex: 1;
             padding: 20px 24px;
@@ -395,7 +373,32 @@
         }
         .editor a { color: var(--accent); }
 
-        /* Scrollbar */
+        /* ============================================
+           Editor Footer (Drafts & Counters)
+           ============================================ */
+        .editor-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 16px;
+            background: var(--surface-raised);
+            border-top: 1px solid var(--border);
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-3);
+            transition: background var(--transition);
+        }
+        .save-status {
+            display: flex; align-items: center; gap: 5px;
+            transition: color var(--transition);
+        }
+        .char-counter {
+            display: flex; align-items: center; gap: 5px;
+            transition: color var(--transition);
+        }
+        .char-counter.warning { color: var(--warning); }
+        .char-counter.danger { color: var(--danger); }
+
         ::-webkit-scrollbar { width: 5px; height: 5px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 10px; }
@@ -501,7 +504,6 @@
             z-index: 2;
             margin-bottom: 10px;
         }
-        /* Fade edges on sticky title */
         .pack-title-bar::before {
             content: '';
             position: absolute;
@@ -539,7 +541,6 @@
         .remove-pack-btn:hover { color: var(--danger); background: var(--danger-bg); }
         .remove-pack-btn svg { width: 11px; height: 11px; }
 
-        /* Emoji Grid */
         .emoji-grid {
             display: grid;
             grid-template-columns: repeat(8, 1fr);
@@ -567,7 +568,6 @@
         }
         .emoji-item:active { transform: scale(0.95); }
 
-        /* Picker Tabs */
         .picker-tabs {
             display: flex;
             overflow-x: auto;
@@ -618,7 +618,6 @@
             opacity: 0.3;
         }
 
-        /* Loading Skeleton */
         .skeleton {
             background: linear-gradient(90deg, var(--border) 25%, var(--toolbar-btn) 50%, var(--border) 75%);
             background-size: 200% 100%;
@@ -810,7 +809,6 @@
             .toolbar { padding: 6px 12px; gap: 2px; overflow-x: auto; flex-wrap: nowrap; }
             .toolbar::-webkit-scrollbar { display: none; }
             .toolbar-btn { width: 32px; height: 32px; flex-shrink: 0; }
-            /* Hide tooltips on mobile */
             .toolbar-btn[title]:hover::after { display: none; }
 
             .emoji-picker-wrapper {
@@ -900,7 +898,16 @@
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/><line x1="2" y1="2" x2="22" y2="22"/></svg>
                 </button>
             </div>
+            
             <div class="editor" id="editor" contenteditable="true" placeholder="Type your message here…"></div>
+            
+            <div class="editor-footer">
+                <div class="save-status" id="saveStatus">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+                    Saved
+                </div>
+                <div class="char-counter" id="charCounter">0 / 1024 <span style="font-size:10px;opacity:0.6">(Media)</span></div>
+            </div>
         </div>
     </div>
 
@@ -1061,7 +1068,6 @@
 
     let savedSelectionRange = null;
 
-    // Fixed Insert Link Logic (Bug Fix for Desktop)
     function openLinkModal() {
         editor.focus();
         const sel = window.getSelection();
@@ -1088,7 +1094,8 @@
                 sel.removeAllRanges();
                 if (savedSelectionRange) sel.addRange(savedSelectionRange);
                 document.execCommand('createLink', false, url);
-            }, 300); // Wait for modal to close before executing
+                handleEditorChange(); // Trigger Save & Count
+            }, 300);
         }
     }
 
@@ -1112,6 +1119,7 @@
                     const p = node.parentNode;
                     while (node.firstChild) p.insertBefore(node.firstChild, node);
                     p.removeChild(node);
+                    handleEditorChange(); // Trigger Save & Count
                     return;
                 }
             }
@@ -1127,6 +1135,7 @@
         }
         try {
             range.surroundContents(wrapper);
+            handleEditorChange(); // Trigger Save & Count
         } catch (e) {
             const txt = range.toString();
             if (txt) {
@@ -1219,6 +1228,66 @@
     }
 
     // ==========================================
+    // Auto-Save & Character Counter
+    // ==========================================
+    let saveTimeout;
+    
+    function updateCharCount() {
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = editor.innerHTML;
+        
+        // Emojis count as characters (we replace them with fallback text to count)
+        const images = tempDiv.querySelectorAll('img');
+        images.forEach(img => {
+            const fallback = img.getAttribute('data-tg-fallback') || '😀';
+            const textNode = document.createTextNode(fallback);
+            img.parentNode.replaceChild(textNode, img);
+        });
+
+        const textContent = tempDiv.textContent || "";
+        const count = textContent.length;
+        const counterEl = document.getElementById('charCounter');
+        
+        if (count <= 1024) {
+            counterEl.innerHTML = `${count} / 1024 <span style="font-size:10px;opacity:0.6">(Media)</span>`;
+            counterEl.className = 'char-counter';
+        } else if (count <= 4096) {
+            counterEl.innerHTML = `${count} / 4096 <span style="font-size:10px;opacity:0.6">(Text Only)</span>`;
+            counterEl.className = 'char-counter warning';
+        } else {
+            counterEl.innerHTML = `${count} / 4096 <span style="font-size:10px;opacity:0.6">(Exceeded)</span>`;
+            counterEl.className = 'char-counter danger';
+        }
+    }
+
+    function handleEditorChange() {
+        updateCharCount();
+        const statusEl = document.getElementById('saveStatus');
+        
+        statusEl.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;"><path d="M21 12a9 9 0 1 1-6.219-8.56"></path></svg> Saving...`;
+        statusEl.style.color = 'var(--text-3)';
+        
+        clearTimeout(saveTimeout);
+        saveTimeout = setTimeout(() => {
+            localStorage.setItem('poozter_draft', editor.innerHTML);
+            statusEl.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg> Saved`;
+            statusEl.style.color = 'var(--success)';
+        }, 800);
+    }
+
+    // Load Draft on Startup
+    window.addEventListener('DOMContentLoaded', () => {
+        const savedDraft = localStorage.getItem('poozter_draft');
+        if (savedDraft) {
+            editor.innerHTML = savedDraft;
+        }
+        updateCharCount(); // Initialize counter on load
+    });
+
+    // Listen to changes (typing and formatting)
+    editor.addEventListener('input', handleEditorChange);
+
+    // ==========================================
     // Emoji / Pack System
     // ==========================================
     const DEFAULT_PACKS = ["NewsEmoji","Udif7rr7_by_fStikBot","OutlineEmoji","FinanceEmoji","FlameEmoji","PremiumIcons"];
@@ -1253,7 +1322,7 @@
             modal.style.display = 'none';
             const inputs = modal.getElementsByTagName('input');
             if(inputs.length > 0) inputs[0].value = '';
-            editor.focus(); // Return focus to editor
+            editor.focus(); 
         }, 250);
     }
 
@@ -1304,9 +1373,6 @@
         loadPackData(packName);
     }
 
-    // ==========================================
-    // BUG FIX: Telegram WebApp Confirm API
-    // ==========================================
     function removePack(packName) {
         const msg = `Remove "${packName}" pack?`;
         if (webApp && webApp.showConfirm) {
@@ -1435,6 +1501,7 @@
                 `<img src="${src}" alt="${fallback}" data-tg-id="${emojiData.id}" data-tg-fallback="${fallback}" style="width:24px;height:24px;vertical-align:middle;margin:0 1px;">`
             );
             addToRecent(emojiData);
+            handleEditorChange(); // Trigger Save & Count
         };
         return el;
     }
