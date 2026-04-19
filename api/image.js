@@ -7,7 +7,6 @@ export default async function handler(req, res) {
     }
 
     try {
-        // Step 1: Get file path from Telegram
         const fileRes = await fetch(
             `https://api.telegram.org/bot${token}/getFile?file_id=${file_id}`
         );
@@ -21,24 +20,24 @@ export default async function handler(req, res) {
         }
 
         const filePath = fileData.result.file_path;
-
-        // Step 2: Fetch the actual file from Telegram CDN
         const imageRes = await fetch(
             `https://api.telegram.org/file/bot${token}/${filePath}`
         );
 
         if (!imageRes.ok) {
-            return res.status(502).json({ error: "Failed to fetch file from Telegram" });
+            return res.status(502).json({ 
+                error: "Failed to fetch file from Telegram" 
+            });
         }
 
-        // Step 3: Stream it back with correct headers
-        const contentType = imageRes.headers.get('content-type') || 
-            (filePath.endsWith('.webm') ? 'video/webm' : 
-             filePath.endsWith('.tgs') ? 'application/x-tgsticker' :
-             'image/webp');
+        const contentType = 
+            filePath.endsWith('.webm') ? 'video/webm' :
+            filePath.endsWith('.tgs')  ? 'image/webp' : // serve tgs as webp fallback
+            'image/webp';
 
         res.setHeader('Content-Type', contentType);
-        res.setHeader('Cache-Control', 'public, max-age=86400, stale-while-revalidate=604800');
+        res.setHeader('Cache-Control', 
+            'public, max-age=86400, stale-while-revalidate=604800');
         res.setHeader('Access-Control-Allow-Origin', '*');
 
         const buffer = await imageRes.arrayBuffer();
@@ -46,6 +45,9 @@ export default async function handler(req, res) {
 
     } catch (error) {
         console.error('Image fetch error:', error);
-        res.status(500).json({ error: "Server error", details: error.message });
+        res.status(500).json({ 
+            error: "Server error", 
+            details: error.message 
+        });
     }
 }
