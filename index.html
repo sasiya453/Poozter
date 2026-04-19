@@ -1,0 +1,2678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, 
+          maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Poozter Web Editor</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,
+          wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;
+          1,9..40,400&family=JetBrains+Mono:wght@400;500&display=swap" 
+          rel="stylesheet">
+
+    <style>
+        :root {
+            --bg: #eef1f7;
+            --surface: #ffffff;
+            --surface-raised: #f8faff;
+            --surface-float: rgba(255,255,255,0.85);
+            --text-1: #0d1117;
+            --text-2: #4a5568;
+            --text-3: #9aa5b4;
+            --accent: #3b82f6;
+            --accent-2: #6366f1;
+            --accent-glow: rgba(59,130,246,0.2);
+            --accent-hover: #2563eb;
+            --border: rgba(0,0,0,0.07);
+            --border-strong: rgba(0,0,0,0.13);
+            --toolbar-btn: rgba(0,0,0,0.04);
+            --toolbar-hover: rgba(59,130,246,0.1);
+            --spoiler-bg: #dde3ee;
+            --danger: #ef4444;
+            --danger-bg: rgba(239,68,68,0.08);
+            --success: #22c55e;
+            --warning: #f59e0b;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+            --shadow-md: 0 4px 16px rgba(0,0,0,0.07), 0 2px 6px rgba(0,0,0,0.04);
+            --shadow-lg: 0 20px 40px rgba(0,0,0,0.1), 0 8px 16px rgba(0,0,0,0.06);
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 18px;
+            --radius-xl: 24px;
+            --modal-overlay: rgba(10,15,30,0.45);
+            --transition: 0.2s cubic-bezier(0.4,0,0.2,1);
+        }
+
+        [data-theme="dark"] {
+            --bg: #0b0f18;
+            --surface: #131929;
+            --surface-raised: #1a2235;
+            --surface-float: rgba(19,25,41,0.92);
+            --text-1: #f0f4ff;
+            --text-2: #7c8fa8;
+            --text-3: #3d5066;
+            --accent: #4f8ef7;
+            --accent-2: #7c7cf7;
+            --accent-glow: rgba(79,142,247,0.18);
+            --accent-hover: #3b7ef4;
+            --border: rgba(255,255,255,0.06);
+            --border-strong: rgba(255,255,255,0.12);
+            --toolbar-btn: rgba(255,255,255,0.04);
+            --toolbar-hover: rgba(79,142,247,0.12);
+            --spoiler-bg: #1f2d44;
+            --danger: #f87171;
+            --danger-bg: rgba(248,113,113,0.1);
+            --success: #4ade80;
+            --warning: #fbbf24;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.3), 0 1px 2px rgba(0,0,0,0.2);
+            --shadow-md: 0 4px 16px rgba(0,0,0,0.35), 0 2px 6px rgba(0,0,0,0.2);
+            --shadow-lg: 0 20px 60px rgba(0,0,0,0.5), 0 8px 24px rgba(0,0,0,0.3);
+            --modal-overlay: rgba(0,0,0,0.7);
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--text-1);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            transition: background var(--transition), color var(--transition);
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background:
+                radial-gradient(ellipse 80% 50% at 20% 10%, 
+                    var(--accent-glow) 0%, transparent 60%),
+                radial-gradient(ellipse 60% 40% at 80% 90%, 
+                    rgba(99,102,241,0.06) 0%, transparent 60%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        button, input { font-family: inherit; }
+
+        /* ============================================
+           Layout
+        ============================================ */
+        .main-wrapper {
+            display: flex;
+            gap: 20px;
+            width: 100%;
+            max-width: 1240px;
+            padding: 20px;
+            height: 100%;
+            position: relative;
+            z-index: 1;
+        }
+
+        .left-column {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            min-width: 0;
+        }
+
+        /* ============================================
+           Header Card
+        ============================================ */
+        .top-header-card {
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            padding: 14px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-md);
+            transition: background var(--transition), border-color var(--transition);
+            animation: slideDown 0.4s cubic-bezier(0.34,1.56,0.64,1) both;
+            flex-shrink: 0;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .header-user-info { 
+            display: flex; align-items: center; gap: 14px; 
+            overflow: hidden; 
+        }
+
+        .user-avatar-wrapper { position: relative; flex-shrink: 0; }
+        .user-avatar {
+            width: 44px; height: 44px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--accent-glow);
+            box-shadow: 0 0 0 2px var(--accent-glow);
+            transition: transform var(--transition);
+        }
+        .user-avatar:hover { transform: scale(1.05); }
+        .user-avatar-placeholder {
+            width: 44px; height: 44px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            color: #fff;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 18px; font-weight: 700;
+            text-transform: uppercase;
+            box-shadow: 0 4px 12px var(--accent-glow);
+            flex-shrink: 0;
+        }
+
+        .status-dot {
+            position: absolute;
+            bottom: 1px; right: 1px;
+            width: 10px; height: 10px;
+            background: var(--success);
+            border-radius: 50%;
+            border: 2px solid var(--surface);
+            animation: pulse-dot 2s ease infinite;
+        }
+        @keyframes pulse-dot {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(34,197,94,0.4); }
+            50% { box-shadow: 0 0 0 4px rgba(34,197,94,0); }
+        }
+
+        .header-text-block { 
+            display: flex; flex-direction: column; 
+            overflow: hidden; gap: 1px; 
+        }
+        .app-title {
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            opacity: 0.8;
+        }
+        .greeting-line {
+            font-size: 15px;
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .greeting-text { color: var(--text-2); font-weight: 400; margin-right: 4px; }
+        .user-name-text { color: var(--text-1); }
+
+        .header-actions { 
+            display: flex; align-items: center; 
+            gap: 8px; flex-shrink: 0; 
+        }
+
+        .icon-btn {
+            background: var(--toolbar-btn);
+            border: 1px solid var(--border);
+            color: var(--text-2);
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            width: 38px; height: 38px;
+            border-radius: var(--radius-sm);
+            transition: all var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+        .icon-btn:hover { 
+            color: var(--accent); border-color: var(--accent); 
+            transform: translateY(-1px); 
+            box-shadow: 0 4px 12px var(--accent-glow); 
+        }
+        .icon-btn svg { width: 18px; height: 18px; position: relative; z-index: 1; }
+
+        /* Clear Text Button */
+        .btn-clear-text {
+            background: var(--toolbar-btn);
+            border: 1px solid var(--border);
+            color: var(--text-2);
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            gap: 6px;
+            height: 38px;
+            padding: 0 12px;
+            border-radius: var(--radius-sm);
+            transition: all var(--transition);
+            font-size: 13px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        .btn-clear-text:hover { 
+            color: var(--danger); 
+            border-color: var(--danger); 
+            background: var(--danger-bg);
+            transform: translateY(-1px);
+        }
+        .btn-clear-text svg { width: 15px; height: 15px; }
+        .btn-clear-text .btn-label-clear { display: inline; }
+
+        .btn-copy-html {
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            color: white;
+            border: none;
+            padding: 0 18px;
+            height: 38px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13.5px;
+            transition: all var(--transition);
+            display: flex; align-items: center; gap: 8px;
+            box-shadow: 0 4px 12px var(--accent-glow);
+            position: relative;
+            overflow: hidden;
+            letter-spacing: 0.2px;
+            white-space: nowrap;
+        }
+        .btn-copy-html:hover { 
+            transform: translateY(-1px); 
+            box-shadow: 0 6px 20px var(--accent-glow); 
+        }
+        .btn-copy-html.success {
+            background: linear-gradient(135deg, var(--success), #16a34a);
+            box-shadow: 0 4px 12px rgba(34,197,94,0.3);
+        }
+        .btn-copy-html svg { width: 16px; height: 16px; }
+
+        /* ============================================
+           Editor Container
+        ============================================ */
+        .editor-container {
+            flex: 1;
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            transition: background var(--transition), 
+                        border-color var(--transition), 
+                        box-shadow var(--transition);
+            animation: slideUp 0.4s cubic-bezier(0.34,1.56,0.64,1) 0.05s both;
+            min-height: 0;
+        }
+        .editor-container:focus-within {
+            border-color: var(--accent);
+            box-shadow: var(--shadow-md), 0 0 0 3px var(--accent-glow);
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .toolbar {
+            display: flex;
+            gap: 3px;
+            padding: 8px 14px;
+            flex-wrap: wrap;
+            background: var(--surface-raised);
+            border-bottom: 1px solid var(--border);
+            align-items: center;
+            transition: background var(--transition);
+            flex-shrink: 0;
+        }
+
+        .toolbar-btn {
+            width: 34px; height: 34px;
+            border: 1px solid transparent;
+            background: transparent;
+            cursor: pointer;
+            border-radius: var(--radius-sm);
+            color: var(--text-2);
+            display: flex; align-items: center; justify-content: center;
+            transition: all var(--transition);
+            position: relative;
+            flex-shrink: 0;
+        }
+        .toolbar-btn:hover {
+            background: var(--toolbar-hover);
+            color: var(--accent);
+            border-color: var(--border);
+            transform: translateY(-1px);
+        }
+        .toolbar-btn:active { transform: translateY(0) scale(0.95); }
+        .toolbar-btn svg { width: 17px; height: 17px; }
+
+        .toolbar-divider {
+            width: 1px; height: 22px;
+            background: var(--border-strong);
+            margin: 0 3px;
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+
+        /* Tooltip */
+        .toolbar-btn[title]:hover::after {
+            content: attr(title);
+            position: absolute;
+            bottom: calc(100% + 6px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--text-1);
+            color: var(--surface);
+            font-size: 11px;
+            font-weight: 500;
+            padding: 4px 8px;
+            border-radius: 6px;
+            white-space: nowrap;
+            pointer-events: none;
+            z-index: 100;
+            letter-spacing: 0.2px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .editor {
+            flex: 1;
+            padding: 20px 24px;
+            outline: none;
+            font-size: 15px;
+            line-height: 1.7;
+            overflow-y: auto;
+            color: var(--text-1);
+            font-weight: 400;
+            transition: color var(--transition);
+            word-break: break-word;
+        }
+
+        /* Fix: Proper emoji image rendering - no double display */
+        .editor img.tg-emoji-img {
+            width: 22px; 
+            height: 22px;
+            vertical-align: middle;
+            margin: 0 1px;
+            border-radius: 3px;
+            display: inline-block;
+            /* Prevent browser from showing broken image icon */
+            object-fit: contain;
+        }
+        .editor img.tg-emoji-img:hover { 
+            transform: scale(1.4); 
+            transition: transform 0.15s cubic-bezier(0.34,1.56,0.64,1);
+        }
+
+        .editor video.tg-emoji-video {
+            width: 22px; 
+            height: 22px;
+            vertical-align: middle;
+            margin: 0 1px;
+            display: inline-block;
+        }
+
+        .editor[placeholder]:empty:before {
+            content: attr(placeholder);
+            color: var(--text-3);
+            pointer-events: none;
+            display: block;
+            font-style: italic;
+        }
+
+        .tg-spoiler {
+            background: var(--spoiler-bg);
+            color: transparent;
+            border-radius: 4px;
+            padding: 1px 5px;
+            cursor: pointer;
+            transition: all var(--transition);
+            user-select: none;
+        }
+        .tg-spoiler.revealed { color: var(--text-1); }
+        .tg-spoiler:hover { color: var(--text-1); }
+
+        .editor blockquote {
+            border-left: 3px solid var(--accent);
+            padding: 8px 14px;
+            margin: 10px 0;
+            color: var(--text-2);
+            font-style: italic;
+            background: var(--accent-glow);
+            border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+        }
+        .editor code {
+            font-family: 'JetBrains Mono', monospace;
+            background: var(--toolbar-btn);
+            padding: 2px 7px;
+            border-radius: 5px;
+            color: var(--accent);
+            font-size: 0.875em;
+            border: 1px solid var(--border);
+        }
+        .editor a { 
+            color: var(--accent); 
+            text-decoration: underline;
+            text-underline-offset: 2px;
+        }
+
+        /* ============================================
+           Editor Footer
+        ============================================ */
+        .editor-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 16px;
+            background: var(--surface-raised);
+            border-top: 1px solid var(--border);
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-3);
+            transition: background var(--transition);
+            flex-shrink: 0;
+        }
+        .save-status {
+            display: flex; align-items: center; gap: 5px;
+            transition: color var(--transition);
+        }
+        .char-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .char-counter {
+            display: flex; align-items: center; gap: 4px;
+            transition: color var(--transition);
+        }
+        .char-counter.warning { color: var(--warning); }
+        .char-counter.danger { color: var(--danger); }
+
+        /* Char progress bar */
+        .char-progress {
+            width: 60px;
+            height: 3px;
+            background: var(--border);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .char-progress-fill {
+            height: 100%;
+            background: var(--success);
+            border-radius: 10px;
+            transition: width 0.3s ease, background 0.3s ease;
+        }
+
+        ::-webkit-scrollbar { width: 5px; height: 5px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { 
+            background: var(--border-strong); border-radius: 10px; 
+        }
+        ::-webkit-scrollbar-thumb:hover { background: var(--text-3); }
+
+        /* ============================================
+           Emoji Picker (Right Column)
+        ============================================ */
+        .emoji-picker-wrapper {
+            width: 370px;
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+            flex-shrink: 0;
+            border: 1px solid var(--border);
+            transition: background var(--transition), border-color var(--transition);
+            animation: slideLeft 0.4s cubic-bezier(0.34,1.56,0.64,1) 0.1s both;
+        }
+        @keyframes slideLeft {
+            from { opacity: 0; transform: translateX(16px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .picker-header {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--surface-raised);
+            flex-shrink: 0;
+        }
+        .picker-header-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-1);
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+        .picker-header-title svg { width: 15px; height: 15px; color: var(--accent); }
+
+        .header-btn-group { display: flex; gap: 7px; align-items: center; }
+
+        .btn-add-pack {
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            color: white;
+            border: none;
+            padding: 6px 11px;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all var(--transition);
+            display: flex; align-items: center; gap: 5px;
+            box-shadow: 0 2px 8px var(--accent-glow);
+            letter-spacing: 0.2px;
+        }
+        .btn-add-pack:hover { 
+            transform: translateY(-1px); 
+            box-shadow: 0 4px 12px var(--accent-glow); 
+        }
+        .btn-add-pack svg { width: 12px; height: 12px; }
+
+        .clear-packs-btn {
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            color: var(--text-3);
+            background: transparent;
+            border: 1px solid var(--border);
+            padding: 5px 9px;
+            border-radius: var(--radius-sm);
+            transition: all var(--transition);
+            display: flex; align-items: center; gap: 4px;
+        }
+        .clear-packs-btn:hover { 
+            color: var(--danger); 
+            border-color: var(--danger); 
+            background: var(--danger-bg); 
+        }
+        .clear-packs-btn svg { width: 12px; height: 12px; }
+
+        /* Search bar */
+        .picker-search {
+            padding: 10px 16px;
+            border-bottom: 1px solid var(--border);
+            background: var(--surface-raised);
+            flex-shrink: 0;
+        }
+        .picker-search input {
+            width: 100%;
+            padding: 8px 12px 8px 34px;
+            border-radius: var(--radius-sm);
+            border: 1.5px solid var(--border-strong);
+            background: var(--surface);
+            color: var(--text-1);
+            font-size: 13px;
+            outline: none;
+            transition: all var(--transition);
+            font-family: inherit;
+        }
+        .picker-search input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+        .picker-search input::placeholder { color: var(--text-3); }
+        .picker-search-wrapper {
+            position: relative;
+        }
+        .picker-search-icon {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-3);
+            pointer-events: none;
+        }
+        .picker-search-icon svg { width: 14px; height: 14px; }
+
+        .picker-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 14px 16px;
+            scroll-behavior: smooth;
+        }
+
+        .pack-section {
+            margin-bottom: 20px;
+            animation: fadeInUp 0.3s ease both;
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .pack-title-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: -14px;
+            background: var(--surface);
+            padding: 8px 0;
+            z-index: 2;
+            margin-bottom: 10px;
+        }
+        .pack-title-bar::before {
+            content: '';
+            position: absolute;
+            top: -14px;
+            left: -16px;
+            right: -16px;
+            height: 14px;
+            background: var(--surface);
+        }
+
+        .pack-title {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-3);
+        }
+
+        .pack-title-count {
+            font-size: 10px;
+            color: var(--text-3);
+            background: var(--toolbar-btn);
+            padding: 1px 6px;
+            border-radius: 20px;
+            margin-left: 6px;
+            font-weight: 600;
+        }
+
+        .pack-actions { display: flex; gap: 5px; }
+
+        .view-pack-btn, .remove-pack-btn {
+            font-size: 11px;
+            font-weight: 600;
+            padding: 4px 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all var(--transition);
+            border: none;
+            display: flex; align-items: center; gap: 3px;
+        }
+        .view-pack-btn { color: var(--accent); background: var(--toolbar-hover); }
+        .view-pack-btn:hover { background: rgba(59,130,246,0.2); }
+        .view-pack-btn svg { width: 11px; height: 11px; }
+        .remove-pack-btn { color: var(--text-3); background: transparent; }
+        .remove-pack-btn:hover { color: var(--danger); background: var(--danger-bg); }
+        .remove-pack-btn svg { width: 11px; height: 11px; }
+
+        .emoji-grid {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 4px;
+        }
+
+        .emoji-item {
+            width: 100%;
+            aspect-ratio: 1;
+            cursor: pointer;
+            object-fit: contain;
+            border-radius: var(--radius-sm);
+            transition: all 0.15s cubic-bezier(0.34,1.56,0.64,1);
+            padding: 4px;
+            border: 1px solid transparent;
+            background: transparent;
+        }
+        .emoji-item:hover {
+            transform: scale(1.25);
+            background: var(--toolbar-hover);
+            border-color: var(--border);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            z-index: 2;
+            position: relative;
+        }
+        .emoji-item:active { transform: scale(0.92); }
+
+        /* Error state for failed images */
+        .emoji-item.load-error {
+            background: var(--danger-bg);
+            border-color: var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            cursor: default;
+        }
+
+        .picker-tabs {
+            display: flex;
+            overflow-x: auto;
+            background: var(--surface-raised);
+            padding: 8px 12px;
+            gap: 6px;
+            align-items: center;
+            border-top: 1px solid var(--border);
+            flex-shrink: 0;
+        }
+        .picker-tabs::-webkit-scrollbar { display: none; }
+
+        .pack-tab {
+            width: 34px; height: 34px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            opacity: 0.5;
+            transition: all var(--transition);
+            display: flex; justify-content: center; align-items: center;
+            background: var(--surface);
+            border: 1.5px solid transparent;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-2);
+            flex-shrink: 0;
+            letter-spacing: 0.3px;
+            overflow: hidden;
+        }
+        .pack-tab:hover { 
+            opacity: 0.85; transform: translateY(-2px); 
+            box-shadow: var(--shadow-sm); 
+        }
+        .pack-tab.active {
+            opacity: 1;
+            border-color: var(--accent);
+            color: var(--accent);
+            background: var(--toolbar-hover);
+            box-shadow: 0 2px 8px var(--accent-glow);
+        }
+        .pack-tab img {
+            width: 24px; height: 24px;
+            object-fit: contain;
+        }
+        .recent-tab { font-size: 16px; }
+
+        .status-text {
+            color: var(--text-3);
+            font-size: 13px;
+            text-align: center;
+            margin-top: 40px;
+            line-height: 1.8;
+        }
+        .status-text svg {
+            display: block;
+            margin: 0 auto 12px;
+            width: 36px; height: 36px;
+            opacity: 0.3;
+        }
+
+        .skeleton {
+            background: linear-gradient(90deg, 
+                var(--border) 25%, 
+                var(--toolbar-btn) 50%, 
+                var(--border) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.4s infinite;
+            border-radius: var(--radius-sm);
+        }
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* Error banner */
+        .error-banner {
+            background: var(--danger-bg);
+            color: var(--danger);
+            padding: 10px 14px;
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            grid-column: span 8;
+            border: 1px solid rgba(239,68,68,0.2);
+        }
+        .error-banner svg { width: 14px; height: 14px; flex-shrink: 0; }
+
+        /* Retry button */
+        .retry-btn {
+            background: var(--danger);
+            color: white;
+            border: none;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-left: auto;
+            font-family: inherit;
+        }
+        .retry-btn:hover { opacity: 0.85; }
+
+        /* ============================================
+           Modals
+        ============================================ */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: var(--modal-overlay);
+            z-index: 1000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal-overlay.visible { opacity: 1; }
+
+        .modal-content {
+            background: var(--surface);
+            padding: 0;
+            border-radius: var(--radius-xl);
+            width: 90%;
+            max-width: 360px;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border-strong);
+            transform: scale(0.94) translateY(10px);
+            transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1);
+            overflow: hidden;
+        }
+        .modal-overlay.visible .modal-content { 
+            transform: scale(1) translateY(0); 
+        }
+
+        .modal-header {
+            padding: 20px 22px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .modal-header h3 {
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--text-1);
+            display: flex; align-items: center; gap: 8px;
+        }
+        .modal-header h3 svg { width: 18px; height: 18px; color: var(--accent); }
+        .modal-subtitle {
+            font-size: 12.5px;
+            color: var(--text-2);
+            padding: 6px 22px 0;
+        }
+
+        .close-modal-btn {
+            background: var(--toolbar-btn);
+            border: 1px solid var(--border);
+            width: 30px; height: 30px;
+            border-radius: 8px;
+            color: var(--text-2);
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            transition: all var(--transition);
+        }
+        .close-modal-btn:hover { 
+            color: var(--text-1); border-color: var(--border-strong); 
+        }
+        .close-modal-btn svg { width: 14px; height: 14px; }
+
+        .modal-body { padding: 18px 22px 22px; }
+
+        .input-group { display: flex; gap: 8px; margin-bottom: 14px; }
+        .pack-input {
+            flex: 1;
+            padding: 11px 14px;
+            border-radius: var(--radius-sm);
+            border: 1.5px solid var(--border-strong);
+            background: var(--surface-raised);
+            color: var(--text-1);
+            outline: none;
+            font-size: 14px;
+            font-family: inherit;
+            transition: all var(--transition);
+        }
+        .pack-input::placeholder { color: var(--text-3); }
+        .pack-input:focus { 
+            border-color: var(--accent); 
+            box-shadow: 0 0 0 3px var(--accent-glow); 
+        }
+
+        .paste-btn {
+            background: var(--toolbar-btn);
+            border: 1.5px solid var(--border-strong);
+            border-radius: var(--radius-sm);
+            padding: 0 13px;
+            cursor: pointer;
+            color: var(--text-2);
+            transition: all var(--transition);
+            display: flex; align-items: center;
+            font-size: 16px;
+        }
+        .paste-btn:hover { 
+            background: var(--toolbar-hover); 
+            color: var(--accent); 
+            border-color: var(--accent); 
+        }
+
+        .btn-full {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            color: #fff;
+            border: none;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 14px;
+            font-family: inherit;
+            transition: all var(--transition);
+            box-shadow: 0 4px 12px var(--accent-glow);
+            letter-spacing: 0.2px;
+        }
+        .btn-full:hover { 
+            transform: translateY(-1px); 
+            box-shadow: 0 6px 18px var(--accent-glow); 
+        }
+        .btn-full:active { transform: translateY(0); }
+
+        /* Confirm dialog overlay */
+        .confirm-overlay {
+            position: fixed;
+            inset: 0;
+            background: var(--modal-overlay);
+            z-index: 2000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(4px);
+        }
+        .confirm-overlay.active { display: flex; }
+        .confirm-box {
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            width: 88%;
+            max-width: 300px;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border-strong);
+            text-align: center;
+        }
+        .confirm-box .confirm-icon {
+            font-size: 32px;
+            margin-bottom: 12px;
+        }
+        .confirm-box h4 {
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 6px;
+            color: var(--text-1);
+        }
+        .confirm-box p {
+            font-size: 13px;
+            color: var(--text-2);
+            margin-bottom: 18px;
+            line-height: 1.5;
+        }
+        .confirm-btns {
+            display: flex;
+            gap: 10px;
+        }
+        .confirm-btns button {
+            flex: 1;
+            padding: 10px;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            font-size: 13.5px;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all var(--transition);
+            border: 1px solid var(--border-strong);
+        }
+        .confirm-cancel {
+            background: var(--toolbar-btn);
+            color: var(--text-2);
+        }
+        .confirm-cancel:hover { background: var(--border); }
+        .confirm-ok {
+            background: var(--danger) !important;
+            color: white !important;
+            border-color: transparent !important;
+        }
+        .confirm-ok:hover { opacity: 0.88; }
+
+        /* ============================================
+           Toast Notification
+        ============================================ */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: var(--text-1);
+            color: var(--surface);
+            padding: 10px 18px;
+            border-radius: 100px;
+            font-size: 13px;
+            font-weight: 600;
+            z-index: 9999;
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
+            pointer-events: none;
+            white-space: nowrap;
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            max-width: calc(100vw - 40px);
+        }
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* ============================================
+           Responsive – Mobile
+        ============================================ */
+        @media (max-width: 768px) {
+            .main-wrapper {
+                flex-direction: column;
+                padding: 0;
+                gap: 0;
+                height: 100vh;
+                height: 100dvh;
+            }
+            body::before { display: none; }
+
+            .left-column { flex: 0 0 auto; gap: 0; }
+
+            .top-header-card {
+                border-radius: 0;
+                border: none;
+                border-bottom: 1px solid var(--border);
+                padding: 10px 14px;
+                box-shadow: none;
+                animation: none;
+            }
+            .user-avatar, .user-avatar-placeholder { 
+                width: 36px; height: 36px; font-size: 14px; 
+            }
+            .app-title { display: none; }
+            .greeting-line { font-size: 13px; }
+
+            /* Hide label on small screens */
+            .btn-copy-html .btn-label { display: none; }
+            .btn-copy-html { padding: 0 12px; min-width: 38px; }
+            .btn-clear-text .btn-label-clear { display: none; }
+            .btn-clear-text { padding: 0 10px; }
+            .header-actions { gap: 6px; }
+
+            .editor-container {
+                flex: 0 0 36vh;
+                border-radius: 0;
+                border: none;
+                border-bottom: 1px solid var(--border);
+                box-shadow: none;
+                animation: none;
+            }
+            .toolbar { 
+                padding: 6px 10px; gap: 2px; 
+                overflow-x: auto; flex-wrap: nowrap; 
+            }
+            .toolbar::-webkit-scrollbar { display: none; }
+            .toolbar-btn { width: 32px; height: 32px; flex-shrink: 0; }
+            .toolbar-btn[title]:hover::after { display: none; }
+            .editor { padding: 14px 16px; font-size: 14px; }
+
+            .emoji-picker-wrapper {
+                width: 100%;
+                flex: 1;
+                border-radius: 0;
+                border: none;
+                box-shadow: none;
+                animation: none;
+            }
+            .emoji-grid { grid-template-columns: repeat(7, 1fr); gap: 3px; }
+            .picker-header { padding: 10px 14px; }
+        }
+
+        @media (max-width: 380px) {
+            .emoji-grid { grid-template-columns: repeat(6, 1fr); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="main-wrapper">
+    <div class="left-column">
+
+        <!-- Header -->
+        <div class="top-header-card">
+            <div class="header-user-info">
+                <div class="user-avatar-wrapper">
+                    <img id="user-avatar" class="user-avatar" 
+                         src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" 
+                         alt="Avatar" style="display:none;">
+                    <div id="user-avatar-placeholder" class="user-avatar-placeholder">U</div>
+                    <div class="status-dot"></div>
+                </div>
+                <div class="header-text-block">
+                    <span class="app-title">Poozter Editor</span>
+                    <div class="greeting-line">
+                        <span id="greeting-text" class="greeting-text">Welcome,</span>
+                        <span id="user-name" class="user-name-text">Creator</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="header-actions">
+                <!-- Theme Toggle -->
+                <button class="icon-btn" id="themeToggle" 
+                        onclick="toggleTheme()" title="Toggle Theme">
+                    <svg id="themeIcon" viewBox="0 0 24 24" fill="none" 
+                         stroke="currentColor" stroke-width="2" 
+                         stroke-linecap="round" stroke-linejoin="round"></svg>
+                </button>
+
+                <!-- Clear Editor Button -->
+                <button class="btn-clear-text" onclick="clearEditorText()" 
+                        title="Clear all text">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" 
+                         stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 6h18M8 6V4h8v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+                        <path d="M10 11v6M14 11v6"/>
+                    </svg>
+                    <span class="btn-label-clear">Clear</span>
+                </button>
+
+                <!-- Copy HTML Button -->
+                <button class="btn-copy-html" id="copyBtn" 
+                        onclick="copyAndGenerateHTML()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" 
+                         stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                    </svg>
+                    <span class="btn-label">Copy HTML</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Editor -->
+        <div class="editor-container">
+            <div class="toolbar">
+                <!-- Bold -->
+                <button class="toolbar-btn" onclick="execCmd('bold')" 
+                        title="Bold (Ctrl+B)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" 
+                         stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M6 4h8a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"/>
+                        <path d="M6 12h9a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"/>
+                    </svg>
+                </button>
+                <!-- Italic -->
+                <button class="toolbar-btn" onclick="execCmd('italic')" 
+                        title="Italic (Ctrl+I)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" 
+                         stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="19" y1="4" x2="10" y2="4"/>
+                        <line x1="14" y1="20" x2="5" y2="20"/>
+                        <line x1="15" y1="4" x2="9" y2="20"/>
+                    </svg>
+                </button>
+                <!-- Underline -->
+                <button class="toolbar-btn" onclick="execCmd('underline')" 
+                        title="Underline (Ctrl+U)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" 
+                         stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M6 3v7a6 6 0 0 0 6 6 6 6 0 0 0 6-6V3"/>
+                        <line x1="4" y1="21" x2="20" y2="21"/>
+                    </svg>
+                </button>
+                <!-- Strikethrough -->
+                <button class="toolbar-btn" onclick="execCmd('strikeThrough')" 
+                        title="Strikethrough (Ctrl+Shift+X)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" 
+                         stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M16 4H9a3 3 0 0 0-2.83 4"/>
+                        <path d="M14 12a4 4 0 0 1 0 8H6"/>
+                        <line x1="4" y1="12" x2="20" y2="12"/>
+                    </svg>
+                </button>
+
+                <div class="toolbar-divider"></div>
+
+                <!-- Blockquote -->
+                <button class="toolbar-btn" onclick="toggleCustomFormat('blockquote')" 
+                        title="Blockquote (Ctrl+Shift+.)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" 
+                         stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z"/>
+                        <path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z"/>
+                    </svg>
+                </button>
+                <!-- Code/Monospace -->
+                <button class="toolbar-btn" onclick="toggleCustomFormat('code')" 
+                        title="Monospace (Ctrl+Shift+M)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" 
+                         stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="16 18 22 12 16 6"/>
+                        <polyline points="8 6 2 12 8 18"/>
+                    </svg>
+                </button>
+                <!-- Spoiler -->
+                <button class="toolbar-btn" onclick="toggleCustomFormat('tg-spoiler')" 
+                        title="Spoiler (Ctrl+Shift+P)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" 
+                         stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/>
+                        <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/>
+                        <line x1="1" y1="1" x2="23" y2="23"/>
+                    </svg>
+                </button>
+
+                <div class="toolbar-divider"></div>
+
+                <!-- Link -->
+                <button class="toolbar-btn" onclick="openLinkModal()" 
+                        title="Insert Link (Ctrl+K)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" 
+                         stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+                        <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+                    </svg>
+                </button>
+                <!-- Date -->
+                <button class="toolbar-btn" onclick="insertDate()" 
+                        title="Insert Date (Ctrl+Shift+D)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" 
+                         stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                        <line x1="16" y1="2" x2="16" y2="6"/>
+                        <line x1="8" y1="2" x2="8" y2="6"/>
+                        <line x1="3" y1="10" x2="21" y2="10"/>
+                    </svg>
+                </button>
+                <!-- Clear Format -->
+                <button class="toolbar-btn" 
+                        onclick="execCmd('removeFormat'); removeCustomFormats();" 
+                        title="Clear Format (Ctrl+Shift+N)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" 
+                         stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                        <line x1="2" y1="2" x2="22" y2="22"/>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="editor" id="editor" contenteditable="true" 
+                 placeholder="Type your message here…"
+                 spellcheck="true"></div>
+
+            <div class="editor-footer">
+                <div class="save-status" id="saveStatus">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" 
+                         stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" 
+                         style="width:12px;height:12px;">
+                        <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+                        <polyline points="17 21 17 13 7 13 7 21"/>
+                        <polyline points="7 3 7 8 15 8"/>
+                    </svg>
+                    Draft saved
+                </div>
+                <div class="char-info">
+                    <div class="char-progress">
+                        <div class="char-progress-fill" id="charProgressFill"></div>
+                    </div>
+                    <div class="char-counter" id="charCounter">
+                        0 / 1024
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div><!-- end left-column -->
+
+    <!-- Emoji Picker -->
+    <div class="emoji-picker-wrapper">
+        <div class="picker-header">
+            <div class="picker-header-title">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" 
+                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"/>
+                    <path d="M8 14s1.5 2 4 2 4-2 4-2"/>
+                    <line x1="9" y1="9" x2="9.01" y2="9"/>
+                    <line x1="15" y1="9" x2="15.01" y2="9"/>
+                </svg>
+                Stickers & Emoji
+            </div>
+            <div class="header-btn-group">
+                <button class="btn-add-pack" onclick="openAddModal()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" 
+                         stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="5" x2="12" y2="19"/>
+                        <line x1="5" y1="12" x2="19" y2="12"/>
+                    </svg>
+                    Add Pack
+                </button>
+                <button class="clear-packs-btn" onclick="clearAllData()" 
+                        title="Clear all packs">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" 
+                         stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="3 6 5 6 21 6"/>
+                        <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+                        <path d="M10 11v6M14 11v6"/>
+                    </svg>
+                    Clear
+                </button>
+            </div>
+        </div>
+
+        <!-- Search -->
+        <div class="picker-search">
+            <div class="picker-search-wrapper">
+                <div class="picker-search-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" 
+                         stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"/>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                    </svg>
+                </div>
+                <input type="text" id="emojiSearch" 
+                       placeholder="Search packs…" 
+                       oninput="filterPacks(this.value)">
+            </div>
+        </div>
+
+        <div class="picker-body" id="pickerBody">
+            <div id="welcomeText" class="status-text" style="display:none;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" 
+                     stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"/>
+                    <path d="M8 14s1.5 2 4 2 4-2 4-2"/>
+                    <line x1="9" y1="9" x2="9.01" y2="9"/>
+                    <line x1="15" y1="9" x2="15.01" y2="9"/>
+                </svg>
+                No packs added yet.<br>Tap <strong>Add Pack</strong> to get started.
+            </div>
+        </div>
+
+        <div class="picker-tabs" id="pickerTabs"></div>
+    </div>
+</div>
+
+<!-- Add Pack Modal -->
+<div class="modal-overlay" id="addPackModal" 
+     onclick="handleOverlayClick(event,'addPackModal')">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" 
+                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="3" width="18" height="18" rx="2"/>
+                    <line x1="12" y1="8" x2="12" y2="16"/>
+                    <line x1="8" y1="12" x2="16" y2="12"/>
+                </svg>
+                Add Emoji Pack
+            </h3>
+            <button class="close-modal-btn" onclick="closeModal('addPackModal')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" 
+                     stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"/>
+                    <line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+            </button>
+        </div>
+        <p class="modal-subtitle">Enter a pack name or paste a t.me link</p>
+        <div class="modal-body">
+            <div class="input-group">
+                <input class="pack-input" type="text" id="packInput" 
+                       placeholder="e.g. NewsEmoji or t.me/addemoji/…" 
+                       onkeypress="if(event.key==='Enter') addNewPack()">
+                <button class="paste-btn" onclick="pasteFromClipboard('packInput')" 
+                        title="Paste">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" 
+                         stroke="currentColor" stroke-width="2" stroke-linecap="round" 
+                         stroke-linejoin="round">
+                        <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
+                        <rect x="8" y="2" width="8" height="4" rx="1" ry="1"/>
+                    </svg>
+                </button>
+            </div>
+            <button class="btn-full" onclick="addNewPack()">Add Pack</button>
+        </div>
+    </div>
+</div>
+
+<!-- Insert Link Modal -->
+<div class="modal-overlay" id="addLinkModal" 
+     onclick="handleOverlayClick(event,'addLinkModal')">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" 
+                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+                    <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+                </svg>
+                Insert Link
+            </h3>
+            <button class="close-modal-btn" onclick="closeModal('addLinkModal')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" 
+                     stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"/>
+                    <line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+            </button>
+        </div>
+        <p class="modal-subtitle">Enter the URL for your selected text</p>
+        <div class="modal-body">
+            <div class="input-group">
+                <input class="pack-input" type="url" id="linkInput" 
+                       placeholder="https://…" 
+                       onkeypress="if(event.key==='Enter') confirmInsertLink()">
+                <button class="paste-btn" onclick="pasteFromClipboard('linkInput')" 
+                        title="Paste">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" 
+                         stroke="currentColor" stroke-width="2" stroke-linecap="round" 
+                         stroke-linejoin="round">
+                        <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
+                        <rect x="8" y="2" width="8" height="4" rx="1" ry="1"/>
+                    </svg>
+                </button>
+            </div>
+            <button class="btn-full" onclick="confirmInsertLink()">Insert Link</button>
+        </div>
+    </div>
+</div>
+
+<!-- Custom Confirm Dialog (replaces browser confirm()) -->
+<div class="confirm-overlay" id="confirmOverlay">
+    <div class="confirm-box">
+        <div class="confirm-icon" id="confirmIcon">⚠️</div>
+        <h4 id="confirmTitle">Are you sure?</h4>
+        <p id="confirmMsg">This action cannot be undone.</p>
+        <div class="confirm-btns">
+            <button class="confirm-cancel" onclick="closeConfirm(false)">Cancel</button>
+            <button class="confirm-ok" onclick="closeConfirm(true)">Confirm</button>
+        </div>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ==========================================
+// Telegram Mini App Init
+// ==========================================
+const webApp = window.Telegram?.WebApp;
+if (webApp) { webApp.ready(); webApp.expand(); }
+
+function initTelegramUserInfo() {
+    const user = webApp?.initDataUnsafe?.user;
+    const avatarImg = document.getElementById('user-avatar');
+    const placeholder = document.getElementById('user-avatar-placeholder');
+    const nameText = document.getElementById('user-name');
+    const greetingText = document.getElementById('greeting-text');
+
+    if (user) {
+        const fullName = [user.first_name, user.last_name]
+            .filter(Boolean).join(' ');
+        nameText.innerText = fullName || 'Creator';
+
+        const h = new Date().getHours();
+        greetingText.innerText = 
+            h < 5  ? 'Good night,' :
+            h < 12 ? 'Good morning,' :
+            h < 17 ? 'Good afternoon,' :
+            h < 21 ? 'Good evening,' : 'Good night,';
+
+        if (user.photo_url) {
+            avatarImg.src = user.photo_url;
+            avatarImg.onload = () => {
+                avatarImg.style.display = 'block';
+                placeholder.style.display = 'none';
+            };
+            avatarImg.onerror = () => {
+                avatarImg.style.display = 'none';
+                placeholder.style.display = 'flex';
+                placeholder.innerText = (user.first_name || 'U')
+                    .charAt(0).toUpperCase();
+            };
+        } else {
+            placeholder.innerText = (user.first_name || 'U')
+                .charAt(0).toUpperCase();
+        }
+    }
+}
+initTelegramUserInfo();
+
+// ==========================================
+// Toast
+// ==========================================
+let toastTimer;
+function showToast(msg, duration = 2400) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), duration);
+}
+
+// ==========================================
+// Custom Confirm Dialog
+// ==========================================
+let confirmResolve = null;
+
+function showConfirm(title, msg, icon = '⚠️') {
+    return new Promise(resolve => {
+        confirmResolve = resolve;
+        document.getElementById('confirmIcon').textContent = icon;
+        document.getElementById('confirmTitle').textContent = title;
+        document.getElementById('confirmMsg').textContent = msg;
+        document.getElementById('confirmOverlay').classList.add('active');
+    });
+}
+
+function closeConfirm(result) {
+    document.getElementById('confirmOverlay').classList.remove('active');
+    if (confirmResolve) {
+        confirmResolve(result);
+        confirmResolve = null;
+    }
+}
+
+// ==========================================
+// Theme
+// ==========================================
+const SUN_ICON = `<circle cx="12" cy="12" r="5"/>
+<line x1="12" y1="1" x2="12" y2="3"/>
+<line x1="12" y1="21" x2="12" y2="23"/>
+<line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+<line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+<line x1="1" y1="12" x2="3" y2="12"/>
+<line x1="21" y1="12" x2="23" y2="12"/>
+<line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+<line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>`;
+const MOON_ICON = `<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>`;
+
+function getLuminance(hex) {
+    if (!hex || !hex.startsWith('#')) return 255;
+    const c = hex.replace('#','');
+    const full = c.length === 3 
+        ? c.split('').map(x=>x+x).join('') 
+        : c;
+    const rgb = parseInt(full, 16);
+    return 0.2126*((rgb>>16)&0xff) + 
+           0.7152*((rgb>>8)&0xff) + 
+           0.0722*(rgb&0xff);
+}
+
+const tgBg = webApp?.themeParams?.bg_color;
+const prefersDark = tgBg 
+    ? getLuminance(tgBg) < 128 
+    : window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+function initTheme() {
+    const theme = localStorage.getItem('poozter_theme') 
+        || (prefersDark ? 'dark' : 'light');
+    applyTheme(theme);
+}
+
+function applyTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    document.getElementById('themeIcon').innerHTML = 
+        theme === 'dark' ? SUN_ICON : MOON_ICON;
+    localStorage.setItem('poozter_theme', theme);
+}
+
+function toggleTheme() {
+    const cur = document.documentElement.getAttribute('data-theme');
+    applyTheme(cur === 'dark' ? 'light' : 'dark');
+}
+initTheme();
+
+// ==========================================
+// Editor Logic
+// ==========================================
+const editor = document.getElementById('editor');
+let savedSelectionRange = null;
+
+function execCmd(cmd, val = null) {
+    editor.focus();
+    document.execCommand(cmd, false, val);
+}
+
+// Save selection before modal opens
+function saveSelection() {
+    editor.focus();
+    const sel = window.getSelection();
+    if (sel.rangeCount > 0) {
+        savedSelectionRange = sel.getRangeAt(0).cloneRange();
+    }
+}
+
+function restoreSelection() {
+    if (!savedSelectionRange) return;
+    editor.focus();
+    const sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(savedSelectionRange);
+}
+
+// Open link modal
+function openLinkModal() {
+    saveSelection();
+    // Pre-fill if selected text starts with http
+    const selText = savedSelectionRange 
+        ? savedSelectionRange.toString().trim() : '';
+    const linkInput = document.getElementById('linkInput');
+    if (selText.startsWith('http')) linkInput.value = selText;
+    else linkInput.value = '';
+    openModal('addLinkModal');
+}
+
+function confirmInsertLink() {
+    let url = document.getElementById('linkInput').value.trim();
+    if (!url) { showToast('⚠️ Please enter a URL'); return; }
+    // Auto-add https:// if missing
+    if (!url.match(/^https?:\/\//i)) url = 'https://' + url;
+    
+    closeModal('addLinkModal');
+    setTimeout(() => {
+        restoreSelection();
+        const sel = window.getSelection();
+        if (sel.toString().trim()) {
+            document.execCommand('createLink', false, url);
+        } else {
+            // No selection: insert as text link
+            const a = `<a href="${url}" target="_blank">${url}</a>`;
+            document.execCommand('insertHTML', false, a);
+        }
+        handleEditorChange();
+        editor.focus();
+    }, 300);
+}
+
+function insertDate() {
+    const d = new Date().toLocaleString(undefined, {
+        year: 'numeric', month: 'short', day: 'numeric',
+        hour: '2-digit', minute: '2-digit'
+    });
+    document.execCommand('insertText', false, d);
+    editor.focus();
+}
+
+function toggleCustomFormat(formatType) {
+    editor.focus();
+    const sel = window.getSelection();
+    if (!sel.rangeCount) return;
+
+    // Check if selection is already wrapped in target format
+    let node = sel.anchorNode;
+    while (node && node !== editor) {
+        if (node.nodeType === 1) {
+            const isMatch =
+                (formatType === 'tg-spoiler' && 
+                    node.classList?.contains('tg-spoiler')) ||
+                (formatType === 'code' && node.tagName === 'CODE') ||
+                (formatType === 'blockquote' && 
+                    node.tagName === 'BLOCKQUOTE');
+            if (isMatch) {
+                // Unwrap
+                const parent = node.parentNode;
+                while (node.firstChild) {
+                    parent.insertBefore(node.firstChild, node);
+                }
+                parent.removeChild(node);
+                handleEditorChange();
+                return;
+            }
+        }
+        node = node.parentNode;
+    }
+
+    // Wrap selection
+    const range = sel.getRangeAt(0);
+    let wrapper;
+    if (formatType === 'tg-spoiler') {
+        wrapper = document.createElement('span');
+        wrapper.className = 'tg-spoiler';
+    } else {
+        wrapper = document.createElement(formatType === 'code' 
+            ? 'code' : 'blockquote');
+    }
+
+    try {
+        range.surroundContents(wrapper);
+    } catch (e) {
+        // Selection spans multiple elements - use insertHTML fallback
+        const selectedText = range.toString();
+        if (selectedText) {
+            if (formatType === 'tg-spoiler') {
+                document.execCommand('insertHTML', false, 
+                    `<span class="tg-spoiler">${selectedText}</span>`);
+            } else if (formatType === 'code') {
+                document.execCommand('insertHTML', false, 
+                    `<code>${selectedText}</code>`);
+            } else {
+                document.execCommand('insertHTML', false, 
+                    `<blockquote>${selectedText}</blockquote>`);
+            }
+        }
+    }
+    handleEditorChange();
+}
+
+function removeCustomFormats() {
+    const sel = window.getSelection();
+    if (sel && !sel.isCollapsed) {
+        const text = sel.toString();
+        document.execCommand('insertText', false, text);
+    }
+}
+
+// Clear editor text
+function clearEditorText() {
+    if (!editor.textContent.trim() && !editor.innerHTML.trim()) {
+        showToast('ℹ️ Editor is already empty');
+        return;
+    }
+    showConfirm(
+        'Clear Editor?',
+        'This will remove all text and formatting. Your draft will also be cleared.',
+        '🗑️'
+    ).then(confirmed => {
+        if (confirmed) {
+            editor.innerHTML = '';
+            localStorage.removeItem('poozter_draft');
+            handleEditorChange();
+            editor.focus();
+            showToast('✅ Editor cleared');
+        }
+    });
+}
+
+// ==========================================
+// Keyboard Shortcuts
+// ==========================================
+editor.addEventListener('keydown', e => {
+    const isMac = navigator.platform.toUpperCase().includes('MAC');
+    const ctrl = isMac ? e.metaKey : e.ctrlKey;
+    if (!ctrl) return;
+
+    const key = e.key.toLowerCase();
+
+    if (e.shiftKey) {
+        switch(key) {
+            case 'x': e.preventDefault(); execCmd('strikeThrough'); break;
+            case '.': e.preventDefault(); toggleCustomFormat('blockquote'); break;
+            case 'm': e.preventDefault(); toggleCustomFormat('code'); break;
+            case 'p': e.preventDefault(); toggleCustomFormat('tg-spoiler'); break;
+            case 'd': e.preventDefault(); insertDate(); break;
+            case 'n': 
+                e.preventDefault(); 
+                execCmd('removeFormat'); 
+                removeCustomFormats(); 
+                break;
+        }
+    } else {
+        switch(key) {
+            case 'b': e.preventDefault(); execCmd('bold'); break;
+            case 'i': e.preventDefault(); execCmd('italic'); break;
+            case 'u': e.preventDefault(); execCmd('underline'); break;
+            case 'k': e.preventDefault(); openLinkModal(); break;
+        }
+    }
+});
+
+// ==========================================
+// Copy HTML - Fixed parseNode
+// ==========================================
+function copyAndGenerateHTML() {
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = editor.innerHTML;
+
+    function parseNode(node) {
+        if (node.nodeType === Node.TEXT_NODE) {
+            return node.textContent;
+        }
+        if (node.nodeType !== Node.ELEMENT_NODE) return '';
+
+        // For IMG - custom emoji (the ONLY way emojis appear in editor)
+        if (node.nodeName === 'IMG') {
+            const emojiId = node.getAttribute('data-tg-id');
+            const fallback = node.getAttribute('data-tg-fallback') || '🙂';
+            if (emojiId) {
+                return `<tg-emoji emoji-id="${emojiId}">${fallback}</tg-emoji>`;
+            }
+            return ''; // Skip non-emoji images
+        }
+
+        // For BR
+        if (node.nodeName === 'BR') return '\n';
+
+        // Parse children
+        const inner = Array.from(node.childNodes)
+            .map(parseNode).join('');
+
+        switch(node.nodeName) {
+            case 'B':
+            case 'STRONG': return `<b>${inner}</b>`;
+            case 'I':
+            case 'EM': return `<i>${inner}</i>`;
+            case 'U': return `<u>${inner}</u>`;
+            case 'S':
+            case 'STRIKE':
+            case 'DEL': return `<s>${inner}</s>`;
+            case 'A': {
+                const href = node.getAttribute('href') || '#';
+                return `<a href="${href}">${inner}</a>`;
+            }
+            case 'CODE': return `<code>${inner}</code>`;
+            case 'BLOCKQUOTE': return `<blockquote>${inner}</blockquote>`;
+            case 'SPAN':
+                if (node.classList.contains('tg-spoiler')) {
+                    return `<tg-spoiler>${inner}</tg-spoiler>`;
+                }
+                return inner;
+            case 'DIV':
+            case 'P': 
+                return inner ? `\n${inner}` : '\n';
+            default: return inner;
+        }
+    }
+
+    const rawHtml = Array.from(tempDiv.childNodes)
+        .map(parseNode).join('');
+    
+    // Clean up: trim leading/trailing newlines, 
+    // collapse 3+ newlines to 2
+    const html = rawHtml
+        .replace(/^\n+/, '')
+        .replace(/\n{3,}/g, '\n\n')
+        .trim();
+
+    if (!html) { 
+        showToast('⚠️ Editor is empty!'); 
+        return; 
+    }
+
+    const writeToClipboard = (text) => {
+        if (navigator.clipboard?.writeText) {
+            return navigator.clipboard.writeText(text);
+        }
+        // Fallback
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.cssText = 'position:fixed;opacity:0;';
+        document.body.appendChild(ta);
+        ta.focus(); ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        return Promise.resolve();
+    };
+
+    writeToClipboard(html)
+        .then(flashCopySuccess)
+        .catch(() => showToast('❌ Copy failed — try again'));
+}
+
+function flashCopySuccess() {
+    const btn = document.getElementById('copyBtn');
+    const orig = btn.innerHTML;
+    btn.innerHTML = `
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" 
+             stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"/>
+        </svg>
+        <span class="btn-label">Copied!</span>`;
+    btn.classList.add('success');
+    showToast('✅ HTML copied to clipboard!');
+    setTimeout(() => { 
+        btn.innerHTML = orig; 
+        btn.classList.remove('success'); 
+    }, 2200);
+}
+
+// ==========================================
+// Auto-Save & Character Counter
+// ==========================================
+let saveTimeout;
+
+function getPlainTextLength() {
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = editor.innerHTML;
+
+    // Replace emoji images with their fallback character
+    tempDiv.querySelectorAll('img[data-tg-fallback]').forEach(img => {
+        const fallback = img.getAttribute('data-tg-fallback') || '🙂';
+        img.replaceWith(document.createTextNode(fallback));
+    });
+    // Remove remaining images
+    tempDiv.querySelectorAll('img').forEach(img => img.remove());
+
+    return (tempDiv.textContent || '').length;
+}
+
+function updateCharCount() {
+    const count = getPlainTextLength();
+    const counterEl = document.getElementById('charCounter');
+    const fillEl = document.getElementById('charProgressFill');
+    const MAX_MEDIA = 1024;
+    const MAX_TEXT = 4096;
+
+    let pct, color;
+    if (count <= MAX_MEDIA) {
+        pct = (count / MAX_MEDIA) * 100;
+        color = 'var(--success)';
+        counterEl.innerHTML = `${count}<span style="opacity:.5"> / ${MAX_MEDIA}</span>`;
+        counterEl.className = 'char-counter';
+    } else if (count <= MAX_TEXT) {
+        pct = (count / MAX_TEXT) * 100;
+        color = 'var(--warning)';
+        counterEl.innerHTML = `${count}<span style="opacity:.5"> / ${MAX_TEXT}</span>`;
+        counterEl.className = 'char-counter warning';
+    } else {
+        pct = 100;
+        color = 'var(--danger)';
+        counterEl.innerHTML = `${count}<span style="opacity:.5"> / ${MAX_TEXT} ⚠️</span>`;
+        counterEl.className = 'char-counter danger';
+    }
+
+    fillEl.style.width = Math.min(pct, 100) + '%';
+    fillEl.style.background = color;
+}
+
+function handleEditorChange() {
+    updateCharCount();
+    const statusEl = document.getElementById('saveStatus');
+    statusEl.innerHTML = `
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" 
+             stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" 
+             style="width:12px;height:12px;animation:spin 1s linear infinite">
+            <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+        </svg> Saving…`;
+    statusEl.style.color = 'var(--text-3)';
+
+    clearTimeout(saveTimeout);
+    saveTimeout = setTimeout(() => {
+        try {
+            localStorage.setItem('poozter_draft', editor.innerHTML);
+            statusEl.innerHTML = `
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" 
+                     stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" 
+                     style="width:12px;height:12px;">
+                    <polyline points="20 6 9 17 4 12"/>
+                </svg> Saved`;
+            statusEl.style.color = 'var(--success)';
+        } catch (e) {
+            // localStorage full or blocked
+            statusEl.innerHTML = `⚠️ Save failed`;
+            statusEl.style.color = 'var(--warning)';
+        }
+    }, 900);
+}
+
+// Add spin keyframe dynamically
+const spinStyle = document.createElement('style');
+spinStyle.textContent = `@keyframes spin { 
+    to { transform: rotate(360deg); } 
+}`;
+document.head.appendChild(spinStyle);
+
+// Load Draft
+(function loadDraft() {
+    try {
+        const draft = localStorage.getItem('poozter_draft');
+        if (draft) {
+            editor.innerHTML = draft;
+        }
+    } catch(e) { /* ignore */ }
+    updateCharCount();
+})();
+
+editor.addEventListener('input', handleEditorChange);
+
+// Handle paste - strip unwanted HTML, keep structure
+editor.addEventListener('paste', e => {
+    e.preventDefault();
+    const text = e.clipboardData.getData('text/plain');
+    if (text) {
+        document.execCommand('insertText', false, text);
+    }
+});
+
+// ==========================================
+// Spoiler Click Toggle
+// ==========================================
+editor.addEventListener('click', e => {
+    const spoiler = e.target.closest('.tg-spoiler');
+    if (spoiler) {
+        spoiler.classList.toggle('revealed');
+    }
+});
+
+// ==========================================
+// Emoji / Pack System
+// ==========================================
+const DEFAULT_PACKS = [
+    "NewsEmoji","Udif7rr7_by_fStikBot","OutlineEmoji",
+    "FinanceEmoji","FlameEmoji","PremiumIcons"
+];
+
+let savedPacks = [];
+try {
+    const raw = localStorage.getItem('tg_saved_packs');
+    savedPacks = raw ? JSON.parse(raw) : [];
+    if (!Array.isArray(savedPacks)) savedPacks = [];
+} catch { savedPacks = []; }
+
+if (savedPacks.length === 0) {
+    savedPacks = [...DEFAULT_PACKS];
+    localStorage.setItem('tg_saved_packs', JSON.stringify(savedPacks));
+}
+
+let recentEmojis = [];
+try { 
+    const r = localStorage.getItem('tg_recent_emojis');
+    recentEmojis = r ? JSON.parse(r) : [];
+    if (!Array.isArray(recentEmojis)) recentEmojis = [];
+} catch { recentEmojis = []; }
+
+// Track which packs are loaded (name -> sticker array)
+const loadedPackData = new Map();
+// Track failed loads for retry
+const failedPacks = new Set();
+
+// Initial render
+renderTabs();
+if (recentEmojis.length > 0) {
+    loadRecentEmojis();
+} else if (savedPacks.length > 0) {
+    loadPackData(savedPacks[0]);
+} else {
+    document.getElementById('welcomeText').style.display = 'block';
+}
+
+// ==========================================
+// Modal Helpers
+// ==========================================
+function openModal(modalId) {
+    const modal = document.getElementById(modalId);
+    modal.style.display = 'flex';
+    requestAnimationFrame(() => {
+        modal.classList.add('active');
+        requestAnimationFrame(() => {
+            modal.classList.add('visible');
+        });
+    });
+    // Focus first input
+    setTimeout(() => {
+        const input = modal.querySelector('input');
+        if (input) input.focus();
+    }, 100);
+}
+
+function closeModal(modalId) {
+    const modal = document.getElementById(modalId);
+    modal.classList.remove('visible');
+    setTimeout(() => {
+        modal.classList.remove('active');
+        modal.style.display = 'none';
+        // Clear inputs
+        modal.querySelectorAll('input').forEach(i => i.value = '');
+    }, 260);
+}
+
+function handleOverlayClick(e, modalId) {
+    if (e.target === document.getElementById(modalId)) {
+        closeModal(modalId);
+    }
+}
+
+async function pasteFromClipboard(inputId) {
+    try {
+        const text = await navigator.clipboard.readText();
+        document.getElementById(inputId).value = text;
+        document.getElementById(inputId).focus();
+    } catch {
+        showToast('⚠️ Clipboard access denied — paste manually');
+    }
+}
+
+// ==========================================
+// Add Pack Modal
+// ==========================================
+function openAddModal() {
+    openModal('addPackModal');
+}
+
+function viewPackInTelegram(packName) {
+    const url = `https://t.me/addemoji/${packName}`;
+    if (webApp?.openTelegramLink) webApp.openTelegramLink(url);
+    else window.open(url, '_blank');
+}
+
+function addNewPack() {
+    const raw = document.getElementById('packInput').value.trim();
+    if (!raw) { showToast('⚠️ Enter a pack name or link'); return; }
+
+    // Extract name from full URL if pasted
+    let packName = raw;
+    try {
+        if (raw.includes('t.me') || raw.includes('telegram.me')) {
+            const parts = raw.split('/').filter(Boolean);
+            packName = parts[parts.length - 1];
+        }
+    } catch {}
+    packName = packName.trim();
+
+    if (!packName || packName.length < 2) { 
+        showToast('⚠️ Invalid pack name'); 
+        return; 
+    }
+
+    document.getElementById('welcomeText').style.display = 'none';
+
+    if (savedPacks.includes(packName)) {
+        showToast('ℹ️ Pack already added');
+        closeModal('addPackModal');
+        // Scroll to it
+        document.getElementById(`section-${packName}`)
+            ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        setActiveTab(packName);
+        return;
+    }
+
+    savedPacks.push(packName);
+    localStorage.setItem('tg_saved_packs', JSON.stringify(savedPacks));
+    renderTabs();
+    closeModal('addPackModal');
+    loadPackData(packName);
+    showToast(`📦 Loading "${packName}"…`);
+}
+
+function removePack(packName) {
+    showConfirm(
+        'Remove Pack?',
+        `Remove "${packName}" from your collection?`,
+        '🗑️'
+    ).then(agreed => {
+        if (agreed) executeRemovePack(packName);
+    });
+}
+
+function executeRemovePack(packName) {
+    savedPacks = savedPacks.filter(p => p !== packName);
+    localStorage.setItem('tg_saved_packs', JSON.stringify(savedPacks));
+    loadedPackData.delete(packName);
+    failedPacks.delete(packName);
+    document.getElementById(`section-${packName}`)?.remove();
+    renderTabs();
+    showToast(`✅ Pack "${packName}" removed`);
+
+    if (savedPacks.length === 0 && recentEmojis.length === 0) {
+        document.getElementById('welcomeText').style.display = 'block';
+    } else if (savedPacks.length > 0) {
+        setActiveTab(savedPacks[0]);
+    }
+}
+
+function clearAllData() {
+    showConfirm(
+        'Clear Everything?',
+        'Remove all packs and recent emojis? This cannot be undone.',
+        '⚠️'
+    ).then(agreed => {
+        if (agreed) executeClearData();
+    });
+}
+
+function executeClearData() {
+    savedPacks = [];
+    recentEmojis = [];
+    loadedPackData.clear();
+    failedPacks.clear();
+    localStorage.setItem('tg_saved_packs', '[]');
+    localStorage.removeItem('tg_recent_emojis');
+    renderTabs();
+
+    const body = document.getElementById('pickerBody');
+    body.innerHTML = `
+        <div id="welcomeText" class="status-text">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" 
+                 stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="M8 14s1.5 2 4 2 4-2 4-2"/>
+                <line x1="9" y1="9" x2="9.01" y2="9"/>
+                <line x1="15" y1="9" x2="15.01" y2="9"/>
+            </svg>
+            No packs added yet.<br>
+            Tap <strong>Add Pack</strong> to get started.
+        </div>`;
+    showToast('🗑️ All data cleared');
+}
+
+// ==========================================
+// Recent Emojis
+// ==========================================
+function addToRecent(emojiData) {
+    if (!emojiData.id) return; // Skip if no ID
+    recentEmojis = recentEmojis.filter(e => e.id !== emojiData.id);
+    recentEmojis.unshift(emojiData);
+    if (recentEmojis.length > 32) recentEmojis.pop();
+    try {
+        localStorage.setItem('tg_recent_emojis', JSON.stringify(recentEmojis));
+    } catch {}
+    // Update recent grid if visible
+    const grid = document.getElementById('grid-recent');
+    if (grid) renderRecentGrid(grid);
+}
+
+function renderRecentGrid(grid) {
+    grid.innerHTML = '';
+    if (recentEmojis.length === 0) {
+        grid.innerHTML = `<span style="color:var(--text-3);font-size:12px;
+            grid-column:span 8;padding:8px 0">No recent emojis yet.</span>`;
+        return;
+    }
+    const frag = document.createDocumentFragment();
+    recentEmojis.forEach(item => {
+        frag.appendChild(createEmojiEl(item));
+    });
+    grid.appendChild(frag);
+}
+
+// ==========================================
+// Tab Management
+// ==========================================
+function setActiveTab(id) {
+    document.querySelectorAll('.pack-tab').forEach(t => 
+        t.classList.remove('active'));
+    const tab = document.getElementById(`tab-${id}`);
+    if (tab) {
+        tab.classList.add('active');
+        // Scroll tab into view
+        tab.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    }
+}
+
+function renderTabs() {
+    const container = document.getElementById('pickerTabs');
+    container.innerHTML = '';
+
+    // Recent tab
+    const recentTab = document.createElement('div');
+    recentTab.className = 'pack-tab recent-tab';
+    recentTab.id = 'tab-recent';
+    recentTab.title = 'Recently Used';
+    recentTab.textContent = '🕒';
+    recentTab.onclick = () => loadRecentEmojis();
+    container.appendChild(recentTab);
+
+    // Pack tabs
+    savedPacks.forEach(packName => {
+        const tab = document.createElement('div');
+        tab.className = 'pack-tab';
+        tab.id = `tab-${packName}`;
+        tab.title = packName;
+
+        // Try to use first emoji image as tab icon
+        const packData = loadedPackData.get(packName);
+        if (packData && packData.length > 0) {
+            const img = document.createElement('img');
+            img.src = `/api/image?file_id=${packData[0].file_id}`;
+            img.alt = packName.substring(0,2).toUpperCase();
+            img.onerror = () => { img.remove(); tab.textContent = packName.substring(0,2).toUpperCase(); };
+            tab.appendChild(img);
+        } else {
+            tab.textContent = packName.substring(0,2).toUpperCase();
+        }
+
+        tab.onclick = () => loadPackData(packName);
+        container.appendChild(tab);
+    });
+}
+
+// ==========================================
+// Pack Loading - Main Fix for Double Emoji Bug
+// ==========================================
+function loadRecentEmojis() {
+    setActiveTab('recent');
+    const body = document.getElementById('pickerBody');
+
+    let section = document.getElementById('section-recent');
+    if (!section) {
+        section = document.createElement('div');
+        section.className = 'pack-section';
+        section.id = 'section-recent';
+        section.innerHTML = `
+            <div class="pack-title-bar">
+                <div class="pack-title">Recently Used</div>
+            </div>
+            <div class="emoji-grid" id="grid-recent"></div>`;
+        body.prepend(section);
+    }
+
+    renderRecentGrid(document.getElementById('grid-recent'));
+    section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+/**
+ * Determine best file to display for a sticker.
+ * FIX for double-emoji bug: animated stickers (.tgs) are NOT displayable 
+ * as images in browser. We use thumbnail instead.
+ * Video stickers (.webm) can be shown as <video>.
+ * Static stickers (.webp) shown as <img>.
+ */
+function getStickerDisplayInfo(sticker) {
+    // is_animated = TGS (lottie) - NOT displayable directly
+    // is_video = WebM video sticker
+    // else = static WebP
+
+    if (sticker.is_animated) {
+        // Use thumbnail (which is a static webp)
+        if (sticker.thumbnail) {
+            return { 
+                file_id: sticker.thumbnail.file_id, 
+                isVideo: false,
+                isAnimated: false
+            };
+        }
+        // No thumbnail available
+        return null;
+    }
+
+    if (sticker.is_video) {
+        // WebM video - can display as video element
+        return { 
+            file_id: sticker.file_id, 
+            isVideo: true,
+            isAnimated: false
+        };
+    }
+
+    // Static WebP
+    return { 
+        file_id: sticker.file_id, 
+        isVideo: false,
+        isAnimated: false
+    };
+}
+
+/**
+ * Create a displayable emoji element.
+ * Returns img or video element.
+ */
+function createEmojiEl(emojiData) {
+    const isVideo = emojiData.isVideo || 
+        (emojiData.url && emojiData.url.includes('.webm'));
+    
+    let el;
+    if (isVideo) {
+        el = document.createElement('video');
+        el.autoplay = true;
+        el.loop = true;
+        el.muted = true;
+        el.playsInline = true;
+        el.className = 'emoji-item';
+    } else {
+        el = document.createElement('img');
+        el.className = 'emoji-item';
+        el.alt = emojiData.fallback || '';
+        el.loading = 'lazy';
+        el.decoding = 'async';
+        
+        // Handle load error
+        el.onerror = function() {
+            this.classList.add('load-error');
+            this.src = ''; // Stop retry
+            this.alt = emojiData.fallback || '?';
+            // Show fallback emoji text
+            const span = document.createElement('span');
+            span.style.fontSize = '18px';
+            span.textContent = emojiData.fallback || '?';
+            this.replaceWith(span);
+        };
+    }
+
+    const src = emojiData.url || 
+        (emojiData.file_id ? `/api/image?file_id=${emojiData.file_id}` : '');
+    el.src = src;
+    el.title = emojiData.fallback || 'Custom Emoji';
+
+    el.addEventListener('click', () => {
+        insertEmojiIntoEditor(emojiData);
+    });
+
+    return el;
+}
+
+/**
+ * Insert emoji as <img> tag in editor.
+ * Uses data attributes for HTML export.
+ */
+function insertEmojiIntoEditor(emojiData) {
+    const src = emojiData.url || 
+        `/api/image?file_id=${emojiData.file_id}`;
+    const fallback = emojiData.fallback || '🙂';
+    const id = emojiData.id || '';
+
+    editor.focus();
+    
+    // Use img tag (not video) for editor display - keeps it simple
+    // and avoids the double-emoji visual bug
+    const html = `<img 
+        class="tg-emoji-img" 
+        src="${src}" 
+        alt="${fallback}" 
+        data-tg-id="${id}" 
+        data-tg-fallback="${fallback}" 
+        style="width:22px;height:22px;vertical-align:middle;margin:0 1px;display:inline-block;">`;
+    
+    document.execCommand('insertHTML', false, html);
+    addToRecent({ ...emojiData, url: src });
+    handleEditorChange();
+}
+
+async function loadPackData(packName) {
+    setActiveTab(packName);
+    const body = document.getElementById('pickerBody');
+
+    // Hide welcome text
+    const welcome = document.getElementById('welcomeText');
+    if (welcome) welcome.style.display = 'none';
+
+    // If already loaded successfully, just scroll to it
+    if (loadedPackData.has(packName)) {
+        const sec = document.getElementById(`section-${packName}`);
+        if (sec) sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        return;
+    }
+
+    // If section already exists (loading or error state), scroll to it
+    const existingSection = document.getElementById(`section-${packName}`);
+    if (existingSection && !failedPacks.has(packName)) {
+        existingSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        return;
+    }
+
+    // Remove failed section to retry
+    existingSection?.remove();
+    failedPacks.delete(packName);
+
+    // Create section with loading skeletons
+    const section = document.createElement('div');
+    section.className = 'pack-section';
+    section.id = `section-${packName}`;
+    section.innerHTML = `
+        <div class="pack-title-bar">
+            <div class="pack-title">
+                ${packName}
+                <span class="pack-title-count" id="count-${packName}">Loading…</span>
+            </div>
+            <div class="pack-actions">
+                <button class="view-pack-btn" 
+                        onclick="viewPackInTelegram('${packName}')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" 
+                         stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                        <circle cx="12" cy="12" r="3"/>
+                    </svg>
+                    View
+                </button>
+                <button class="remove-pack-btn" 
+                        onclick="removePack('${packName}')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" 
+                         stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                    Remove
+                </button>
+            </div>
+        </div>
+        <div class="emoji-grid" id="grid-${packName}"></div>`;
+    body.appendChild(section);
+
+    const grid = document.getElementById(`grid-${packName}`);
+    createSkeletons(grid, 24);
+    section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+    try {
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 15000);
+
+        const res = await fetch(`/api/getPack?name=${packName}`, {
+            signal: controller.signal
+        });
+        clearTimeout(timeout);
+
+        if (!res.ok) {
+            throw new Error(`HTTP ${res.status}`);
+        }
+
+        const data = await res.json();
+        grid.innerHTML = '';
+
+        if (!data.ok) {
+            showPackError(grid, packName, 
+                data.description || 'Unknown error from Telegram');
+            failedPacks.add(packName);
+            return;
+        }
+
+        const stickers = data.result.stickers;
+        if (!stickers || stickers.length === 0) {
+            grid.innerHTML = `<span style="color:var(--text-3);font-size:12px;
+                grid-column:span 8">This pack is empty.</span>`;
+            return;
+        }
+
+        // Update count
+        const countEl = document.getElementById(`count-${packName}`);
+        if (countEl) countEl.textContent = `${stickers.length}`;
+
+        const frag = document.createDocumentFragment();
+
+        stickers.forEach((sticker, i) => {
+            const displayInfo = getStickerDisplayInfo(sticker);
+            
+            // Skip if we can't display this sticker
+            if (!displayInfo) return;
+
+            const emojiData = {
+                id: sticker.custom_emoji_id || sticker.file_unique_id || '',
+                file_id: displayInfo.file_id,
+                url: `/api/image?file_id=${displayInfo.file_id}`,
+                fallback: sticker.emoji || '🙂',
+                isVideo: displayInfo.isVideo,
+                packName: packName
+            };
+
+            const el = createEmojiEl(emojiData);
+            if (el) {
+                // Stagger animation
+                el.style.animationDelay = `${Math.min(i * 0.02, 0.5)}s`;
+                frag.appendChild(el);
+            }
+        });
+
+        grid.appendChild(frag);
+
+        // Store sticker data for tab thumbnail and retry
+        loadedPackData.set(packName, stickers);
+
+        // Update tab to show first emoji
+        renderTabs();
+
+    } catch (err) {
+        grid.innerHTML = '';
+        failedPacks.add(packName);
+        
+        let errMsg = 'Network error. Check your connection.';
+        if (err.name === 'AbortError') errMsg = 'Request timed out.';
+        else if (err.message) errMsg = err.message;
+        
+        showPackError(grid, packName, errMsg);
+    }
+}
+
+function showPackError(grid, packName, message) {
+    grid.innerHTML = '';
+    const errEl = document.createElement('div');
+    errEl.className = 'error-banner';
+    errEl.innerHTML = `
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" 
+             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="8" x2="12" y2="12"/>
+            <line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+        <span>${message}</span>
+        <button class="retry-btn" onclick="retryPack('${packName}')">
+            Retry
+        </button>`;
+    grid.appendChild(errEl);
+}
+
+function retryPack(packName) {
+    failedPacks.delete(packName);
+    const section = document.getElementById(`section-${packName}`);
+    if (section) section.remove();
+    loadPackData(packName);
+}
+
+function createSkeletons(grid, count) {
+    const frag = document.createDocumentFragment();
+    for (let i = 0; i < count; i++) {
+        const sk = document.createElement('div');
+        sk.className = 'emoji-item skeleton';
+        sk.style.animationDelay = `${i * 0.04}s`;
+        frag.appendChild(sk);
+    }
+    grid.appendChild(frag);
+}
+
+// ==========================================
+// Pack Search / Filter
+// ==========================================
+function filterPacks(query) {
+    const q = query.toLowerCase().trim();
+    document.querySelectorAll('.pack-section').forEach(section => {
+        if (!q || section.id === 'section-recent') {
+            section.style.display = '';
+            return;
+        }
+        const name = section.id.replace('section-', '').toLowerCase();
+        section.style.display = name.includes(q) ? '' : 'none';
+    });
+}
+
+// ==========================================
+// Keyboard Shortcuts for Modals
+// ==========================================
+document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+        closeModal('addPackModal');
+        closeModal('addLinkModal');
+        closeConfirm(false);
+    }
+});
+</script>
+</body>
+</html>
