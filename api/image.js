@@ -13,9 +13,9 @@ export default async function handler(req, res) {
         const fileData = await fileRes.json();
 
         if (!fileData.ok) {
-            return res.status(404).json({ 
-                error: "File not found", 
-                details: fileData.description 
+            return res.status(404).json({
+                error: "File not found",
+                details: fileData.description
             });
         }
 
@@ -25,18 +25,18 @@ export default async function handler(req, res) {
         );
 
         if (!imageRes.ok) {
-            return res.status(502).json({ 
-                error: "Failed to fetch file from Telegram" 
+            return res.status(502).json({
+                error: "Failed to fetch file from Telegram"
             });
         }
 
-        const contentType = 
+        const contentType =
             filePath.endsWith('.webm') ? 'video/webm' :
-            filePath.endsWith('.tgs')  ? 'image/webp' : // serve tgs as webp fallback
+            filePath.endsWith('.tgs')  ? 'image/webp' :
             'image/webp';
 
         res.setHeader('Content-Type', contentType);
-        res.setHeader('Cache-Control', 
+        res.setHeader('Cache-Control',
             'public, max-age=86400, stale-while-revalidate=604800');
         res.setHeader('Access-Control-Allow-Origin', '*');
 
@@ -45,9 +45,9 @@ export default async function handler(req, res) {
 
     } catch (error) {
         console.error('Image fetch error:', error);
-        res.status(500).json({ 
-            error: "Server error", 
-            details: error.message 
+        res.status(500).json({
+            error: "Server error",
+            details: error.message
         });
     }
 }
