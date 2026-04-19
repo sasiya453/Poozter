@@ -239,6 +239,18 @@ wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;
             z-index:100;box-shadow:var(--shadow-sm);
         }
 
+        /* Emoji picker items must not steal focus from editor */
+.emoji-picker-wrapper,
+.emoji-picker-wrapper * {
+    -webkit-user-select: none;
+    user-select: none;
+}
+.emoji-grid-item {
+    /* prevent any focus-related side effects on click */
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
         /* ── The editor itself ── */
         .editor{
             flex:1;padding:20px 24px;outline:none;
@@ -998,7 +1010,7 @@ if (tgApp) { tgApp.ready(); tgApp.expand(); }
 
     if (user.photo_url) {
         avatarImg.src = user.photo_url;
-        avatarImg.onload  = () => {
+        avatarImg.onload = () => {
             avatarImg.style.display = 'block';
             placeholder.style.display = 'none';
         };
@@ -1047,10 +1059,12 @@ function closeConfirm(result) {
    THEME
 ────────────────────────────────────────────────────────────────── */
 const SUN = `<circle cx="12" cy="12" r="5"/>
-<line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+<line x1="12" y1="1" x2="12" y2="3"/>
+<line x1="12" y1="21" x2="12" y2="23"/>
 <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
 <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
-<line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+<line x1="1" y1="12" x2="3" y2="12"/>
+<line x1="21" y1="12" x2="23" y2="12"/>
 <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
 <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>`;
 const MOON = `<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>`;
@@ -1058,9 +1072,9 @@ const MOON = `<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>`;
 function _lum(hex) {
     if (!hex?.startsWith('#')) return 255;
     const c = hex.replace('#', '');
-    const f = c.length === 3 ? c.split('').map(x=>x+x).join('') : c;
+    const f = c.length === 3 ? c.split('').map(x => x + x).join('') : c;
     const n = parseInt(f, 16);
-    return .2126*((n>>16)&255) + .7152*((n>>8)&255) + .0722*(n&255);
+    return .2126 * ((n >> 16) & 255) + .7152 * ((n >> 8) & 255) + .0722 * (n & 255);
 }
 const _dark0 = tgApp?.themeParams?.bg_color
     ? _lum(tgApp.themeParams.bg_color) < 128
@@ -1068,7 +1082,7 @@ const _dark0 = tgApp?.themeParams?.bg_color
 
 function applyTheme(t) {
     document.documentElement.setAttribute('data-theme', t);
-    document.getElementById('themeIcon').innerHTML = t==='dark' ? SUN : MOON;
+    document.getElementById('themeIcon').innerHTML = t === 'dark' ? SUN : MOON;
     localStorage.setItem('poozter_theme', t);
 }
 function toggleTheme() {
@@ -1078,35 +1092,101 @@ function toggleTheme() {
 applyTheme(localStorage.getItem('poozter_theme') || (_dark0 ? 'dark' : 'light'));
 
 /* ──────────────────────────────────────────────────────────────────
-   EDITOR — Core
+   EDITOR — CARET PERSISTENCE  ← THE CORE FIX
 ────────────────────────────────────────────────────────────────── */
 const editor = document.getElementById('editor');
 
-/** execCommand wrapper — always refocuses editor */
+/*
+ * We store a serialized caret position any time the editor
+ * loses focus OR the selection changes inside it.
+ * Before inserting an emoji we ALWAYS restore this position.
+ *
+ * We serialize as { startNode, startOffset, endNode, endOffset }
+ * using node references so it survives scrolling.
+ */
+let _savedCaret = null;   // { range: Range } — live Range clone
+
+/** Call this to snapshot the current caret. */
+function saveCaret() {
+    const sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0) return;
+
+    const range = sel.getRangeAt(0);
+
+    // Only save if caret is inside (or on) the editor
+    if (!editor.contains(range.commonAncestorContainer)) return;
+
+    _savedCaret = range.cloneRange();
+}
+
+/** Restores the saved caret into the editor and re-focuses. */
+function restoreCaret() {
+    editor.focus();
+
+    if (!_savedCaret) {
+        // No saved position → put caret at end of editor
+        const range = document.createRange();
+        range.selectNodeContents(editor);
+        range.collapse(false);  // false = collapse to END
+        const sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+        _savedCaret = range.cloneRange();
+        return;
+    }
+
+    try {
+        const sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(_savedCaret);
+    } catch (e) {
+        // Range became invalid (e.g. draft was reloaded) → go to end
+        _savedCaret = null;
+        restoreCaret();
+    }
+}
+
+/*
+ * Listen for ALL selection changes in the document.
+ * If the selection is inside the editor, save it.
+ */
+document.addEventListener('selectionchange', () => {
+    const sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0) return;
+    const range = sel.getRangeAt(0);
+    if (editor.contains(range.commonAncestorContainer)) {
+        _savedCaret = range.cloneRange();
+    }
+});
+
+/* Also save when editor explicitly loses focus */
+editor.addEventListener('blur', saveCaret);
+
+/* ──────────────────────────────────────────────────────────────────
+   EDITOR — helpers
+────────────────────────────────────────────────────────────────── */
 function fmt(cmd) {
     editor.focus();
     document.execCommand(cmd, false, null);
 }
 
-/* ── Saved selection (for link modal) ── */
-let _savedRange = null;
-function saveRange() {
+/* For Link modal */
+let _savedLinkRange = null;
+function saveLinkRange() {
     const sel = window.getSelection();
-    _savedRange = sel.rangeCount ? sel.getRangeAt(0).cloneRange() : null;
+    _savedLinkRange = (sel && sel.rangeCount)
+        ? sel.getRangeAt(0).cloneRange() : null;
 }
-function restoreRange() {
-    if (!_savedRange) return;
+function restoreLinkRange() {
+    if (!_savedLinkRange) return;
     editor.focus();
     const sel = window.getSelection();
     sel.removeAllRanges();
-    sel.addRange(_savedRange);
+    sel.addRange(_savedLinkRange);
 }
 
-/* ── Insert a cursor-safe zero-width char after img ── */
-function insertAfterNode(node) {
-    /*  After inserting a self-closing element (img) we need
-        a text node the cursor can live in.
-        We use a zero-width non-joiner so it's invisible.  */
+/* Zero-width text node trick: gives the cursor a home after an <img> */
+function placeCursorAfter(node) {
     const zwnj = document.createTextNode('\u200B');
     node.after(zwnj);
     const sel = window.getSelection();
@@ -1115,79 +1195,59 @@ function insertAfterNode(node) {
     r.collapse(true);
     sel.removeAllRanges();
     sel.addRange(r);
+    _savedCaret = r.cloneRange(); // update saved caret
 }
 
 /* ──────────────────────────────────────────────────────────────────
-   EMOJI INSERTION  ← THE MAIN FIX
+   EMOJI INSERTION  — uses restored caret, never video in editor
 ────────────────────────────────────────────────────────────────── */
-/*
-   PROBLEM: video/webm cannot be displayed in <img>.
-            <video> inside contenteditable steals focus.
-   SOLUTION:
-     • Static stickers  → <img class="tg-emoji">
-     • Video stickers   → fetch thumbnail file_id if available,
-                          else show the fallback emoji as text
-     • Animated (TGS)   → thumbnail (static webp) as <img>
-
-   We NEVER insert <video> into the editor. Period.
-*/
 function insertEmoji(data) {
-    /*  data = { id, url, fallback, isVideo, thumbUrl }
-        thumbUrl is set for video stickers               */
+    /*
+     * STEP 1 – restore the saved caret position.
+     *   This is the key fix. No matter where the user scrolled,
+     *   we put the cursor back where they left it.
+     */
+    restoreCaret();
 
-    editor.focus();
-
-    // Decide which URL to use
-    const src = data.isVideo
-        ? (data.thumbUrl || null)   // prefer thumbnail
+    const src = (data.isVideo && data.thumbUrl)
+        ? data.thumbUrl   // static thumbnail for video stickers
         : data.url;
 
     if (!src) {
-        // Last resort: insert the unicode fallback as plain text
+        // Absolute fallback: plain text emoji
         document.execCommand('insertText', false, data.fallback || '🙂');
         onEdit();
+        addToRecent(data);
         return;
     }
 
-    // Build the img element directly (NOT via insertHTML)
-    // insertHTML can drop the cursor before the element on some browsers.
+    /* STEP 2 – build the <img> element */
     const img = document.createElement('img');
-    img.className        = 'tg-emoji';
-    img.src              = src;
-    img.alt              = data.fallback || '🙂';
-    img.setAttribute('data-tg-id',       data.id || '');
+    img.className = 'tg-emoji';
+    img.src       = src;
+    img.alt       = data.fallback || '🙂';
+    img.setAttribute('data-tg-id',       data.id       || '');
     img.setAttribute('data-tg-fallback', data.fallback || '🙂');
-    img.setAttribute('data-is-video',    data.isVideo ? '1' : '0');
-    img.draggable        = false;
+    img.draggable = false;
 
-    img.onerror = function() {
-        // Image failed to load → replace with fallback text
-        const txt = document.createTextNode(this.getAttribute('data-tg-fallback') || '🙂');
+    img.onerror = function () {
+        const txt = document.createTextNode(
+            this.getAttribute('data-tg-fallback') || '🙂');
         this.replaceWith(txt);
-        // Put cursor after text node
-        const sel = window.getSelection();
-        const r   = document.createRange();
-        r.setStartAfter(txt); r.collapse(true);
-        sel.removeAllRanges(); sel.addRange(r);
         onEdit();
     };
 
-    // Insert at current caret position
+    /* STEP 3 – insert at the restored caret position */
     const sel = window.getSelection();
-    if (sel.rangeCount) {
+    if (sel && sel.rangeCount) {
         const range = sel.getRangeAt(0);
         range.deleteContents();
         range.insertNode(img);
-        // Move cursor AFTER the image
-        insertAfterNode(img);
+        placeCursorAfter(img);   // moves caret AFTER the new img
     } else {
-        // No selection: append to editor
+        // Fallback: append to editor
         editor.appendChild(img);
-        const zwnj = document.createTextNode('\u200B');
-        editor.appendChild(zwnj);
-        const r = document.createRange();
-        r.setStartAfter(zwnj); r.collapse(true);
-        sel.removeAllRanges(); sel.addRange(r);
+        placeCursorAfter(img);
     }
 
     addToRecent(data);
@@ -1195,39 +1255,38 @@ function insertEmoji(data) {
 }
 
 /* ──────────────────────────────────────────────────────────────────
-   FORMAT BLOCKS (blockquote / code / spoiler)
+   FORMAT BLOCKS
 ────────────────────────────────────────────────────────────────── */
 function wrapBlock(type) {
     editor.focus();
     const sel = window.getSelection();
     if (!sel.rangeCount) return;
 
-    // Detect if already wrapped → unwrap
     let node = sel.anchorNode;
     while (node && node !== editor) {
         if (node.nodeType === 1) {
             const match =
-                (type === 'tg-spoiler'  && node.classList?.contains('tg-spoiler')) ||
-                (type === 'code'        && node.tagName === 'CODE') ||
-                (type === 'blockquote'  && node.tagName === 'BLOCKQUOTE');
+                (type === 'tg-spoiler' && node.classList?.contains('tg-spoiler')) ||
+                (type === 'code'       && node.tagName === 'CODE') ||
+                (type === 'blockquote' && node.tagName === 'BLOCKQUOTE');
             if (match) {
                 const p = node.parentNode;
                 while (node.firstChild) p.insertBefore(node.firstChild, node);
                 p.removeChild(node);
-                onEdit(); return;
+                onEdit();
+                return;
             }
         }
         node = node.parentNode;
     }
 
-    // Wrap
     const range = sel.getRangeAt(0);
     let wrapper;
     if (type === 'tg-spoiler') {
         wrapper = document.createElement('span');
         wrapper.className = 'tg-spoiler';
     } else {
-        wrapper = document.createElement(type); // 'code' | 'blockquote'
+        wrapper = document.createElement(type);
     }
     try {
         range.surroundContents(wrapper);
@@ -1250,19 +1309,18 @@ function clearFormat() {
     const sel = window.getSelection();
     if (sel && !sel.isCollapsed) {
         document.execCommand('removeFormat');
-        // also strip custom wrappers
         document.execCommand('insertText', false, sel.toString());
     }
     onEdit();
 }
 
 /* ──────────────────────────────────────────────────────────────────
-   DATE INSERT
+   DATE
 ────────────────────────────────────────────────────────────────── */
 function insertDate() {
     const s = new Date().toLocaleString(undefined, {
-        year:'numeric', month:'short', day:'numeric',
-        hour:'2-digit', minute:'2-digit'
+        year: 'numeric', month: 'short', day: 'numeric',
+        hour: '2-digit', minute: '2-digit'
     });
     editor.focus();
     document.execCommand('insertText', false, s);
@@ -1272,21 +1330,22 @@ function insertDate() {
    LINK MODAL
 ────────────────────────────────────────────────────────────────── */
 function openLinkModal() {
-    saveRange();
-    const sel = _savedRange ? _savedRange.toString().trim() : '';
+    saveLinkRange();
+    const sel = _savedLinkRange ? _savedLinkRange.toString().trim() : '';
     const inp = document.getElementById('linkInput');
     inp.value = sel.startsWith('http') ? sel : '';
     openModal('addLinkModal');
 }
+
 function confirmLink() {
     let url = document.getElementById('linkInput').value.trim();
     if (!url) { showToast('⚠️ Enter a URL'); return; }
     if (!url.match(/^https?:\/\//i)) url = 'https://' + url;
     closeModal('addLinkModal');
     setTimeout(() => {
-        restoreRange();
+        restoreLinkRange();
         const sel = window.getSelection();
-        if (sel.toString().trim()) {
+        if (sel && sel.toString().trim()) {
             document.execCommand('createLink', false, url);
         } else {
             document.execCommand('insertHTML', false,
@@ -1301,30 +1360,32 @@ function confirmLink() {
 ────────────────────────────────────────────────────────────────── */
 function clearEditorText() {
     if (!editor.textContent.trim() && !editor.querySelector('img')) {
-        showToast('ℹ️ Editor is already empty'); return;
+        showToast('ℹ️ Editor is already empty');
+        return;
     }
     showConfirm('Clear Editor?',
         'All text and formatting will be removed.', '🗑️')
-    .then(ok => {
-        if (!ok) return;
-        editor.innerHTML = '';
-        localStorage.removeItem('poozter_draft');
-        onEdit();
-        editor.focus();
-        showToast('✅ Editor cleared');
-    });
+        .then(ok => {
+            if (!ok) return;
+            editor.innerHTML = '';
+            _savedCaret = null;
+            localStorage.removeItem('poozter_draft');
+            onEdit();
+            editor.focus();
+            showToast('✅ Editor cleared');
+        });
 }
 
 /* ──────────────────────────────────────────────────────────────────
    COPY HTML
 ────────────────────────────────────────────────────────────────── */
 function nodeToTg(node) {
-    if (node.nodeType === Node.TEXT_NODE) return node.textContent;
+    if (node.nodeType === Node.TEXT_NODE)    return node.textContent;
     if (node.nodeType !== Node.ELEMENT_NODE) return '';
 
     if (node.nodeName === 'IMG') {
-        const id  = node.getAttribute('data-tg-id');
-        const fb  = node.getAttribute('data-tg-fallback') || '🙂';
+        const id = node.getAttribute('data-tg-id');
+        const fb = node.getAttribute('data-tg-fallback') || '🙂';
         return id ? `<tg-emoji emoji-id="${id}">${fb}</tg-emoji>` : fb;
     }
     if (node.nodeName === 'BR') return '\n';
@@ -1332,18 +1393,17 @@ function nodeToTg(node) {
     const inner = [...node.childNodes].map(nodeToTg).join('');
 
     switch (node.nodeName) {
-        case 'B': case 'STRONG':            return `<b>${inner}</b>`;
-        case 'I': case 'EM':                return `<i>${inner}</i>`;
-        case 'U':                           return `<u>${inner}</u>`;
-        case 'S': case 'STRIKE': case 'DEL':return `<s>${inner}</s>`;
+        case 'B': case 'STRONG':             return `<b>${inner}</b>`;
+        case 'I': case 'EM':                 return `<i>${inner}</i>`;
+        case 'U':                            return `<u>${inner}</u>`;
+        case 'S': case 'STRIKE': case 'DEL': return `<s>${inner}</s>`;
         case 'A':
-            return `<a href="${node.getAttribute('href')||''}">${inner}</a>`;
-        case 'CODE':                        return `<code>${inner}</code>`;
-        case 'BLOCKQUOTE':                  return `<blockquote>${inner}</blockquote>`;
+            return `<a href="${node.getAttribute('href') || ''}">${inner}</a>`;
+        case 'CODE':                         return `<code>${inner}</code>`;
+        case 'BLOCKQUOTE':                   return `<blockquote>${inner}</blockquote>`;
         case 'SPAN':
             return node.classList.contains('tg-spoiler')
-                ? `<tg-spoiler>${inner}</tg-spoiler>`
-                : inner;
+                ? `<tg-spoiler>${inner}</tg-spoiler>` : inner;
         case 'DIV': case 'P':
             return inner ? `\n${inner}` : '\n';
         default: return inner;
@@ -1351,37 +1411,37 @@ function nodeToTg(node) {
 }
 
 function copyHTML() {
-    const tmp = document.createElement('div');
+    const tmp  = document.createElement('div');
     tmp.innerHTML = editor.innerHTML;
-    const raw = [...tmp.childNodes].map(nodeToTg).join('');
+    const raw  = [...tmp.childNodes].map(nodeToTg).join('');
     const html = raw.replace(/^\n+/, '').replace(/\n{3,}/g, '\n\n').trim();
     if (!html) { showToast('⚠️ Editor is empty'); return; }
 
-    const write = txt =>
-        navigator.clipboard?.writeText(txt) ??
-        Promise.reject();
+    const fallback = () => {
+        const ta = Object.assign(document.createElement('textarea'),
+            { value: html, style: 'position:fixed;opacity:0' });
+        document.body.appendChild(ta);
+        ta.focus(); ta.select();
+        document.execCommand('copy');
+        ta.remove();
+    };
 
-    write(html)
-        .then(() => {
-            const btn = document.getElementById('copyBtn');
+    (navigator.clipboard?.writeText(html) ?? Promise.reject())
+        .catch(fallback)
+        .finally(() => {
+            const btn  = document.getElementById('copyBtn');
             const orig = btn.innerHTML;
-            btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2.5"
+                stroke-linecap="round" stroke-linejoin="round">
                 <polyline points="20 6 9 17 4 12"/></svg>
                 <span class="btn-label">Copied!</span>`;
             btn.classList.add('success');
             showToast('✅ HTML copied!');
-            setTimeout(() => { btn.innerHTML = orig; btn.classList.remove('success'); }, 2200);
-        })
-        .catch(() => {
-            // textarea fallback
-            const ta = Object.assign(document.createElement('textarea'),
-                { value: html, style: 'position:fixed;opacity:0' });
-            document.body.appendChild(ta);
-            ta.focus(); ta.select();
-            document.execCommand('copy');
-            ta.remove();
-            showToast('✅ HTML copied!');
+            setTimeout(() => {
+                btn.innerHTML = orig;
+                btn.classList.remove('success');
+            }, 2200);
         });
 }
 
@@ -1393,11 +1453,9 @@ let _saveTimer;
 function charLen() {
     const tmp = document.createElement('div');
     tmp.innerHTML = editor.innerHTML;
-    // Replace emoji images with their fallback char
-    tmp.querySelectorAll('img[data-tg-fallback]').forEach(img => {
-        img.replaceWith(img.getAttribute('data-tg-fallback'));
-    });
-    // Strip invisible zero-width chars for counting
+    tmp.querySelectorAll('img[data-tg-fallback]').forEach(img =>
+        img.replaceWith(img.getAttribute('data-tg-fallback')));
+    // strip zero-width chars we inserted
     return (tmp.textContent || '').replace(/\u200B/g, '').length;
 }
 
@@ -1407,30 +1465,32 @@ function updateCounter() {
     const ctr  = document.getElementById('charCounter');
     const MAX  = n <= 1024 ? 1024 : 4096;
     const pct  = Math.min(n / MAX * 100, 100);
-    const col  = n > 4096 ? 'var(--danger)' :
-                 n > 1024 ? 'var(--warning)' : 'var(--success)';
+    const col  = n > 4096 ? 'var(--danger)'
+               : n > 1024 ? 'var(--warning)'
+               :             'var(--success)';
 
     fill.style.width      = pct + '%';
     fill.style.background = col;
     ctr.textContent       = `${n} / ${MAX}`;
-    ctr.className = 'char-counter' +
-        (n > 4096 ? ' danger' : n > 1024 ? ' warning' : '');
+    ctr.className = 'char-counter'
+        + (n > 4096 ? ' danger' : n > 1024 ? ' warning' : '');
 }
 
 function onEdit() {
     updateCounter();
     const st = document.getElementById('saveStatus');
-    st.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-        stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
+    st.innerHTML = `<svg viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2.5"
+        stroke-linecap="round" stroke-linejoin="round"
         style="width:12px;height:12px;animation:spin 1s linear infinite">
         <path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg> Saving…`;
     st.style.color = 'var(--text-3)';
-
     clearTimeout(_saveTimer);
     _saveTimer = setTimeout(() => {
         try { localStorage.setItem('poozter_draft', editor.innerHTML); } catch {}
-        st.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-            stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
+        st.innerHTML = `<svg viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2.5"
+            stroke-linecap="round" stroke-linejoin="round"
             style="width:12px;height:12px">
             <polyline points="20 6 9 17 4 12"/></svg> Saved`;
         st.style.color = 'var(--success)';
@@ -1446,36 +1506,36 @@ updateCounter();
 
 editor.addEventListener('input', onEdit);
 
-/* ── Paste: strip HTML, keep plain text ── */
+/* Paste → plain text only */
 editor.addEventListener('paste', e => {
     e.preventDefault();
     const txt = e.clipboardData.getData('text/plain');
     if (txt) document.execCommand('insertText', false, txt);
 });
 
-/* ── Spoiler reveal on click ── */
+/* Spoiler click */
 editor.addEventListener('click', e => {
     const sp = e.target.closest('.tg-spoiler');
     if (sp) sp.classList.toggle('revealed');
 });
 
-/* ── Keyboard shortcuts ── */
+/* Keyboard shortcuts */
 editor.addEventListener('keydown', e => {
     const mod = e.ctrlKey || e.metaKey;
     if (!mod) return;
     const k = e.key.toLowerCase();
     if (e.shiftKey) {
-        if (k==='x') { e.preventDefault(); fmt('strikeThrough'); }
-        else if (k==='.') { e.preventDefault(); wrapBlock('blockquote'); }
-        else if (k==='m') { e.preventDefault(); wrapBlock('code'); }
-        else if (k==='p') { e.preventDefault(); wrapBlock('tg-spoiler'); }
-        else if (k==='d') { e.preventDefault(); insertDate(); }
-        else if (k==='n') { e.preventDefault(); clearFormat(); }
+        if      (k === 'x') { e.preventDefault(); fmt('strikeThrough'); }
+        else if (k === '.') { e.preventDefault(); wrapBlock('blockquote'); }
+        else if (k === 'm') { e.preventDefault(); wrapBlock('code'); }
+        else if (k === 'p') { e.preventDefault(); wrapBlock('tg-spoiler'); }
+        else if (k === 'd') { e.preventDefault(); insertDate(); }
+        else if (k === 'n') { e.preventDefault(); clearFormat(); }
     } else {
-        if (k==='b') { e.preventDefault(); fmt('bold'); }
-        else if (k==='i') { e.preventDefault(); fmt('italic'); }
-        else if (k==='u') { e.preventDefault(); fmt('underline'); }
-        else if (k==='k') { e.preventDefault(); openLinkModal(); }
+        if      (k === 'b') { e.preventDefault(); fmt('bold'); }
+        else if (k === 'i') { e.preventDefault(); fmt('italic'); }
+        else if (k === 'u') { e.preventDefault(); fmt('underline'); }
+        else if (k === 'k') { e.preventDefault(); openLinkModal(); }
     }
 });
 
@@ -1500,54 +1560,63 @@ if (!savedPacks.length) {
 
 let recentEmojis = [];
 try {
-    recentEmojis = JSON.parse(localStorage.getItem('tg_recent_emojis')) || [];
+    recentEmojis = JSON.parse(
+        localStorage.getItem('tg_recent_emojis')) || [];
 } catch { recentEmojis = []; }
 
-// packName → sticker array (raw from Telegram)
 const loadedPacks = new Map();
 const failedPacks = new Set();
 
 /* ── Tabs ── */
 function setActiveTab(id) {
-    document.querySelectorAll('.pack-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.pack-tab')
+        .forEach(t => t.classList.remove('active'));
     const t = document.getElementById(`tab-${id}`);
-    if (t) { t.classList.add('active'); t.scrollIntoView({inline:'center',block:'nearest'}); }
+    if (t) {
+        t.classList.add('active');
+        t.scrollIntoView({ inline: 'center', block: 'nearest' });
+    }
 }
 
 function renderTabs() {
     const c = document.getElementById('pickerTabs');
     c.innerHTML = '';
 
-    const recent = _makeTab('recent', '🕒', 'Recently Used',
-        () => showRecentSection());
-    c.appendChild(recent);
+    c.appendChild(_makeTab('recent', '🕒', 'Recently Used',
+        () => showRecentSection()));
 
     savedPacks.forEach(name => {
         const stickers = loadedPacks.get(name);
-        let inner;
+        let child;
         if (stickers?.length) {
             const d = getStickerDisplay(stickers[0]);
             if (d) {
                 const img = document.createElement('img');
-                img.src = `/api/image?file_id=${d.file_id}`;
-                img.alt = name.slice(0,2).toUpperCase();
-                img.onerror = () => { inner = name.slice(0,2).toUpperCase(); };
-                inner = img;
+                img.src    = `/api/image?file_id=${d.file_id}`;
+                img.alt    = name.slice(0, 2).toUpperCase();
+                img.onerror = () => { img.replaceWith(
+                    document.createTextNode(name.slice(0,2).toUpperCase())); };
+                child = img;
             }
         }
-        const tab = _makeTab(name, inner || name.slice(0,2).toUpperCase(),
-            name, () => loadPack(name));
-        c.appendChild(tab);
+        c.appendChild(_makeTab(name,
+            child || name.slice(0, 2).toUpperCase(),
+            name, () => loadPack(name)));
     });
 }
 
 function _makeTab(id, content, title, onclick) {
     const t = document.createElement('div');
     t.className = 'pack-tab';
-    t.id = `tab-${id}`;
-    t.title = title;
+    t.id        = `tab-${id}`;
+    t.title     = title;
     if (typeof content === 'string') t.textContent = content;
     else t.appendChild(content);
+    /*
+     * Use mousedown + preventDefault so the editor does NOT blur.
+     * This is the second part of the caret fix.
+     */
+    t.addEventListener('mousedown', e => e.preventDefault());
     t.addEventListener('click', onclick);
     return t;
 }
@@ -1558,9 +1627,53 @@ function addToRecent(data) {
     recentEmojis = recentEmojis.filter(e => e.id !== data.id);
     recentEmojis.unshift(data);
     if (recentEmojis.length > 32) recentEmojis.pop();
-    try { localStorage.setItem('tg_recent_emojis', JSON.stringify(recentEmojis)); } catch {}
+    try {
+        localStorage.setItem('tg_recent_emojis',
+            JSON.stringify(recentEmojis));
+    } catch {}
     const g = document.getElementById('grid-recent');
-    if (g) renderGrid(g, recentEmojis);
+    if (g) fillRecentGrid(g);
+}
+
+function fillRecentGrid(grid) {
+    grid.innerHTML = '';
+    if (!recentEmojis.length) {
+        const s = document.createElement('span');
+        s.style.cssText =
+            'color:var(--text-3);font-size:12px;grid-column:span 8;padding:8px 0';
+        s.textContent = 'No recent emojis yet.';
+        grid.appendChild(s);
+        return;
+    }
+    const frag = document.createDocumentFragment();
+    recentEmojis.forEach(item => {
+        frag.appendChild(makeRecentItem(item));
+    });
+    grid.appendChild(frag);
+}
+
+function makeRecentItem(data) {
+    const wrap = document.createElement('div');
+    wrap.className = 'emoji-grid-item';
+    wrap.title     = data.fallback || '';
+
+    const img  = document.createElement('img');
+    const src  = (data.isVideo && data.thumbUrl) ? data.thumbUrl : data.url;
+    img.src    = src;
+    img.alt    = data.fallback || '';
+    img.style.cssText =
+        'width:32px;height:32px;object-fit:contain;pointer-events:none';
+    img.loading = 'lazy';
+    img.onerror = () => {
+        wrap.style.fontSize = '22px';
+        wrap.textContent    = data.fallback || '?';
+    };
+    wrap.appendChild(img);
+
+    /* mousedown preventDefault keeps editor focused */
+    wrap.addEventListener('mousedown', e => e.preventDefault());
+    wrap.addEventListener('click',     () => insertEmoji(data));
+    return wrap;
 }
 
 function showRecentSection() {
@@ -1571,69 +1684,67 @@ function showRecentSection() {
         section = makeSection('recent', 'Recently Used');
         body.prepend(section);
     }
-    renderGrid(document.getElementById('grid-recent'), recentEmojis);
-    section.scrollIntoView({behavior:'smooth', block:'start'});
+    fillRecentGrid(document.getElementById('grid-recent'));
+    section.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 /* ── Sticker display logic ── */
 function getStickerDisplay(sticker) {
     if (!sticker) return null;
-
     if (sticker.is_animated) {
-        // TGS → use thumbnail (static webp)
         return sticker.thumbnail
-            ? { file_id: sticker.thumbnail.file_id, isVideo: false, thumbFile_id: null }
+            ? { file_id: sticker.thumbnail.file_id, isVideo: false,
+                thumbFile_id: null }
             : null;
     }
     if (sticker.is_video) {
-        // WebM → prefer thumbnail for editor, keep original for picker preview
         return {
-            file_id:      sticker.file_id,          // WebM for picker
+            file_id:      sticker.file_id,
             isVideo:      true,
-            thumbFile_id: sticker.thumbnail?.file_id || null  // static for editor
+            thumbFile_id: sticker.thumbnail?.file_id || null
         };
     }
-    // Static WebP
     return { file_id: sticker.file_id, isVideo: false, thumbFile_id: null };
 }
 
-/* ── Build picker grid element ── */
-function makeGridItem(sticker, packName) {
+/* ── Build one picker grid cell ── */
+function makeGridItem(sticker) {
     const d = getStickerDisplay(sticker);
     if (!d) return null;
 
     const wrap = document.createElement('div');
     wrap.className = 'emoji-grid-item';
-    wrap.title = sticker.emoji || packName;
+    wrap.title     = sticker.emoji || '';
 
     let media;
     if (d.isVideo) {
-        // In the PICKER we can show video (it's not in contenteditable)
-        media = document.createElement('video');
-        media.src = `/api/image?file_id=${d.file_id}`;
-        media.autoplay = true; media.loop = true;
-        media.muted = true; media.playsInline = true;
-        media.style.cssText = 'width:32px;height:32px;object-fit:contain;pointer-events:none';
+        media            = document.createElement('video');
+        media.src        = `/api/image?file_id=${d.file_id}`;
+        media.autoplay   = true;
+        media.loop       = true;
+        media.muted      = true;
+        media.playsInline = true;
     } else {
-        media = document.createElement('img');
-        media.src = `/api/image?file_id=${d.file_id}`;
-        media.alt = sticker.emoji || '';
+        media         = document.createElement('img');
+        media.src     = `/api/image?file_id=${d.file_id}`;
+        media.alt     = sticker.emoji || '';
         media.loading = 'lazy';
-        media.style.cssText = 'width:32px;height:32px;object-fit:contain;pointer-events:none';
         media.onerror = () => {
             wrap.style.fontSize = '22px';
-            wrap.textContent = sticker.emoji || '?';
+            wrap.textContent    = sticker.emoji || '?';
         };
     }
+    media.style.cssText =
+        'width:32px;height:32px;object-fit:contain;pointer-events:none';
     wrap.appendChild(media);
 
-    // Click → insert as IMG (never video) in editor
+    /* ← Critical: prevent blur on mousedown */
+    wrap.addEventListener('mousedown', e => e.preventDefault());
     wrap.addEventListener('click', () => {
         insertEmoji({
             id:       sticker.custom_emoji_id || sticker.file_unique_id || '',
             url:      `/api/image?file_id=${d.file_id}`,
-            // For video stickers: use thumb URL for editor (static image)
-            thumbUrl: d.isVideo && d.thumbFile_id
+            thumbUrl: (d.isVideo && d.thumbFile_id)
                         ? `/api/image?file_id=${d.thumbFile_id}`
                         : null,
             fallback: sticker.emoji || '🙂',
@@ -1644,141 +1755,97 @@ function makeGridItem(sticker, packName) {
     return wrap;
 }
 
-function renderGrid(grid, items) {
-    grid.innerHTML = '';
-    if (!items.length) {
-        const s = document.createElement('span');
-        s.style.cssText = 'color:var(--text-3);font-size:12px;grid-column:span 8;padding:8px 0';
-        s.textContent = 'No recent emojis yet.';
-        grid.appendChild(s);
-        return;
-    }
-    const frag = document.createDocumentFragment();
-    items.forEach(item => {
-        // item can be raw sticker (from pack) or saved recent {id,url,fallback,isVideo,thumbUrl}
-        if (item.file_id !== undefined && item.emoji !== undefined) {
-            // raw sticker
-            const el = makeGridItem(item, '');
-            if (el) frag.appendChild(el);
-        } else {
-            // recent emoji data
-            const wrap = document.createElement('div');
-            wrap.className = 'emoji-grid-item';
-            wrap.title = item.fallback || '';
-            const img = document.createElement('img');
-            img.src  = item.isVideo && item.thumbUrl ? item.thumbUrl : item.url;
-            img.alt  = item.fallback || '';
-            img.style.cssText = 'width:32px;height:32px;object-fit:contain;pointer-events:none';
-            img.loading = 'lazy';
-            img.onerror = () => {
-                wrap.style.fontSize = '22px';
-                wrap.textContent = item.fallback || '?';
-            };
-            wrap.appendChild(img);
-            wrap.addEventListener('click', () => insertEmoji(item));
-            frag.appendChild(wrap);
-        }
-    });
-    grid.appendChild(frag);
-}
-
 /* ── Section scaffold ── */
 function makeSection(id, title) {
-    const sec = document.createElement('div');
+    const sec  = document.createElement('div');
     sec.className = 'pack-section';
-    sec.id = `section-${id}`;
+    sec.id        = `section-${id}`;
 
-    const bar = document.createElement('div');
+    const bar  = document.createElement('div');
     bar.className = 'pack-title-bar';
 
     const left = document.createElement('div');
     left.className = 'pack-title-left';
-    left.innerHTML = `<span class="pack-title">${title}</span>
-        <span class="pack-title-count" id="count-${id}"></span>`;
-
+    left.innerHTML =
+        `<span class="pack-title">${title}</span>
+         <span class="pack-title-count" id="count-${id}"></span>`;
     bar.appendChild(left);
 
     if (id !== 'recent') {
-        const actions = document.createElement('div');
-        actions.className = 'pack-actions';
-        actions.innerHTML = `
+        const acts = document.createElement('div');
+        acts.className = 'pack-actions';
+        acts.innerHTML = `
             <button class="view-pack-btn" onclick="viewPack('${id}')">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                   stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                   stroke-width="2" stroke-linecap="round"
+                   stroke-linejoin="round">
                 <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                <circle cx="12" cy="12" r="3"/>
-              </svg>View
+                <circle cx="12" cy="12" r="3"/></svg>View
             </button>
             <button class="remove-pack-btn" onclick="removePack('${id}')">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                   stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                   stroke-width="2.5" stroke-linecap="round"
+                   stroke-linejoin="round">
                 <line x1="18" y1="6" x2="6" y2="18"/>
-                <line x1="6" y1="6" x2="18" y2="18"/>
-              </svg>Remove
+                <line x1="6"  y1="6" x2="18" y2="18"/></svg>Remove
             </button>`;
-        bar.appendChild(actions);
+        bar.appendChild(acts);
     }
 
     const grid = document.createElement('div');
     grid.className = 'emoji-grid';
-    grid.id = `grid-${id}`;
+    grid.id        = `grid-${id}`;
 
     sec.appendChild(bar);
     sec.appendChild(grid);
     return sec;
 }
 
-/* ── Load Pack ── */
+/* ── Load Pack from API ── */
 async function loadPack(name) {
     setActiveTab(name);
     const body = document.getElementById('pickerBody');
     document.getElementById('welcomeText').style.display = 'none';
 
-    // Already loaded → just scroll
     if (loadedPacks.has(name)) {
         document.getElementById(`section-${name}`)
-            ?.scrollIntoView({behavior:'smooth', block:'start'});
+            ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
         return;
     }
-
-    // Remove failed section to allow retry
     if (failedPacks.has(name)) {
         document.getElementById(`section-${name}`)?.remove();
         failedPacks.delete(name);
     }
-
-    // Don't duplicate
     if (document.getElementById(`section-${name}`)) {
         document.getElementById(`section-${name}`)
-            ?.scrollIntoView({behavior:'smooth', block:'start'});
+            ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
         return;
     }
 
     const section = makeSection(name, name);
     body.appendChild(section);
-    section.scrollIntoView({behavior:'smooth', block:'start'});
+    section.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
     const grid = document.getElementById(`grid-${name}`);
-    // Skeletons
-    const frag = document.createDocumentFragment();
+    const sf   = document.createDocumentFragment();
     for (let i = 0; i < 24; i++) {
         const sk = document.createElement('div');
         sk.className = 'skeleton-item';
         sk.style.animationDelay = `${i * .04}s`;
-        frag.appendChild(sk);
+        sf.appendChild(sk);
     }
-    grid.appendChild(frag);
+    grid.appendChild(sf);
 
     try {
-        const ctrl = new AbortController();
+        const ctrl    = new AbortController();
         const timeout = setTimeout(() => ctrl.abort(), 15000);
-        const res  = await fetch(`/api/getPack?name=${encodeURIComponent(name)}`,
+        const res     = await fetch(
+            `/api/getPack?name=${encodeURIComponent(name)}`,
             { signal: ctrl.signal });
         clearTimeout(timeout);
-
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const data = await res.json();
 
+        const data = await res.json();
         if (!data.ok) {
             showError(grid, name, data.description || 'Telegram error');
             failedPacks.add(name);
@@ -1792,22 +1859,23 @@ async function loadPack(name) {
         if (countEl) countEl.textContent = stickers.length;
 
         if (!stickers.length) {
-            grid.innerHTML = `<span style="color:var(--text-3);font-size:12px;
-                grid-column:span 8">Pack is empty.</span>`;
+            grid.innerHTML =
+                `<span style="color:var(--text-3);font-size:12px;
+                 grid-column:span 8">Pack is empty.</span>`;
             return;
         }
 
-        const f = document.createDocumentFragment();
+        const frag = document.createDocumentFragment();
         stickers.forEach((s, i) => {
-            const el = makeGridItem(s, name);
+            const el = makeGridItem(s);
             if (el) {
                 el.style.animationDelay = `${Math.min(i * .02, .5)}s`;
-                f.appendChild(el);
+                frag.appendChild(el);
             }
         });
-        grid.appendChild(f);
+        grid.appendChild(frag);
         loadedPacks.set(name, stickers);
-        renderTabs(); // update tab thumbnail
+        renderTabs();
 
     } catch (err) {
         grid.innerHTML = '';
@@ -1824,10 +1892,11 @@ function showError(grid, name, msg) {
     d.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
         stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <circle cx="12" cy="12" r="10"/>
-        <line x1="12" y1="8" x2="12" y2="12"/>
+        <line x1="12" y1="8"  x2="12"   y2="12"/>
         <line x1="12" y1="16" x2="12.01" y2="16"/>
         </svg><span>${msg}</span>
-        <button class="retry-btn" onclick="retryPack('${name}')">Retry</button>`;
+        <button class="retry-btn"
+            onclick="retryPack('${name}')">Retry</button>`;
     grid.appendChild(d);
 }
 
@@ -1862,26 +1931,28 @@ function removePack(name) {
 function clearAllData() {
     showConfirm('Clear Everything?',
         'Remove all packs and recent emojis?', '⚠️')
-    .then(ok => {
-        if (!ok) return;
-        savedPacks = []; recentEmojis = [];
-        loadedPacks.clear(); failedPacks.clear();
-        localStorage.setItem('tg_saved_packs', '[]');
-        localStorage.removeItem('tg_recent_emojis');
-        renderTabs();
-        document.getElementById('pickerBody').innerHTML = `
-            <div id="welcomeText" class="status-text">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                   stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="10"/>
-                <path d="M8 14s1.5 2 4 2 4-2 4-2"/>
-                <line x1="9" y1="9" x2="9.01" y2="9"/>
-                <line x1="15" y1="9" x2="15.01" y2="9"/>
-              </svg>
-              No packs added yet.<br>Tap <strong>Add Pack</strong> to get started.
-            </div>`;
-        showToast('🗑️ Cleared');
-    });
+        .then(ok => {
+            if (!ok) return;
+            savedPacks = []; recentEmojis = [];
+            loadedPacks.clear(); failedPacks.clear();
+            localStorage.setItem('tg_saved_packs', '[]');
+            localStorage.removeItem('tg_recent_emojis');
+            renderTabs();
+            document.getElementById('pickerBody').innerHTML = `
+                <div id="welcomeText" class="status-text">
+                  <svg viewBox="0 0 24 24" fill="none"
+                       stroke="currentColor" stroke-width="1.5"
+                       stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"/>
+                    <path d="M8 14s1.5 2 4 2 4-2 4-2"/>
+                    <line x1="9"  y1="9"  x2="9.01"  y2="9"/>
+                    <line x1="15" y1="9"  x2="15.01" y2="9"/>
+                  </svg>
+                  No packs added yet.<br>
+                  Tap <strong>Add Pack</strong> to get started.
+                </div>`;
+            showToast('🗑️ Cleared');
+        });
 }
 
 /* ── Add Pack modal ── */
@@ -1892,9 +1963,8 @@ function addNewPack() {
     if (!raw) { showToast('⚠️ Enter a pack name'); return; }
 
     let name = raw;
-    if (raw.includes('t.me') || raw.includes('telegram.me')) {
+    if (raw.includes('t.me') || raw.includes('telegram.me'))
         name = raw.split('/').filter(Boolean).pop();
-    }
     name = name.trim();
     if (name.length < 2) { showToast('⚠️ Invalid pack name'); return; }
 
@@ -1902,7 +1972,7 @@ function addNewPack() {
         showToast('ℹ️ Pack already added');
         closeModal('addPackModal');
         document.getElementById(`section-${name}`)
-            ?.scrollIntoView({behavior:'smooth', block:'start'});
+            ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
         setActiveTab(name);
         return;
     }
@@ -1958,9 +2028,7 @@ async function pasteClip(inputId) {
     } catch { showToast('⚠️ Paste manually'); }
 }
 
-/* ──────────────────────────────────────────────────────────────────
-   KEYBOARD: close modals on Escape
-────────────────────────────────────────────────────────────────── */
+/* ── Escape closes modals ── */
 document.addEventListener('keydown', e => {
     if (e.key !== 'Escape') return;
     closeModal('addPackModal');
@@ -1972,7 +2040,7 @@ document.addEventListener('keydown', e => {
    INIT
 ────────────────────────────────────────────────────────────────── */
 renderTabs();
-if (recentEmojis.length)   showRecentSection();
+if (recentEmojis.length)    showRecentSection();
 else if (savedPacks.length) loadPack(savedPacks[0]);
 else document.getElementById('welcomeText').style.display = 'block';
 </script>
