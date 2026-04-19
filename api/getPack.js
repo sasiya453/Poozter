@@ -3,17 +3,13 @@ export default async function handler(req, res) {
     const token = process.env.BOT_TOKEN;
 
     if (!name) {
-        return res.status(400).json({ 
-            ok: false, description: "Pack name required" 
-        });
+        return res.status(400).json({ ok: false, description: "Pack name required" });
     }
 
     const cleanName = name.split('/').pop().trim();
 
     if (!cleanName || cleanName.length < 2) {
-        return res.status(400).json({ 
-            ok: false, description: "Invalid pack name" 
-        });
+        return res.status(400).json({ ok: false, description: "Invalid pack name" });
     }
 
     try {
@@ -22,9 +18,9 @@ export default async function handler(req, res) {
         );
 
         if (!response.ok) {
-            return res.status(502).json({ 
-                ok: false, 
-                description: `Telegram API error: ${response.status}` 
+            return res.status(502).json({
+                ok: false,
+                description: `Telegram API error: ${response.status}`
             });
         }
 
@@ -35,9 +31,9 @@ export default async function handler(req, res) {
 
     } catch (error) {
         console.error('getPack error:', error);
-        res.status(500).json({ 
-            ok: false, 
-            description: "Server error: " + error.message 
+        res.status(500).json({
+            ok: false,
+            description: "Server error: " + error.message
         });
     }
 }
