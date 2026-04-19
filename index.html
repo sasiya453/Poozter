@@ -1832,8 +1832,8 @@ function copyAndGenerateHTML() {
         }
         if (node.nodeType !== Node.ELEMENT_NODE) return '';
 
-        // For IMG - custom emoji (the ONLY way emojis appear in editor)
-        if (node.nodeName === 'IMG') {
+        // FIX: Check for BOTH IMG and VIDEO tags for custom emojis
+        if (node.nodeName === 'IMG' || node.nodeName === 'VIDEO') {
             const emojiId = node.getAttribute('data-tg-id');
             const fallback = node.getAttribute('data-tg-fallback') || '🙂';
             if (emojiId) {
@@ -1937,13 +1937,14 @@ function getPlainTextLength() {
     const tempDiv = document.createElement('div');
     tempDiv.innerHTML = editor.innerHTML;
 
-    // Replace emoji images with their fallback character
-    tempDiv.querySelectorAll('img[data-tg-fallback]').forEach(img => {
-        const fallback = img.getAttribute('data-tg-fallback') || '🙂';
-        img.replaceWith(document.createTextNode(fallback));
+    // FIX: Replace both image AND video emojis with their fallback character
+    tempDiv.querySelectorAll('img[data-tg-fallback], video[data-tg-fallback]').forEach(el => {
+        const fallback = el.getAttribute('data-tg-fallback') || '🙂';
+        el.replaceWith(document.createTextNode(fallback));
     });
-    // Remove remaining images
-    tempDiv.querySelectorAll('img').forEach(img => img.remove());
+    
+    // Remove any remaining media
+    tempDiv.querySelectorAll('img, video').forEach(el => el.remove());
 
     return (tempDiv.textContent || '').length;
 }
@@ -2447,22 +2448,31 @@ function createEmojiEl(emojiData) {
  * Uses data attributes for HTML export.
  */
 function insertEmojiIntoEditor(emojiData) {
-    const src = emojiData.url || 
-        `/api/image?file_id=${emojiData.file_id}`;
+    const src = emojiData.url || `/api/image?file_id=${emojiData.file_id}`;
     const fallback = emojiData.fallback || '🙂';
     const id = emojiData.id || '';
 
     editor.focus();
     
-    // Use img tag (not video) for editor display - keeps it simple
-    // and avoids the double-emoji visual bug
-    const html = `<img 
-        class="tg-emoji-img" 
-        src="${src}" 
-        alt="${fallback}" 
-        data-tg-id="${id}" 
-        data-tg-fallback="${fallback}" 
-        style="width:22px;height:22px;vertical-align:middle;margin:0 1px;display:inline-block;">`;
+    let html = '';
+    // If it's a video sticker, insert a video tag. Otherwise, insert an image.
+    if (emojiData.isVideo) {
+        html = `<video 
+            class="tg-emoji-video" 
+            src="${src}" 
+            data-tg-id="${id}" 
+            data-tg-fallback="${fallback}" 
+            autoplay loop muted playsinline
+            style="width:22px;height:22px;vertical-align:middle;margin:0 1px;display:inline-block;pointer-events:none;"></video>`;
+    } else {
+        html = `<img 
+            class="tg-emoji-img" 
+            src="${src}" 
+            alt="${fallback}" 
+            data-tg-id="${id}" 
+            data-tg-fallback="${fallback}" 
+            style="width:22px;height:22px;vertical-align:middle;margin:0 1px;display:inline-block;object-fit:contain;">`;
+    }
     
     document.execCommand('insertHTML', false, html);
     addToRecent({ ...emojiData, url: src });
