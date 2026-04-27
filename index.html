@@ -7,10 +7,7 @@
     <title>Poozter Web Editor</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,
-wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;
-1,9..40,400&family=JetBrains+Mono:wght@400;500&display=swap"
-          rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg:#eef1f7; --surface:#fff; --surface-raised:#f8faff;
@@ -26,29 +23,19 @@ wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;
             --shadow-sm:0 1px 3px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04);
             --shadow-md:0 4px 16px rgba(0,0,0,.07),0 2px 6px rgba(0,0,0,.04);
             --shadow-lg:0 20px 40px rgba(0,0,0,.1),0 8px 16px rgba(0,0,0,.06);
-            --radius-sm:8px; --radius-md:12px;
-            --radius-lg:18px; --radius-xl:24px;
+            --radius-sm:8px; --radius-md:12px; --radius-lg:18px; --radius-xl:24px;
             --modal-overlay:rgba(10,15,30,.45);
             --transition:.2s cubic-bezier(.4,0,.2,1);
-            /* Code editor colors */
-            --code-bg:#0d1117;
-            --code-surface:#161b22;
-            --code-border:#30363d;
-            --code-text:#e6edf3;
-            --code-comment:#8b949e;
-            --code-tag:#7ee787;
-            --code-attr:#79c0ff;
-            --code-string:#a5d6ff;
-            --code-bracket:#e6edf3;
-            --code-line-num:#6e7681;
+            --code-bg:#0d1117; --code-surface:#161b22;
+            --code-border:#30363d; --code-text:#e6edf3;
+            --code-comment:#8b949e; --code-line-num:#6e7681;
         }
         [data-theme="dark"] {
             --bg:#0b0f18; --surface:#131929; --surface-raised:#1a2235;
             --text-1:#f0f4ff; --text-2:#7c8fa8; --text-3:#3d5066;
             --accent:#4f8ef7; --accent-2:#7c7cf7;
             --accent-glow:rgba(79,142,247,.18);
-            --border:rgba(255,255,255,.06);
-            --border-strong:rgba(255,255,255,.12);
+            --border:rgba(255,255,255,.06); --border-strong:rgba(255,255,255,.12);
             --toolbar-btn:rgba(255,255,255,.04);
             --toolbar-hover:rgba(79,142,247,.12);
             --spoiler-bg:#1f2d44;
@@ -72,45 +59,36 @@ wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;
         body::before {
             content:''; position:fixed; inset:0;
             background:
-                radial-gradient(ellipse 80% 50% at 20% 10%,
-                    var(--accent-glow) 0%,transparent 60%),
-                radial-gradient(ellipse 60% 40% at 80% 90%,
-                    rgba(99,102,241,.06) 0%,transparent 60%);
+                radial-gradient(ellipse 80% 50% at 20% 10%,var(--accent-glow) 0%,transparent 60%),
+                radial-gradient(ellipse 60% 40% at 80% 90%,rgba(99,102,241,.06) 0%,transparent 60%);
             pointer-events:none; z-index:0;
         }
         button,input,textarea { font-family:inherit; }
 
-        /* ── Layout ── */
+        /* Layout */
         .main-wrapper {
             display:flex; gap:20px; width:100%; max-width:1240px;
             padding:20px; height:100%; position:relative; z-index:1;
         }
-        .left-column {
-            flex:1; display:flex; flex-direction:column;
-            gap:14px; min-width:0;
-        }
+        .left-column { flex:1; display:flex; flex-direction:column; gap:14px; min-width:0; }
 
-        /* ── Header ── */
+        /* Header */
         .top-header-card {
             background:var(--surface); border-radius:var(--radius-lg);
-            padding:14px 20px;
-            display:flex; justify-content:space-between; align-items:center;
-            border:1px solid var(--border); box-shadow:var(--shadow-md);
-            flex-shrink:0;
+            padding:14px 20px; display:flex; justify-content:space-between;
+            align-items:center; border:1px solid var(--border);
+            box-shadow:var(--shadow-md); flex-shrink:0;
             animation:slideDown .4s cubic-bezier(.34,1.56,.64,1) both;
         }
         @keyframes slideDown {
-            from { opacity:0; transform:translateY(-12px); }
-            to   { opacity:1; transform:translateY(0); }
+            from{opacity:0;transform:translateY(-12px)}
+            to{opacity:1;transform:translateY(0)}
         }
-        .header-user-info {
-            display:flex; align-items:center; gap:14px; overflow:hidden;
-        }
+        .header-user-info { display:flex; align-items:center; gap:14px; overflow:hidden; }
         .user-avatar-wrapper { position:relative; flex-shrink:0; }
         .user-avatar {
             width:44px; height:44px; border-radius:50%; object-fit:cover;
-            border:2px solid var(--accent-glow);
-            box-shadow:0 0 0 2px var(--accent-glow);
+            border:2px solid var(--accent-glow); box-shadow:0 0 0 2px var(--accent-glow);
         }
         .user-avatar-placeholder {
             width:44px; height:44px; border-radius:50%;
@@ -120,27 +98,18 @@ wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;
             box-shadow:0 4px 12px var(--accent-glow); flex-shrink:0;
         }
         .status-dot {
-            position:absolute; bottom:1px; right:1px;
-            width:10px; height:10px; background:var(--success);
-            border-radius:50%; border:2px solid var(--surface);
+            position:absolute; bottom:1px; right:1px; width:10px; height:10px;
+            background:var(--success); border-radius:50%; border:2px solid var(--surface);
             animation:pulse-dot 2s ease infinite;
         }
         @keyframes pulse-dot {
-            0%,100% { box-shadow:0 0 0 0 rgba(34,197,94,.4); }
-            50%      { box-shadow:0 0 0 4px rgba(34,197,94,0); }
+            0%,100%{box-shadow:0 0 0 0 rgba(34,197,94,.4)}
+            50%{box-shadow:0 0 0 4px rgba(34,197,94,0)}
         }
-        .header-text-block {
-            display:flex; flex-direction:column; gap:1px; overflow:hidden;
-        }
-        .app-title {
-            font-size:10px; font-weight:700; color:var(--accent);
-            text-transform:uppercase; letter-spacing:1.2px; opacity:.8;
-        }
-        .greeting-line {
-            font-size:15px; font-weight:600;
-            white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-        }
-        .greeting-text  { color:var(--text-2); font-weight:400; margin-right:4px; }
+        .header-text-block { display:flex; flex-direction:column; gap:1px; overflow:hidden; }
+        .app-title { font-size:10px; font-weight:700; color:var(--accent); text-transform:uppercase; letter-spacing:1.2px; opacity:.8; }
+        .greeting-line { font-size:15px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .greeting-text { color:var(--text-2); font-weight:400; margin-right:4px; }
         .user-name-text { color:var(--text-1); }
         .header-actions { display:flex; align-items:center; gap:8px; flex-shrink:0; }
 
@@ -151,11 +120,7 @@ wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;
             width:38px; height:38px; border-radius:var(--radius-sm);
             transition:all var(--transition);
         }
-        .icon-btn:hover {
-            color:var(--accent); border-color:var(--accent);
-            transform:translateY(-1px);
-            box-shadow:0 4px 12px var(--accent-glow);
-        }
+        .icon-btn:hover { color:var(--accent); border-color:var(--accent); transform:translateY(-1px); box-shadow:0 4px 12px var(--accent-glow); }
         .icon-btn svg { width:18px; height:18px; }
 
         .btn-clear-text {
@@ -163,29 +128,19 @@ wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;
             color:var(--text-2); cursor:pointer;
             display:flex; align-items:center; justify-content:center; gap:6px;
             height:38px; padding:0 14px; border-radius:var(--radius-sm);
-            font-size:13px; font-weight:600; white-space:nowrap;
-            transition:all var(--transition);
+            font-size:13px; font-weight:600; white-space:nowrap; transition:all var(--transition);
         }
-        .btn-clear-text:hover {
-            color:var(--danger); border-color:var(--danger);
-            background:var(--danger-bg); transform:translateY(-1px);
-        }
+        .btn-clear-text:hover { color:var(--danger); border-color:var(--danger); background:var(--danger-bg); transform:translateY(-1px); }
         .btn-clear-text svg { width:15px; height:15px; }
 
-        /* Import HTML button */
         .btn-import-html {
             background:var(--toolbar-btn); border:1px solid var(--border);
             color:var(--text-2); cursor:pointer;
             display:flex; align-items:center; justify-content:center; gap:6px;
             height:38px; padding:0 14px; border-radius:var(--radius-sm);
-            font-size:13px; font-weight:600; white-space:nowrap;
-            transition:all var(--transition);
+            font-size:13px; font-weight:600; white-space:nowrap; transition:all var(--transition);
         }
-        .btn-import-html:hover {
-            color:var(--accent); border-color:var(--accent);
-            background:var(--toolbar-hover); transform:translateY(-1px);
-            box-shadow:0 4px 12px var(--accent-glow);
-        }
+        .btn-import-html:hover { color:var(--accent); border-color:var(--accent); background:var(--toolbar-hover); transform:translateY(-1px); box-shadow:0 4px 12px var(--accent-glow); }
         .btn-import-html svg { width:15px; height:15px; }
 
         .btn-copy-html {
@@ -197,74 +152,51 @@ wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;
             box-shadow:0 4px 12px var(--accent-glow);
             transition:all var(--transition); white-space:nowrap;
         }
-        .btn-copy-html:hover {
-            transform:translateY(-1px);
-            box-shadow:0 6px 20px var(--accent-glow);
-        }
-        .btn-copy-html.success {
-            background:linear-gradient(135deg,var(--success),#16a34a);
-            box-shadow:0 4px 12px rgba(34,197,94,.3);
-        }
+        .btn-copy-html:hover { transform:translateY(-1px); box-shadow:0 6px 20px var(--accent-glow); }
+        .btn-copy-html.success { background:linear-gradient(135deg,var(--success),#16a34a); box-shadow:0 4px 12px rgba(34,197,94,.3); }
         .btn-copy-html svg { width:16px; height:16px; }
 
-        /* ── Editor ── */
+        /* Editor */
         .editor-container {
-            flex:1; background:var(--surface);
-            border-radius:var(--radius-lg); box-shadow:var(--shadow-md);
-            display:flex; flex-direction:column;
+            flex:1; background:var(--surface); border-radius:var(--radius-lg);
+            box-shadow:var(--shadow-md); display:flex; flex-direction:column;
             overflow:hidden; border:1px solid var(--border);
-            transition:background var(--transition),
-                border-color var(--transition), box-shadow var(--transition);
-            animation:slideUp .4s cubic-bezier(.34,1.56,.64,1) .05s both;
-            min-height:0;
+            transition:background var(--transition),border-color var(--transition),box-shadow var(--transition);
+            animation:slideUp .4s cubic-bezier(.34,1.56,.64,1) .05s both; min-height:0;
         }
-        .editor-container:focus-within {
-            border-color:var(--accent);
-            box-shadow:var(--shadow-md),0 0 0 3px var(--accent-glow);
-        }
+        .editor-container:focus-within { border-color:var(--accent); box-shadow:var(--shadow-md),0 0 0 3px var(--accent-glow); }
         @keyframes slideUp {
-            from { opacity:0; transform:translateY(12px); }
-            to   { opacity:1; transform:translateY(0); }
+            from{opacity:0;transform:translateY(12px)}
+            to{opacity:1;transform:translateY(0)}
         }
 
         .toolbar {
             display:flex; gap:3px; padding:8px 14px;
-            background:var(--surface-raised);
-            border-bottom:1px solid var(--border);
+            background:var(--surface-raised); border-bottom:1px solid var(--border);
             align-items:center; flex-shrink:0; flex-wrap:wrap;
         }
         .toolbar-btn {
             width:34px; height:34px; border:1px solid transparent;
-            background:transparent; cursor:pointer;
-            border-radius:var(--radius-sm); color:var(--text-2);
-            display:flex; align-items:center; justify-content:center;
+            background:transparent; cursor:pointer; border-radius:var(--radius-sm);
+            color:var(--text-2); display:flex; align-items:center; justify-content:center;
             transition:all var(--transition); position:relative; flex-shrink:0;
         }
-        .toolbar-btn:hover {
-            background:var(--toolbar-hover); color:var(--accent);
-            border-color:var(--border); transform:translateY(-1px);
-        }
+        .toolbar-btn:hover { background:var(--toolbar-hover); color:var(--accent); border-color:var(--border); transform:translateY(-1px); }
         .toolbar-btn:active { transform:translateY(0) scale(.95); }
         .toolbar-btn svg { width:17px; height:17px; }
-        .toolbar-divider {
-            width:1px; height:22px; background:var(--border-strong);
-            margin:0 3px; border-radius:2px; flex-shrink:0;
-        }
+        .toolbar-divider { width:1px; height:22px; background:var(--border-strong); margin:0 3px; border-radius:2px; flex-shrink:0; }
         .toolbar-btn[title]:hover::after {
-            content:attr(title);
-            position:absolute; bottom:calc(100% + 6px); left:50%;
-            transform:translateX(-50%);
-            background:var(--text-1); color:var(--surface);
-            font-size:11px; font-weight:500; padding:4px 8px;
-            border-radius:6px; white-space:nowrap; pointer-events:none;
-            z-index:100; box-shadow:var(--shadow-sm);
+            content:attr(title); position:absolute; bottom:calc(100% + 6px); left:50%;
+            transform:translateX(-50%); background:var(--text-1); color:var(--surface);
+            font-size:11px; font-weight:500; padding:4px 8px; border-radius:6px;
+            white-space:nowrap; pointer-events:none; z-index:100; box-shadow:var(--shadow-sm);
         }
 
+        /* THE EDITOR — no white-space:pre-wrap to avoid double newlines */
         .editor {
             flex:1; padding:20px 24px; outline:none;
             font-size:15px; line-height:1.8; overflow-y:auto;
-            color:var(--text-1); font-weight:400;
-            word-break:break-word; white-space:pre-wrap;
+            color:var(--text-1); font-weight:400; word-break:break-word;
         }
         .editor:empty::before {
             content:attr(placeholder); color:var(--text-3);
@@ -277,134 +209,105 @@ wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;
             -webkit-user-select:none; -webkit-user-drag:none;
             border-radius:3px; flex-shrink:0;
         }
+        /* Imported tg-emoji placeholder (shows fallback unicode) */
+        .editor .tg-emoji-placeholder {
+            display:inline-block; font-size:20px; line-height:1;
+            vertical-align:middle; margin:0 1px;
+            cursor:default; user-select:none; -webkit-user-select:none;
+        }
         .editor blockquote {
-            border-left:3px solid var(--accent);
-            padding:8px 14px; margin:8px 0; color:var(--text-2);
-            font-style:italic; background:var(--accent-glow);
+            border-left:3px solid var(--accent); padding:8px 14px; margin:8px 0;
+            color:var(--text-2); font-style:italic; background:var(--accent-glow);
             border-radius:0 var(--radius-sm) var(--radius-sm) 0;
         }
         .editor code {
-            font-family:'JetBrains Mono',monospace;
-            background:var(--toolbar-btn); padding:2px 7px;
-            border-radius:5px; color:var(--accent); font-size:.875em;
-            border:1px solid var(--border);
+            font-family:'JetBrains Mono',monospace; background:var(--toolbar-btn);
+            padding:2px 7px; border-radius:5px; color:var(--accent);
+            font-size:.875em; border:1px solid var(--border);
         }
         .editor a { color:var(--accent); text-underline-offset:2px; }
         .tg-spoiler {
-            background:var(--spoiler-bg); color:transparent;
-            border-radius:4px; padding:1px 5px; cursor:pointer;
-            transition:all var(--transition); user-select:none;
+            background:var(--spoiler-bg); color:transparent; border-radius:4px;
+            padding:1px 5px; cursor:pointer; transition:all var(--transition); user-select:none;
         }
         .tg-spoiler.revealed, .tg-spoiler:hover { color:var(--text-1); }
 
+        /* Editor Footer */
         .editor-footer {
             display:flex; justify-content:space-between; align-items:center;
-            padding:8px 16px;
-            background:var(--surface-raised); border-top:1px solid var(--border);
+            padding:8px 16px; background:var(--surface-raised);
+            border-top:1px solid var(--border);
             font-size:11px; font-weight:600; color:var(--text-3); flex-shrink:0;
         }
         .save-status { display:flex; align-items:center; gap:5px; }
-        .char-info   { display:flex; align-items:center; gap:10px; }
+        .char-info { display:flex; align-items:center; gap:10px; }
         .char-counter { display:flex; align-items:center; gap:4px; }
         .char-counter.warning { color:var(--warning); }
         .char-counter.danger  { color:var(--danger); }
-        .char-progress {
-            width:60px; height:3px; background:var(--border);
-            border-radius:10px; overflow:hidden;
-        }
-        .char-progress-fill {
-            height:100%; background:var(--success); border-radius:10px;
-            transition:width .3s ease, background .3s ease;
-        }
+        .char-progress { width:60px; height:3px; background:var(--border); border-radius:10px; overflow:hidden; }
+        .char-progress-fill { height:100%; background:var(--success); border-radius:10px; transition:width .3s ease,background .3s ease; }
 
         ::-webkit-scrollbar { width:5px; height:5px; }
         ::-webkit-scrollbar-track { background:transparent; }
-        ::-webkit-scrollbar-thumb {
-            background:var(--border-strong); border-radius:10px;
-        }
+        ::-webkit-scrollbar-thumb { background:var(--border-strong); border-radius:10px; }
         ::-webkit-scrollbar-thumb:hover { background:var(--text-3); }
 
-        /* ── Emoji Picker ── */
+        /* Emoji Picker */
         .emoji-picker-wrapper {
-            width:370px; background:var(--surface);
-            border-radius:var(--radius-lg);
+            width:370px; background:var(--surface); border-radius:var(--radius-lg);
             display:flex; flex-direction:column; overflow:hidden;
-            box-shadow:var(--shadow-md); flex-shrink:0;
-            border:1px solid var(--border);
+            box-shadow:var(--shadow-md); flex-shrink:0; border:1px solid var(--border);
             animation:slideLeft .4s cubic-bezier(.34,1.56,.64,1) .1s both;
             -webkit-user-select:none; user-select:none;
         }
         @keyframes slideLeft {
-            from { opacity:0; transform:translateX(16px); }
-            to   { opacity:1; transform:translateX(0); }
+            from{opacity:0;transform:translateX(16px)}
+            to{opacity:1;transform:translateX(0)}
         }
         .picker-header {
             padding:12px 16px; border-bottom:1px solid var(--border);
             display:flex; justify-content:space-between; align-items:center;
             background:var(--surface-raised); flex-shrink:0;
         }
-        .picker-header-title {
-            font-size:13px; font-weight:700; color:var(--text-1);
-            display:flex; align-items:center; gap:7px;
-        }
+        .picker-header-title { font-size:13px; font-weight:700; color:var(--text-1); display:flex; align-items:center; gap:7px; }
         .picker-header-title svg { width:15px; height:15px; color:var(--accent); }
         .header-btn-group { display:flex; gap:7px; align-items:center; }
         .btn-add-pack {
             background:linear-gradient(135deg,var(--accent),var(--accent-2));
-            color:#fff; border:none; padding:6px 12px;
-            border-radius:var(--radius-sm); font-weight:600; font-size:12px;
-            cursor:pointer; display:flex; align-items:center; gap:5px;
-            box-shadow:0 2px 8px var(--accent-glow);
-            transition:all var(--transition);
+            color:#fff; border:none; padding:6px 12px; border-radius:var(--radius-sm);
+            font-weight:600; font-size:12px; cursor:pointer;
+            display:flex; align-items:center; gap:5px;
+            box-shadow:0 2px 8px var(--accent-glow); transition:all var(--transition);
         }
-        .btn-add-pack:hover {
-            transform:translateY(-1px);
-            box-shadow:0 4px 12px var(--accent-glow);
-        }
+        .btn-add-pack:hover { transform:translateY(-1px); box-shadow:0 4px 12px var(--accent-glow); }
         .btn-add-pack svg { width:12px; height:12px; }
         .clear-packs-btn {
-            font-size:12px; font-weight:600; cursor:pointer;
-            color:var(--text-3); background:transparent;
-            border:1px solid var(--border); padding:5px 9px;
+            font-size:12px; font-weight:600; cursor:pointer; color:var(--text-3);
+            background:transparent; border:1px solid var(--border); padding:5px 9px;
             border-radius:var(--radius-sm); transition:all var(--transition);
             display:flex; align-items:center; gap:4px;
         }
-        .clear-packs-btn:hover {
-            color:var(--danger); border-color:var(--danger);
-            background:var(--danger-bg);
-        }
+        .clear-packs-btn:hover { color:var(--danger); border-color:var(--danger); background:var(--danger-bg); }
         .clear-packs-btn svg { width:12px; height:12px; }
 
-        .picker-search {
-            padding:10px 16px; border-bottom:1px solid var(--border);
-            background:var(--surface-raised); flex-shrink:0;
-        }
+        .picker-search { padding:10px 16px; border-bottom:1px solid var(--border); background:var(--surface-raised); flex-shrink:0; }
         .picker-search-wrapper { position:relative; }
         .picker-search input {
-            width:100%; padding:8px 12px 8px 34px;
-            border-radius:var(--radius-sm);
-            border:1.5px solid var(--border-strong);
-            background:var(--surface); color:var(--text-1);
-            font-size:13px; outline:none; font-family:inherit;
-            transition:all var(--transition);
-            user-select:text; -webkit-user-select:text;
+            width:100%; padding:8px 12px 8px 34px; border-radius:var(--radius-sm);
+            border:1.5px solid var(--border-strong); background:var(--surface);
+            color:var(--text-1); font-size:13px; outline:none; font-family:inherit;
+            transition:all var(--transition); user-select:text; -webkit-user-select:text;
         }
-        .picker-search input:focus {
-            border-color:var(--accent);
-            box-shadow:0 0 0 3px var(--accent-glow);
-        }
+        .picker-search input:focus { border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-glow); }
         .picker-search input::placeholder { color:var(--text-3); }
-        .picker-search-icon {
-            position:absolute; left:10px; top:50%;
-            transform:translateY(-50%); color:var(--text-3); pointer-events:none;
-        }
+        .picker-search-icon { position:absolute; left:10px; top:50%; transform:translateY(-50%); color:var(--text-3); pointer-events:none; }
         .picker-search-icon svg { width:14px; height:14px; }
 
         .picker-body { flex:1; overflow-y:auto; padding:14px 16px; }
         .pack-section { margin-bottom:22px; animation:fadeInUp .3s ease both; }
         @keyframes fadeInUp {
-            from { opacity:0; transform:translateY(8px); }
-            to   { opacity:1; transform:translateY(0); }
+            from{opacity:0;transform:translateY(8px)}
+            to{opacity:1;transform:translateY(0)}
         }
         .pack-title-bar {
             display:flex; justify-content:space-between; align-items:center;
@@ -416,19 +319,12 @@ wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;
             left:-16px; right:-16px; height:14px; background:var(--surface);
         }
         .pack-title-left { display:flex; align-items:center; gap:8px; }
-        .pack-title {
-            font-size:11px; font-weight:700; text-transform:uppercase;
-            letter-spacing:1px; color:var(--text-3);
-        }
-        .pack-title-count {
-            font-size:10px; color:var(--text-3); background:var(--toolbar-btn);
-            padding:1px 6px; border-radius:20px; font-weight:600;
-        }
+        .pack-title { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--text-3); }
+        .pack-title-count { font-size:10px; color:var(--text-3); background:var(--toolbar-btn); padding:1px 6px; border-radius:20px; font-weight:600; }
         .pack-actions { display:flex; gap:5px; }
-        .view-pack-btn, .remove-pack-btn {
-            font-size:11px; font-weight:600; padding:4px 8px;
-            border-radius:6px; cursor:pointer;
-            transition:all var(--transition); border:none;
+        .view-pack-btn,.remove-pack-btn {
+            font-size:11px; font-weight:600; padding:4px 8px; border-radius:6px;
+            cursor:pointer; transition:all var(--transition); border:none;
             display:flex; align-items:center; gap:3px;
         }
         .view-pack-btn { color:var(--accent); background:var(--toolbar-hover); }
@@ -438,43 +334,26 @@ wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;
         .remove-pack-btn:hover { color:var(--danger); background:var(--danger-bg); }
         .remove-pack-btn svg { width:11px; height:11px; }
 
-        .emoji-grid {
-            display:grid; grid-template-columns:repeat(8,1fr); gap:4px;
-        }
+        .emoji-grid { display:grid; grid-template-columns:repeat(8,1fr); gap:4px; }
         .emoji-grid-item {
-            position:relative; width:100%; aspect-ratio:1;
-            cursor:pointer; border-radius:var(--radius-sm);
-            border:1px solid transparent; background:transparent;
-            display:flex; align-items:center; justify-content:center;
-            transition:all .15s cubic-bezier(.34,1.56,.64,1);
-            overflow:hidden; outline:none;
-            -webkit-tap-highlight-color:transparent;
+            position:relative; width:100%; aspect-ratio:1; cursor:pointer;
+            border-radius:var(--radius-sm); border:1px solid transparent;
+            background:transparent; display:flex; align-items:center; justify-content:center;
+            transition:all .15s cubic-bezier(.34,1.56,.64,1); overflow:hidden;
+            outline:none; -webkit-tap-highlight-color:transparent;
         }
-        .emoji-grid-item:hover {
-            transform:scale(1.2); background:var(--toolbar-hover);
-            border-color:var(--border);
-            box-shadow:0 4px 12px rgba(0,0,0,.12); z-index:2;
-        }
+        .emoji-grid-item:hover { transform:scale(1.2); background:var(--toolbar-hover); border-color:var(--border); box-shadow:0 4px 12px rgba(0,0,0,.12); z-index:2; }
         .emoji-grid-item:active { transform:scale(.93); }
-        .emoji-grid-item img,
-        .emoji-grid-item video {
-            width:32px; height:32px; object-fit:contain;
-            display:block; pointer-events:none;
-        }
+        .emoji-grid-item img,.emoji-grid-item video { width:32px; height:32px; object-fit:contain; display:block; pointer-events:none; }
         .skeleton-item {
             width:100%; aspect-ratio:1; border-radius:var(--radius-sm);
-            background:linear-gradient(90deg,
-                var(--border) 25%,var(--toolbar-btn) 50%,var(--border) 75%);
-            background-size:200% 100%;
-            animation:shimmer 1.4s infinite;
+            background:linear-gradient(90deg,var(--border) 25%,var(--toolbar-btn) 50%,var(--border) 75%);
+            background-size:200% 100%; animation:shimmer 1.4s infinite;
         }
-        @keyframes shimmer {
-            0%   { background-position:200% 0; }
-            100% { background-position:-200% 0; }
-        }
+        @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+
         .picker-tabs {
-            display:flex; overflow-x:auto;
-            background:var(--surface-raised);
+            display:flex; overflow-x:auto; background:var(--surface-raised);
             padding:8px 12px; gap:6px; align-items:center;
             border-top:1px solid var(--border); flex-shrink:0;
         }
@@ -489,42 +368,28 @@ wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;
             -webkit-tap-highlight-color:transparent;
         }
         .pack-tab:hover { opacity:.85; transform:translateY(-2px); }
-        .pack-tab.active {
-            opacity:1; border-color:var(--accent); color:var(--accent);
-            background:var(--toolbar-hover);
-            box-shadow:0 2px 8px var(--accent-glow);
-        }
-        .pack-tab img {
-            width:22px; height:22px; object-fit:contain; pointer-events:none;
-        }
-        .status-text {
-            color:var(--text-3); font-size:13px; text-align:center;
-            margin-top:40px; line-height:1.8;
-        }
-        .status-text svg {
-            display:block; margin:0 auto 12px;
-            width:36px; height:36px; opacity:.3;
-        }
+        .pack-tab.active { opacity:1; border-color:var(--accent); color:var(--accent); background:var(--toolbar-hover); box-shadow:0 2px 8px var(--accent-glow); }
+        .pack-tab img { width:22px; height:22px; object-fit:contain; pointer-events:none; }
+
+        .status-text { color:var(--text-3); font-size:13px; text-align:center; margin-top:40px; line-height:1.8; }
+        .status-text svg { display:block; margin:0 auto 12px; width:36px; height:36px; opacity:.3; }
         .error-banner {
-            background:var(--danger-bg); color:var(--danger);
-            padding:10px 14px; border-radius:var(--radius-sm);
-            font-size:12px; font-weight:600;
+            background:var(--danger-bg); color:var(--danger); padding:10px 14px;
+            border-radius:var(--radius-sm); font-size:12px; font-weight:600;
             display:flex; align-items:center; gap:8px;
             grid-column:span 8; border:1px solid rgba(239,68,68,.2);
         }
         .error-banner svg { width:14px; height:14px; flex-shrink:0; }
         .retry-btn {
-            background:var(--danger); color:#fff; border:none;
-            padding:4px 10px; border-radius:6px; font-size:11px;
-            font-weight:600; cursor:pointer; margin-left:auto;
-            font-family:inherit;
+            background:var(--danger); color:#fff; border:none; padding:4px 10px;
+            border-radius:6px; font-size:11px; font-weight:600; cursor:pointer;
+            margin-left:auto; font-family:inherit;
         }
 
-        /* ── Modals ── */
+        /* Modals */
         .modal-overlay {
-            position:fixed; inset:0; background:var(--modal-overlay);
-            z-index:1000; display:none; justify-content:center;
-            align-items:center;
+            position:fixed; inset:0; background:var(--modal-overlay); z-index:1000;
+            display:none; justify-content:center; align-items:center;
             backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
             opacity:0; transition:opacity .2s ease;
         }
@@ -537,75 +402,47 @@ wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;
             transform:scale(.94) translateY(10px);
             transition:transform .25s cubic-bezier(.34,1.56,.64,1);
         }
-        .modal-overlay.visible .modal-content {
-            transform:scale(1) translateY(0);
-        }
-        .modal-header {
-            padding:20px 22px 0;
-            display:flex; justify-content:space-between; align-items:center;
-        }
-        .modal-header h3 {
-            font-size:17px; font-weight:700; color:var(--text-1);
-            display:flex; align-items:center; gap:8px;
-        }
+        .modal-overlay.visible .modal-content { transform:scale(1) translateY(0); }
+        .modal-header { padding:20px 22px 0; display:flex; justify-content:space-between; align-items:center; }
+        .modal-header h3 { font-size:17px; font-weight:700; color:var(--text-1); display:flex; align-items:center; gap:8px; }
         .modal-header h3 svg { width:18px; height:18px; color:var(--accent); }
-        .modal-subtitle {
-            font-size:12.5px; color:var(--text-2); padding:6px 22px 0;
-        }
+        .modal-subtitle { font-size:12.5px; color:var(--text-2); padding:6px 22px 0; }
         .close-modal-btn {
             background:var(--toolbar-btn); border:1px solid var(--border);
             width:30px; height:30px; border-radius:8px; color:var(--text-2);
-            cursor:pointer; display:flex; align-items:center;
-            justify-content:center; transition:all var(--transition);
+            cursor:pointer; display:flex; align-items:center; justify-content:center;
+            transition:all var(--transition);
         }
-        .close-modal-btn:hover {
-            color:var(--text-1); border-color:var(--border-strong);
-        }
+        .close-modal-btn:hover { color:var(--text-1); border-color:var(--border-strong); }
         .close-modal-btn svg { width:14px; height:14px; }
         .modal-body { padding:18px 22px 22px; }
         .input-group { display:flex; gap:8px; margin-bottom:14px; }
         .pack-input {
             flex:1; padding:11px 14px; border-radius:var(--radius-sm);
-            border:1.5px solid var(--border-strong);
-            background:var(--surface-raised); color:var(--text-1);
-            outline:none; font-size:14px; font-family:inherit;
-            transition:all var(--transition);
-            user-select:text; -webkit-user-select:text;
+            border:1.5px solid var(--border-strong); background:var(--surface-raised);
+            color:var(--text-1); outline:none; font-size:14px; font-family:inherit;
+            transition:all var(--transition); user-select:text; -webkit-user-select:text;
         }
         .pack-input::placeholder { color:var(--text-3); }
-        .pack-input:focus {
-            border-color:var(--accent);
-            box-shadow:0 0 0 3px var(--accent-glow);
-        }
+        .pack-input:focus { border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-glow); }
         .paste-btn {
-            background:var(--toolbar-btn);
-            border:1.5px solid var(--border-strong);
-            border-radius:var(--radius-sm); padding:0 13px;
-            cursor:pointer; color:var(--text-2);
-            transition:all var(--transition);
-            display:flex; align-items:center;
+            background:var(--toolbar-btn); border:1.5px solid var(--border-strong);
+            border-radius:var(--radius-sm); padding:0 13px; cursor:pointer;
+            color:var(--text-2); transition:all var(--transition); display:flex; align-items:center;
         }
-        .paste-btn:hover {
-            background:var(--toolbar-hover); color:var(--accent);
-            border-color:var(--accent);
-        }
+        .paste-btn:hover { background:var(--toolbar-hover); color:var(--accent); border-color:var(--accent); }
         .btn-full {
             width:100%; padding:12px;
             background:linear-gradient(135deg,var(--accent),var(--accent-2));
-            color:#fff; border:none; border-radius:var(--radius-sm);
-            cursor:pointer; font-weight:700; font-size:14px;
-            font-family:inherit; box-shadow:0 4px 12px var(--accent-glow);
-            transition:all var(--transition); letter-spacing:.2px;
+            color:#fff; border:none; border-radius:var(--radius-sm); cursor:pointer;
+            font-weight:700; font-size:14px; font-family:inherit;
+            box-shadow:0 4px 12px var(--accent-glow); transition:all var(--transition); letter-spacing:.2px;
         }
-        .btn-full:hover {
-            transform:translateY(-1px);
-            box-shadow:0 6px 18px var(--accent-glow);
-        }
+        .btn-full:hover { transform:translateY(-1px); box-shadow:0 6px 18px var(--accent-glow); }
 
-        /* ════════════════════════════════════════════════
-           IMPORT HTML MODAL  — special wide modal with
-           a dark code editor textarea
-        ════════════════════════════════════════════════ */
+        /* ═══════════════════════════════════════════
+           IMPORT HTML MODAL — code editor UI
+        ═══════════════════════════════════════════ */
         .import-modal-content {
             background:var(--surface); border-radius:var(--radius-xl);
             width:95%; max-width:680px; box-shadow:var(--shadow-lg);
@@ -614,77 +451,50 @@ wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;
             transition:transform .25s cubic-bezier(.34,1.56,.64,1);
             display:flex; flex-direction:column;
         }
-        .modal-overlay.visible .import-modal-content {
-            transform:scale(1) translateY(0);
-        }
+        .modal-overlay.visible .import-modal-content { transform:scale(1) translateY(0); }
 
-        /* Code editor area */
         .code-editor-wrap {
-            position:relative;
-            margin:0 22px 16px;
-            border-radius:var(--radius-md);
-            overflow:hidden;
+            position:relative; margin:0 22px 16px;
+            border-radius:var(--radius-md); overflow:hidden;
             border:1.5px solid var(--code-border);
             box-shadow:0 8px 32px rgba(0,0,0,.4);
         }
-
-        /* Top bar of the fake code window */
         .code-editor-topbar {
-            background:var(--code-surface);
-            padding:10px 14px;
-            display:flex;
-            align-items:center;
-            gap:10px;
-            border-bottom:1px solid var(--code-border);
-            flex-shrink:0;
+            background:var(--code-surface); padding:10px 14px;
+            display:flex; align-items:center; gap:10px;
+            border-bottom:1px solid var(--code-border); flex-shrink:0;
         }
-        .code-dots {
-            display:flex; gap:6px;
-        }
-        .code-dot {
-            width:12px; height:12px; border-radius:50%;
-        }
+        .code-dots { display:flex; gap:6px; }
+        .code-dot { width:12px; height:12px; border-radius:50%; }
         .code-dot.red    { background:#ff5f57; }
         .code-dot.yellow { background:#febc2e; }
         .code-dot.green  { background:#28c840; }
         .code-topbar-label {
-            font-family:'JetBrains Mono',monospace;
-            font-size:11px; color:var(--code-comment);
-            flex:1; text-align:center; letter-spacing:.5px;
+            font-family:'JetBrains Mono',monospace; font-size:11px;
+            color:var(--code-comment); flex:1; text-align:center; letter-spacing:.5px;
         }
-        .code-topbar-actions {
-            display:flex; gap:8px;
-        }
+        .code-topbar-actions { display:flex; gap:8px; }
         .code-topbar-btn {
-            background:rgba(255,255,255,.06);
-            border:1px solid var(--code-border);
-            color:var(--code-comment);
-            border-radius:6px;
-            padding:3px 9px;
-            font-size:11px;
-            font-family:'JetBrains Mono',monospace;
-            cursor:pointer;
-            transition:all var(--transition);
-            display:flex; align-items:center; gap:5px;
+            background:rgba(255,255,255,.06); border:1px solid var(--code-border);
+            color:var(--code-comment); border-radius:6px; padding:3px 9px;
+            font-size:11px; font-family:'JetBrains Mono',monospace; cursor:pointer;
+            transition:all var(--transition); display:flex; align-items:center; gap:5px;
         }
-        .code-topbar-btn:hover {
-            color:var(--code-text);
-            background:rgba(255,255,255,.1);
-            border-color:rgba(255,255,255,.2);
-        }
+        .code-topbar-btn:hover { color:var(--code-text); background:rgba(255,255,255,.1); border-color:rgba(255,255,255,.2); }
         .code-topbar-btn svg { width:12px; height:12px; }
 
-        /* Line numbers + textarea wrapper */
+        /* Code editor body: line numbers + textarea side by side */
         .code-editor-body {
-            display:flex;
-            background:var(--code-bg);
-            min-height:260px;
-            max-height:45vh;
-            overflow:hidden;
+            display:flex; background:var(--code-bg);
+            min-height:260px; max-height:45vh; overflow:hidden;
         }
+
+        /* LINE NUMBERS — fixed width, vertical layout */
         .code-line-nums {
+            width:48px;
+            min-width:48px;
+            flex-shrink:0;
             padding:14px 0;
-            min-width:44px;
             background:var(--code-surface);
             border-right:1px solid var(--code-border);
             font-family:'JetBrains Mono',monospace;
@@ -692,171 +502,104 @@ wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;
             line-height:1.65;
             color:var(--code-line-num);
             text-align:right;
-            padding-right:12px;
-            padding-left:8px;
+            padding-right:10px;
+            padding-left:6px;
             user-select:none;
+            -webkit-user-select:none;
             overflow:hidden;
-            flex-shrink:0;
-        }
-        .code-textarea {
-            flex:1;
-            background:transparent;
-            border:none;
-            outline:none;
-            resize:none;
-            padding:14px 16px;
-            font-family:'JetBrains Mono',monospace;
-            font-size:13px;
-            line-height:1.65;
-            color:var(--code-text);
-            caret-color:var(--accent);
-            overflow-y:auto;
-            tab-size:2;
-            /* allow text selection in textarea */
-            user-select:text;
-            -webkit-user-select:text;
-            spellcheck:false;
-        }
-        .code-textarea::placeholder {
-            color:var(--code-line-num);
-            font-style:italic;
-        }
-        .code-textarea::-webkit-scrollbar { width:4px; }
-        .code-textarea::-webkit-scrollbar-track { background:transparent; }
-        .code-textarea::-webkit-scrollbar-thumb {
-            background:var(--code-border); border-radius:4px;
+            /* Critical: keep each number on its own line */
+            white-space:pre;
+            word-break:keep-all;
+            overflow-wrap:normal;
         }
 
-        /* Code editor status bar */
+        .code-textarea {
+            flex:1; min-width:0;
+            background:transparent; border:none; outline:none; resize:none;
+            padding:14px 16px;
+            font-family:'JetBrains Mono',monospace; font-size:13px; line-height:1.65;
+            color:var(--code-text); caret-color:var(--accent);
+            overflow-y:auto; tab-size:2;
+            user-select:text; -webkit-user-select:text;
+            white-space:pre;        /* keep user formatting */
+            overflow-x:auto;
+        }
+        .code-textarea::placeholder { color:var(--code-line-num); font-style:italic; white-space:pre-wrap; }
+        .code-textarea::-webkit-scrollbar { width:4px; height:4px; }
+        .code-textarea::-webkit-scrollbar-track { background:transparent; }
+        .code-textarea::-webkit-scrollbar-thumb { background:var(--code-border); border-radius:4px; }
+
         .code-editor-statusbar {
-            background:var(--code-surface);
-            border-top:1px solid var(--code-border);
-            padding:6px 14px;
-            display:flex;
-            justify-content:space-between;
-            align-items:center;
-            font-family:'JetBrains Mono',monospace;
-            font-size:11px;
-            color:var(--code-comment);
+            background:var(--code-surface); border-top:1px solid var(--code-border);
+            padding:6px 14px; display:flex; justify-content:space-between;
+            align-items:center; font-family:'JetBrains Mono',monospace;
+            font-size:11px; color:var(--code-comment);
         }
         .code-status-left { display:flex; gap:14px; align-items:center; }
         .code-status-badge {
-            background:rgba(79,142,247,.15);
-            color:#4f8ef7;
-            border-radius:4px;
-            padding:1px 7px;
-            font-size:10px;
-            font-weight:600;
-            letter-spacing:.5px;
+            background:rgba(79,142,247,.15); color:#4f8ef7;
+            border-radius:4px; padding:1px 7px; font-size:10px;
+            font-weight:600; letter-spacing:.5px;
         }
         .code-status-right { display:flex; gap:10px; }
 
-        /* Import action buttons row */
-        .import-btn-row {
-            display:flex;
-            gap:10px;
-            padding:0 22px 22px;
-        }
-        .btn-import-cancel {
-            flex:1; padding:11px;
-            background:var(--toolbar-btn);
-            color:var(--text-2);
-            border:1.5px solid var(--border-strong);
-            border-radius:var(--radius-sm);
-            cursor:pointer; font-weight:600; font-size:14px;
-            font-family:inherit; transition:all var(--transition);
-        }
-        .btn-import-cancel:hover {
-            background:var(--border); color:var(--text-1);
-        }
-        .btn-import-confirm {
-            flex:2; padding:11px;
-            background:linear-gradient(135deg,var(--accent),var(--accent-2));
-            color:#fff; border:none;
-            border-radius:var(--radius-sm);
-            cursor:pointer; font-weight:700; font-size:14px;
-            font-family:inherit;
-            box-shadow:0 4px 12px var(--accent-glow);
-            transition:all var(--transition);
-            display:flex; align-items:center; justify-content:center; gap:8px;
-        }
-        .btn-import-confirm:hover {
-            transform:translateY(-1px);
-            box-shadow:0 6px 18px var(--accent-glow);
-        }
-        .btn-import-confirm svg { width:16px; height:16px; }
-
-        /* Import mode radio pills */
-        .import-mode-row {
-            display:flex;
-            gap:8px;
-            padding:0 22px 16px;
-        }
+        /* Import mode pills */
+        .import-mode-row { display:flex; gap:8px; padding:0 22px 16px; }
         .import-mode-pill {
-            flex:1;
-            padding:8px 10px;
-            border-radius:var(--radius-sm);
-            border:1.5px solid var(--border-strong);
-            background:var(--surface-raised);
-            color:var(--text-2);
-            font-size:12px;
-            font-weight:600;
-            cursor:pointer;
-            text-align:center;
-            transition:all var(--transition);
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            gap:6px;
+            flex:1; padding:8px 10px; border-radius:var(--radius-sm);
+            border:1.5px solid var(--border-strong); background:var(--surface-raised);
+            color:var(--text-2); font-size:12px; font-weight:600; cursor:pointer;
+            text-align:center; transition:all var(--transition);
+            display:flex; align-items:center; justify-content:center; gap:6px;
             font-family:inherit;
         }
         .import-mode-pill svg { width:13px; height:13px; }
-        .import-mode-pill.active {
-            border-color:var(--accent);
-            background:var(--toolbar-hover);
-            color:var(--accent);
-            box-shadow:0 0 0 3px var(--accent-glow);
+        .import-mode-pill.active { border-color:var(--accent); background:var(--toolbar-hover); color:var(--accent); box-shadow:0 0 0 3px var(--accent-glow); }
+        .import-mode-pill:hover:not(.active) { border-color:var(--border-strong); background:var(--border); color:var(--text-1); }
+
+        /* Import action buttons */
+        .import-btn-row { display:flex; gap:10px; padding:0 22px 22px; }
+        .btn-import-cancel {
+            flex:1; padding:11px; background:var(--toolbar-btn); color:var(--text-2);
+            border:1.5px solid var(--border-strong); border-radius:var(--radius-sm);
+            cursor:pointer; font-weight:600; font-size:14px; font-family:inherit;
+            transition:all var(--transition);
         }
-        .import-mode-pill:hover:not(.active) {
-            border-color:var(--border-strong);
-            background:var(--border);
-            color:var(--text-1);
+        .btn-import-cancel:hover { background:var(--border); color:var(--text-1); }
+        .btn-import-confirm {
+            flex:2; padding:11px;
+            background:linear-gradient(135deg,var(--accent),var(--accent-2));
+            color:#fff; border:none; border-radius:var(--radius-sm);
+            cursor:pointer; font-weight:700; font-size:14px; font-family:inherit;
+            box-shadow:0 4px 12px var(--accent-glow); transition:all var(--transition);
+            display:flex; align-items:center; justify-content:center; gap:8px;
         }
+        .btn-import-confirm:hover { transform:translateY(-1px); box-shadow:0 6px 18px var(--accent-glow); }
+        .btn-import-confirm svg { width:16px; height:16px; }
 
         /* Confirm dialog */
         .confirm-overlay {
-            position:fixed; inset:0; background:var(--modal-overlay);
-            z-index:2000; display:none; justify-content:center;
-            align-items:center; backdrop-filter:blur(4px);
+            position:fixed; inset:0; background:var(--modal-overlay); z-index:2000;
+            display:none; justify-content:center; align-items:center; backdrop-filter:blur(4px);
         }
         .confirm-overlay.active { display:flex; }
         .confirm-box {
-            background:var(--surface); border-radius:var(--radius-lg);
-            padding:24px; width:88%; max-width:300px;
-            box-shadow:var(--shadow-lg); border:1px solid var(--border-strong);
-            text-align:center;
+            background:var(--surface); border-radius:var(--radius-lg); padding:24px;
+            width:88%; max-width:300px; box-shadow:var(--shadow-lg);
+            border:1px solid var(--border-strong); text-align:center;
         }
         .confirm-icon { font-size:32px; margin-bottom:12px; }
-        .confirm-box h4 {
-            font-size:15px; font-weight:700; margin-bottom:6px; color:var(--text-1);
-        }
-        .confirm-box p {
-            font-size:13px; color:var(--text-2);
-            margin-bottom:18px; line-height:1.5;
-        }
+        .confirm-box h4 { font-size:15px; font-weight:700; margin-bottom:6px; color:var(--text-1); }
+        .confirm-box p  { font-size:13px; color:var(--text-2); margin-bottom:18px; line-height:1.5; }
         .confirm-btns { display:flex; gap:10px; }
         .confirm-btns button {
             flex:1; padding:10px; border-radius:var(--radius-sm);
             font-weight:600; font-size:13.5px; font-family:inherit;
-            cursor:pointer; transition:all var(--transition);
-            border:1px solid var(--border-strong);
+            cursor:pointer; transition:all var(--transition); border:1px solid var(--border-strong);
         }
         .confirm-cancel { background:var(--toolbar-btn); color:var(--text-2); }
         .confirm-cancel:hover { background:var(--border); }
-        .confirm-ok {
-            background:var(--danger)!important;
-            color:#fff!important; border-color:transparent!important;
-        }
+        .confirm-ok { background:var(--danger)!important; color:#fff!important; border-color:transparent!important; }
         .confirm-ok:hover { opacity:.88; }
 
         /* Toast */
@@ -872,23 +615,15 @@ wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;
         }
         .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
 
-        @keyframes spin { to { transform:rotate(360deg); } }
+        @keyframes spin { to{transform:rotate(360deg)} }
 
-        /* ── Responsive ── */
-        @media (max-width:768px) {
-            .main-wrapper {
-                flex-direction:column; padding:0; gap:0;
-                height:100vh; height:100dvh;
-            }
+        /* Responsive */
+        @media(max-width:768px) {
+            .main-wrapper { flex-direction:column; padding:0; gap:0; height:100vh; height:100dvh; }
             body::before { display:none; }
             .left-column { flex:0 0 auto; gap:0; }
-            .top-header-card {
-                border-radius:0; border:none;
-                border-bottom:1px solid var(--border);
-                padding:10px 14px; box-shadow:none; animation:none;
-            }
-            .user-avatar,
-            .user-avatar-placeholder { width:36px; height:36px; font-size:14px; }
+            .top-header-card { border-radius:0; border:none; border-bottom:1px solid var(--border); padding:10px 14px; box-shadow:none; animation:none; }
+            .user-avatar,.user-avatar-placeholder { width:36px; height:36px; font-size:14px; }
             .app-title { display:none; }
             .greeting-line { font-size:13px; }
             .btn-copy-html .btn-label { display:none; }
@@ -897,37 +632,25 @@ wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;
             .btn-clear-text { padding:0 10px; }
             .btn-import-html .lbl { display:none; }
             .btn-import-html { padding:0 10px; }
-            .editor-container {
-                flex:0 0 38vh; border-radius:0; border:none;
-                border-bottom:1px solid var(--border);
-                box-shadow:none; animation:none;
-            }
-            .toolbar {
-                padding:6px 10px; gap:2px;
-                overflow-x:auto; flex-wrap:nowrap;
-            }
+            .editor-container { flex:0 0 38vh; border-radius:0; border:none; border-bottom:1px solid var(--border); box-shadow:none; animation:none; }
+            .toolbar { padding:6px 10px; gap:2px; overflow-x:auto; flex-wrap:nowrap; }
             .toolbar::-webkit-scrollbar { display:none; }
             .toolbar-btn { width:32px; height:32px; flex-shrink:0; }
             .toolbar-btn[title]:hover::after { display:none; }
             .editor { padding:14px 16px; font-size:14px; }
-            .emoji-picker-wrapper {
-                width:100%; flex:1; border-radius:0;
-                border:none; box-shadow:none; animation:none;
-            }
+            .emoji-picker-wrapper { width:100%; flex:1; border-radius:0; border:none; box-shadow:none; animation:none; }
             .emoji-grid { grid-template-columns:repeat(7,1fr); gap:3px; }
             .picker-header { padding:10px 14px; }
-            /* Import modal full width on mobile */
-            .import-modal-content { width:100%; max-width:100%;
+            .import-modal-content {
+                width:100%; max-width:100%;
                 border-radius:var(--radius-lg) var(--radius-lg) 0 0;
                 position:fixed; bottom:0; left:0; right:0;
                 transform:translateY(100%)!important;
             }
-            .modal-overlay.visible .import-modal-content {
-                transform:translateY(0)!important;
-            }
-            .code-editor-body { min-height:200px; max-height:35vh; }
+            .modal-overlay.visible .import-modal-content { transform:translateY(0)!important; }
+            .code-editor-body { min-height:180px; max-height:32vh; }
         }
-        @media (max-width:380px) {
+        @media(max-width:380px) {
             .emoji-grid { grid-template-columns:repeat(6,1fr); }
         }
     </style>
@@ -951,44 +674,24 @@ wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;
           <span class="app-title">Poozter Editor</span>
           <div class="greeting-line">
             <span id="greeting-text" class="greeting-text">Welcome,</span>
-            <span id="user-name"     class="user-name-text">Creator</span>
+            <span id="user-name" class="user-name-text">Creator</span>
           </div>
         </div>
       </div>
       <div class="header-actions">
-        <!-- Theme -->
         <button class="icon-btn" onclick="toggleTheme()" title="Toggle theme">
-          <svg id="themeIcon" viewBox="0 0 24 24" fill="none"
-               stroke="currentColor" stroke-width="2"
-               stroke-linecap="round" stroke-linejoin="round"></svg>
+          <svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></svg>
         </button>
-        <!-- Clear -->
         <button class="btn-clear-text" onclick="clearEditorText()" title="Clear editor">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-               stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="3 6 5 6 21 6"/>
-            <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
-            <path d="M10 11v6M14 11v6"/>
-          </svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
           <span class="lbl">Clear</span>
         </button>
-        <!-- Import HTML -->
         <button class="btn-import-html" onclick="openImportModal()" title="Import HTML">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-               stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="16 16 12 20 8 16"/>
-            <line x1="12" y1="20" x2="12" y2="4"/>
-            <path d="M20 16V20a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-4"/>
-          </svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 16 12 20 8 16"/><line x1="12" y1="20" x2="12" y2="4"/><path d="M20 16V20a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-4"/></svg>
           <span class="lbl">Import</span>
         </button>
-        <!-- Copy HTML -->
         <button class="btn-copy-html" id="copyBtn" onclick="copyHTML()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-               stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
-            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
-          </svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
           <span class="btn-label">Copy HTML</span>
         </button>
       </div>
@@ -997,13 +700,13 @@ wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;
     <!-- Editor -->
     <div class="editor-container">
       <div class="toolbar">
-        <button class="toolbar-btn" onclick="fmt('bold')"          title="Bold (Ctrl+B)">
+        <button class="toolbar-btn" onclick="fmt('bold')" title="Bold (Ctrl+B)">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4h8a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"/><path d="M6 12h9a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"/></svg>
         </button>
-        <button class="toolbar-btn" onclick="fmt('italic')"        title="Italic (Ctrl+I)">
+        <button class="toolbar-btn" onclick="fmt('italic')" title="Italic (Ctrl+I)">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="4" x2="10" y2="4"/><line x1="14" y1="20" x2="5" y2="20"/><line x1="15" y1="4" x2="9" y2="20"/></svg>
         </button>
-        <button class="toolbar-btn" onclick="fmt('underline')"     title="Underline (Ctrl+U)">
+        <button class="toolbar-btn" onclick="fmt('underline')" title="Underline (Ctrl+U)">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3v7a6 6 0 0 0 6 6 6 6 0 0 0 6-6V3"/><line x1="4" y1="21" x2="20" y2="21"/></svg>
         </button>
         <button class="toolbar-btn" onclick="fmt('strikeThrough')" title="Strikethrough (Ctrl+Shift+X)">
@@ -1013,44 +716,37 @@ wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;
         <button class="toolbar-btn" onclick="wrapBlock('blockquote')" title="Blockquote (Ctrl+Shift+.)">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z"/><path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z"/></svg>
         </button>
-        <button class="toolbar-btn" onclick="wrapBlock('code')"       title="Monospace (Ctrl+Shift+M)">
+        <button class="toolbar-btn" onclick="wrapBlock('code')" title="Monospace (Ctrl+Shift+M)">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
         </button>
         <button class="toolbar-btn" onclick="wrapBlock('tg-spoiler')" title="Spoiler (Ctrl+Shift+P)">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
         </button>
         <div class="toolbar-divider"></div>
-        <button class="toolbar-btn" onclick="openLinkModal()"        title="Link (Ctrl+K)">
+        <button class="toolbar-btn" onclick="openLinkModal()" title="Link (Ctrl+K)">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
         </button>
-        <button class="toolbar-btn" onclick="insertDate()"           title="Insert Date (Ctrl+Shift+D)">
+        <button class="toolbar-btn" onclick="insertDate()" title="Insert Date (Ctrl+Shift+D)">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
         </button>
-        <button class="toolbar-btn" onclick="clearFormat()"          title="Clear Format (Ctrl+Shift+N)">
+        <button class="toolbar-btn" onclick="clearFormat()" title="Clear Format (Ctrl+Shift+N)">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/><line x1="2" y1="2" x2="22" y2="22"/></svg>
         </button>
       </div>
 
-      <div class="editor" id="editor"
-           contenteditable="true"
-           placeholder="Type your message here…"
-           spellcheck="true"></div>
+      <div class="editor" id="editor" contenteditable="true"
+           placeholder="Type your message here…" spellcheck="true"></div>
 
       <div class="editor-footer">
         <div class="save-status" id="saveStatus">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-               stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
-               style="width:12px;height:12px">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px">
             <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
-            <polyline points="17 21 17 13 7 13 7 21"/>
-            <polyline points="7 3 7 8 15 8"/>
+            <polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/>
           </svg>
           Draft saved
         </div>
         <div class="char-info">
-          <div class="char-progress">
-            <div class="char-progress-fill" id="charFill"></div>
-          </div>
+          <div class="char-progress"><div class="char-progress-fill" id="charFill"></div></div>
           <div class="char-counter" id="charCounter">0 / 1024</div>
         </div>
       </div>
@@ -1061,31 +757,16 @@ wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;
   <div class="emoji-picker-wrapper">
     <div class="picker-header">
       <div class="picker-header-title">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="10"/>
-          <path d="M8 14s1.5 2 4 2 4-2 4-2"/>
-          <line x1="9"  y1="9" x2="9.01"  y2="9"/>
-          <line x1="15" y1="9" x2="15.01" y2="9"/>
-        </svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
         Stickers & Emoji
       </div>
       <div class="header-btn-group">
         <button class="btn-add-pack" onclick="openAddModal()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-               stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="12" y1="5" x2="12" y2="19"/>
-            <line x1="5"  y1="12" x2="19" y2="12"/>
-          </svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
           Add Pack
         </button>
         <button class="clear-packs-btn" onclick="clearAllData()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-               stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="3 6 5 6 21 6"/>
-            <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
-            <path d="M10 11v6M14 11v6"/>
-          </svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
           Clear
         </button>
       </div>
@@ -1093,26 +774,14 @@ wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;
     <div class="picker-search">
       <div class="picker-search-wrapper">
         <div class="picker-search-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-               stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="11" cy="11" r="8"/>
-            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
-          </svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
         </div>
-        <input type="text" id="emojiSearch"
-               placeholder="Search packs…"
-               oninput="filterPacks(this.value)">
+        <input type="text" id="emojiSearch" placeholder="Search packs…" oninput="filterPacks(this.value)">
       </div>
     </div>
     <div class="picker-body" id="pickerBody">
       <div id="welcomeText" class="status-text" style="display:none">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-             stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="10"/>
-          <path d="M8 14s1.5 2 4 2 4-2 4-2"/>
-          <line x1="9"  y1="9" x2="9.01"  y2="9"/>
-          <line x1="15" y1="9" x2="15.01" y2="9"/>
-        </svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
         No packs added yet.<br>Tap <strong>Add Pack</strong> to get started.
       </div>
     </div>
@@ -1121,40 +790,23 @@ wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;
 </div>
 
 <!-- Add Pack Modal -->
-<div class="modal-overlay" id="addPackModal"
-     onclick="handleOverlayClick(event,'addPackModal')">
+<div class="modal-overlay" id="addPackModal" onclick="handleOverlayClick(event,'addPackModal')">
   <div class="modal-content">
     <div class="modal-header">
       <h3>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="3" y="3" width="18" height="18" rx="2"/>
-          <line x1="12" y1="8" x2="12" y2="16"/>
-          <line x1="8"  y1="12" x2="16" y2="12"/>
-        </svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
         Add Emoji Pack
       </h3>
       <button class="close-modal-btn" onclick="closeModal('addPackModal')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-             stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="18" y1="6" x2="6" y2="18"/>
-          <line x1="6"  y1="6" x2="18" y2="18"/>
-        </svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
     </div>
     <p class="modal-subtitle">Enter a pack name or paste a t.me link</p>
     <div class="modal-body">
       <div class="input-group">
-        <input class="pack-input" type="text" id="packInput"
-               placeholder="e.g. NewsEmoji or t.me/addemoji/…"
-               onkeypress="if(event.key==='Enter')addNewPack()">
+        <input class="pack-input" type="text" id="packInput" placeholder="e.g. NewsEmoji or t.me/addemoji/…" onkeypress="if(event.key==='Enter')addNewPack()">
         <button class="paste-btn" onclick="pasteClip('packInput')" title="Paste">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-               stroke="currentColor" stroke-width="2"
-               stroke-linecap="round" stroke-linejoin="round">
-            <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
-            <rect x="8" y="2" width="8" height="4" rx="1" ry="1"/>
-          </svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>
         </button>
       </div>
       <button class="btn-full" onclick="addNewPack()">Add Pack</button>
@@ -1163,39 +815,23 @@ wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;
 </div>
 
 <!-- Insert Link Modal -->
-<div class="modal-overlay" id="addLinkModal"
-     onclick="handleOverlayClick(event,'addLinkModal')">
+<div class="modal-overlay" id="addLinkModal" onclick="handleOverlayClick(event,'addLinkModal')">
   <div class="modal-content">
     <div class="modal-header">
       <h3>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
-          <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
-        </svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
         Insert Link
       </h3>
       <button class="close-modal-btn" onclick="closeModal('addLinkModal')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-             stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="18" y1="6" x2="6" y2="18"/>
-          <line x1="6"  y1="6" x2="18" y2="18"/>
-        </svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
     </div>
     <p class="modal-subtitle">Enter the URL for your selected text</p>
     <div class="modal-body">
       <div class="input-group">
-        <input class="pack-input" type="url" id="linkInput"
-               placeholder="https://…"
-               onkeypress="if(event.key==='Enter')confirmLink()">
+        <input class="pack-input" type="url" id="linkInput" placeholder="https://…" onkeypress="if(event.key==='Enter')confirmLink()">
         <button class="paste-btn" onclick="pasteClip('linkInput')" title="Paste">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-               stroke="currentColor" stroke-width="2"
-               stroke-linecap="round" stroke-linejoin="round">
-            <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
-            <rect x="8" y="2" width="8" height="4" rx="1" ry="1"/>
-          </svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>
         </button>
       </div>
       <button class="btn-full" onclick="confirmLink()">Insert Link</button>
@@ -1203,69 +839,35 @@ wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;
   </div>
 </div>
 
-<!-- ════════════════════════════════════════════════════════════════
-     IMPORT HTML MODAL
-════════════════════════════════════════════════════════════════ -->
-<div class="modal-overlay" id="importHtmlModal"
-     onclick="handleOverlayClick(event,'importHtmlModal')">
+<!-- Import HTML Modal -->
+<div class="modal-overlay" id="importHtmlModal" onclick="handleOverlayClick(event,'importHtmlModal')">
   <div class="import-modal-content">
-
-    <!-- Modal header -->
     <div class="modal-header" style="padding:20px 22px 14px">
       <h3>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="16 16 12 20 8 16"/>
-          <line x1="12" y1="20" x2="12" y2="4"/>
-          <path d="M20 16V20a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-4"/>
-        </svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 16 12 20 8 16"/><line x1="12" y1="20" x2="12" y2="4"/><path d="M20 16V20a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-4"/></svg>
         Import HTML
       </h3>
       <button class="close-modal-btn" onclick="closeModal('importHtmlModal')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-             stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="18" y1="6" x2="6" y2="18"/>
-          <line x1="6"  y1="6" x2="18" y2="18"/>
-        </svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
     </div>
 
-    <!-- Import mode selector -->
     <div class="import-mode-row">
-      <button class="import-mode-pill active" id="pill-replace"
-              onclick="setImportMode('replace')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-          <polyline points="7 10 12 15 17 10"/>
-          <line x1="12" y1="15" x2="12" y2="3"/>
-        </svg>
-        Replace content
+      <button class="import-mode-pill active" id="pill-replace" onclick="setImportMode('replace')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Replace
       </button>
-      <button class="import-mode-pill" id="pill-append"
-              onclick="setImportMode('append')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="12" y1="5" x2="12" y2="19"/>
-          <line x1="5"  y1="12" x2="19" y2="12"/>
-        </svg>
-        Append to end
+      <button class="import-mode-pill" id="pill-append" onclick="setImportMode('append')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Append
       </button>
-      <button class="import-mode-pill" id="pill-cursor"
-              onclick="setImportMode('cursor')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="9 10 4 15 9 20"/>
-          <path d="M20 4v7a4 4 0 0 1-4 4H4"/>
-        </svg>
-        At cursor
+      <button class="import-mode-pill" id="pill-cursor" onclick="setImportMode('cursor')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 10 4 15 9 20"/><path d="M20 4v7a4 4 0 0 1-4 4H4"/></svg>
+        At Cursor
       </button>
     </div>
 
-    <!-- Code editor -->
     <div class="code-editor-wrap">
-
-      <!-- Fake window top bar -->
       <div class="code-editor-topbar">
         <div class="code-dots">
           <div class="code-dot red"></div>
@@ -1274,47 +876,30 @@ wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;
         </div>
         <span class="code-topbar-label">telegram-html.tg</span>
         <div class="code-topbar-actions">
-          <button class="code-topbar-btn" onclick="pasteToImport()" title="Paste from clipboard">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
-              <rect x="8" y="2" width="8" height="4" rx="1" ry="1"/>
-            </svg>
+          <button class="code-topbar-btn" onclick="pasteToImport()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>
             Paste
           </button>
-          <button class="code-topbar-btn" onclick="formatImportCode()" title="Format / pretty print">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="21" y1="10" x2="7"  y2="10"/>
-              <line x1="21" y1="6"  x2="3"  y2="6"/>
-              <line x1="21" y1="14" x2="3"  y2="14"/>
-              <line x1="21" y1="18" x2="7"  y2="18"/>
-            </svg>
+          <button class="code-topbar-btn" onclick="formatImportCode()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="21" y1="10" x2="7" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="21" y1="18" x2="7" y2="18"/></svg>
             Format
           </button>
-          <button class="code-topbar-btn" onclick="clearImportCode()" title="Clear">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="3 6 5 6 21 6"/>
-              <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
-            </svg>
+          <button class="code-topbar-btn" onclick="clearImportCode()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
             Clear
           </button>
         </div>
       </div>
 
-      <!-- Line numbers + textarea -->
       <div class="code-editor-body">
-        <div class="code-line-nums" id="codeLineNums">1</div>
+        <div class="code-line-nums" id="codeLineNums">1
+</div>
         <textarea class="code-textarea" id="importTextarea"
-                  placeholder="Paste your Telegram HTML here…&#10;&#10;e.g.  &lt;b&gt;Bold&lt;/b&gt; &lt;i&gt;Italic&lt;/i&gt;&#10;      &lt;tg-emoji emoji-id=&quot;…&quot;&gt;🔥&lt;/tg-emoji&gt;&#10;      &lt;tg-spoiler&gt;hidden text&lt;/tg-spoiler&gt;"
-                  spellcheck="false"
-                  autocomplete="off"
-                  autocorrect="off"
-                  autocapitalize="off"></textarea>
+                  placeholder="Paste Telegram HTML here…"
+                  spellcheck="false" autocomplete="off"
+                  autocorrect="off" autocapitalize="off"></textarea>
       </div>
 
-      <!-- Status bar -->
       <div class="code-editor-statusbar">
         <div class="code-status-left">
           <span class="code-status-badge">HTML</span>
@@ -1327,23 +912,17 @@ wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;
       </div>
     </div>
 
-    <!-- Action buttons -->
     <div class="import-btn-row">
-      <button class="btn-import-cancel" onclick="closeModal('importHtmlModal')">
-        Cancel
-      </button>
+      <button class="btn-import-cancel" onclick="closeModal('importHtmlModal')">Cancel</button>
       <button class="btn-import-confirm" onclick="confirmImport()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-             stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="20 6 9 17 4 12"/>
-        </svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
         Import into Editor
       </button>
     </div>
   </div>
 </div>
 
-<!-- Custom confirm -->
+<!-- Custom Confirm -->
 <div class="confirm-overlay" id="confirmOverlay">
   <div class="confirm-box">
     <div class="confirm-icon" id="confirmIcon">⚠️</div>
@@ -1372,1163 +951,815 @@ if (tgApp) { tgApp.ready(); tgApp.expand(); }
     const nameEl      = document.getElementById('user-name');
     const greetEl     = document.getElementById('greeting-text');
     if (!user) return;
-    nameEl.textContent = [user.first_name, user.last_name]
-        .filter(Boolean).join(' ') || 'Creator';
+    nameEl.textContent = [user.first_name, user.last_name].filter(Boolean).join(' ') || 'Creator';
     const h = new Date().getHours();
-    greetEl.textContent =
-        h < 5  ? 'Good night,'     :
-        h < 12 ? 'Good morning,'   :
-        h < 17 ? 'Good afternoon,' :
-        h < 21 ? 'Good evening,'   : 'Good night,';
+    greetEl.textContent = h<5?'Good night,':h<12?'Good morning,':h<17?'Good afternoon,':h<21?'Good evening,':'Good night,';
     if (user.photo_url) {
         avatarImg.src    = user.photo_url;
-        avatarImg.onload = () => {
-            avatarImg.style.display  = 'block';
-            placeholder.style.display = 'none';
-        };
-        avatarImg.onerror = () => {
-            placeholder.textContent =
-                (user.first_name || 'U').charAt(0).toUpperCase();
-        };
+        avatarImg.onload = () => { avatarImg.style.display='block'; placeholder.style.display='none'; };
+        avatarImg.onerror = () => { placeholder.textContent=(user.first_name||'U').charAt(0).toUpperCase(); };
     } else {
-        placeholder.textContent =
-            (user.first_name || 'U').charAt(0).toUpperCase();
+        placeholder.textContent = (user.first_name||'U').charAt(0).toUpperCase();
     }
 })();
 
 /* ── Toast ── */
 let _toastTimer;
-function showToast(msg, ms = 2400) {
+function showToast(msg, ms=2400) {
     const el = document.getElementById('toast');
-    el.textContent = msg;
-    el.classList.add('show');
+    el.textContent = msg; el.classList.add('show');
     clearTimeout(_toastTimer);
-    _toastTimer = setTimeout(() => el.classList.remove('show'), ms);
+    _toastTimer = setTimeout(()=>el.classList.remove('show'), ms);
 }
 
-/* ── Confirm dialog ── */
-let _confirmResolve = null;
-function showConfirm(title, msg, icon = '⚠️') {
-    return new Promise(res => {
-        _confirmResolve = res;
-        document.getElementById('confirmIcon').textContent  = icon;
-        document.getElementById('confirmTitle').textContent = title;
-        document.getElementById('confirmMsg').textContent   = msg;
+/* ── Confirm ── */
+let _confirmResolve=null;
+function showConfirm(title,msg,icon='⚠️') {
+    return new Promise(res=>{
+        _confirmResolve=res;
+        document.getElementById('confirmIcon').textContent=icon;
+        document.getElementById('confirmTitle').textContent=title;
+        document.getElementById('confirmMsg').textContent=msg;
         document.getElementById('confirmOverlay').classList.add('active');
     });
 }
 function closeConfirm(result) {
     document.getElementById('confirmOverlay').classList.remove('active');
-    _confirmResolve?.(result);
-    _confirmResolve = null;
+    _confirmResolve?.(result); _confirmResolve=null;
 }
 
 /* ── Theme ── */
-const SUN = `<circle cx="12" cy="12" r="5"/>
-<line x1="12" y1="1" x2="12" y2="3"/>
-<line x1="12" y1="21" x2="12" y2="23"/>
-<line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
-<line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
-<line x1="1" y1="12" x2="3" y2="12"/>
-<line x1="21" y1="12" x2="23" y2="12"/>
-<line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
-<line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>`;
-const MOON = `<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>`;
-function _lum(hex) {
-    if (!hex?.startsWith('#')) return 255;
-    const c = hex.replace('#','');
-    const f = c.length===3 ? c.split('').map(x=>x+x).join('') : c;
-    const n = parseInt(f,16);
-    return .2126*((n>>16)&255) + .7152*((n>>8)&255) + .0722*(n&255);
-}
-const _dark0 = tgApp?.themeParams?.bg_color
-    ? _lum(tgApp.themeParams.bg_color) < 128
-    : window.matchMedia('(prefers-color-scheme:dark)').matches;
-function applyTheme(t) {
-    document.documentElement.setAttribute('data-theme', t);
-    document.getElementById('themeIcon').innerHTML = t==='dark' ? SUN : MOON;
-    localStorage.setItem('poozter_theme', t);
-}
-function toggleTheme() {
-    applyTheme(
-        document.documentElement.getAttribute('data-theme')==='dark'
-            ? 'light' : 'dark');
-}
-applyTheme(localStorage.getItem('poozter_theme') ||
-           (_dark0 ? 'dark' : 'light'));
+const SUN=`<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>`;
+const MOON=`<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>`;
+function _lum(hex){if(!hex?.startsWith('#'))return 255;const c=hex.replace('#','');const f=c.length===3?c.split('').map(x=>x+x).join(''):c;const n=parseInt(f,16);return .2126*((n>>16)&255)+.7152*((n>>8)&255)+.0722*(n&255);}
+const _dark0=tgApp?.themeParams?.bg_color?_lum(tgApp.themeParams.bg_color)<128:window.matchMedia('(prefers-color-scheme:dark)').matches;
+function applyTheme(t){document.documentElement.setAttribute('data-theme',t);document.getElementById('themeIcon').innerHTML=t==='dark'?SUN:MOON;localStorage.setItem('poozter_theme',t);}
+function toggleTheme(){applyTheme(document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark');}
+applyTheme(localStorage.getItem('poozter_theme')||(_dark0?'dark':'light'));
 
-/* ── Mobile detection ── */
-function isMobile() {
-    return window.matchMedia('(max-width:768px)').matches ||
-           ('ontouchstart' in window);
-}
+/* ── Mobile ── */
+function isMobile(){return window.matchMedia('(max-width:768px)').matches||('ontouchstart' in window);}
 
-/* ──────────────────────────────────────────────────────────────────
+/* ══════════════════════════════════════════
    CARET PERSISTENCE
-────────────────────────────────────────────────────────────────── */
-const editor = document.getElementById('editor');
-let _savedCaret = null;
+══════════════════════════════════════════ */
+const editor=document.getElementById('editor');
+let _savedCaret=null;
 
-function saveCaret() {
-    const sel = window.getSelection();
-    if (!sel || sel.rangeCount === 0) return;
-    const range = sel.getRangeAt(0);
-    if (editor.contains(range.commonAncestorContainer)) {
-        _savedCaret = range.cloneRange();
-    }
+function saveCaret(){
+    const sel=window.getSelection();
+    if(!sel||sel.rangeCount===0)return;
+    const range=sel.getRangeAt(0);
+    if(editor.contains(range.commonAncestorContainer))
+        _savedCaret=range.cloneRange();
 }
-function restoreCaret(focusEditor = true) {
-    if (focusEditor) editor.focus();
-    if (!_savedCaret) {
-        const range = document.createRange();
+function restoreCaret(focusEd=true){
+    if(focusEd) editor.focus();
+    if(!_savedCaret){
+        const range=document.createRange();
         range.selectNodeContents(editor);
         range.collapse(false);
-        const sel = window.getSelection();
-        sel.removeAllRanges();
-        sel.addRange(range);
-        _savedCaret = range.cloneRange();
-        return;
+        const sel=window.getSelection();
+        sel.removeAllRanges(); sel.addRange(range);
+        _savedCaret=range.cloneRange(); return;
     }
-    try {
-        const sel = window.getSelection();
-        sel.removeAllRanges();
-        sel.addRange(_savedCaret);
-    } catch {
-        _savedCaret = null;
-        restoreCaret(focusEditor);
-    }
+    try{
+        const sel=window.getSelection();
+        sel.removeAllRanges(); sel.addRange(_savedCaret);
+    }catch{_savedCaret=null;restoreCaret(focusEd);}
 }
-document.addEventListener('selectionchange', () => {
-    const sel = window.getSelection();
-    if (!sel || sel.rangeCount === 0) return;
-    const range = sel.getRangeAt(0);
-    if (editor.contains(range.commonAncestorContainer)) {
-        _savedCaret = range.cloneRange();
-    }
+document.addEventListener('selectionchange',()=>{
+    const sel=window.getSelection();
+    if(!sel||sel.rangeCount===0)return;
+    const range=sel.getRangeAt(0);
+    if(editor.contains(range.commonAncestorContainer))
+        _savedCaret=range.cloneRange();
 });
-editor.addEventListener('blur', saveCaret);
+editor.addEventListener('blur',saveCaret);
 
-/* ── Editor helpers ── */
-function fmt(cmd) {
-    editor.focus();
-    document.execCommand(cmd, false, null);
-}
-let _savedLinkRange = null;
-function saveLinkRange() {
-    const sel = window.getSelection();
-    _savedLinkRange = (sel && sel.rangeCount)
-        ? sel.getRangeAt(0).cloneRange() : null;
-}
-function restoreLinkRange() {
-    if (!_savedLinkRange) return;
-    editor.focus();
-    const sel = window.getSelection();
-    sel.removeAllRanges();
-    sel.addRange(_savedLinkRange);
-}
-function placeCursorAfter(node) {
-    const zwnj = document.createTextNode('\u200B');
+function fmt(cmd){editor.focus();document.execCommand(cmd,false,null);}
+
+let _savedLinkRange=null;
+function saveLinkRange(){const sel=window.getSelection();_savedLinkRange=(sel&&sel.rangeCount)?sel.getRangeAt(0).cloneRange():null;}
+function restoreLinkRange(){if(!_savedLinkRange)return;editor.focus();const sel=window.getSelection();sel.removeAllRanges();sel.addRange(_savedLinkRange);}
+
+function placeCursorAfter(node){
+    const zwnj=document.createTextNode('\u200B');
     node.after(zwnj);
-    const sel = window.getSelection();
-    const r   = document.createRange();
-    r.setStartAfter(zwnj);
-    r.collapse(true);
-    sel.removeAllRanges();
-    sel.addRange(r);
-    _savedCaret = r.cloneRange();
+    const sel=window.getSelection();
+    const r=document.createRange();
+    r.setStartAfter(zwnj); r.collapse(true);
+    sel.removeAllRanges(); sel.addRange(r);
+    _savedCaret=r.cloneRange();
 }
 
-/* ── Emoji insertion ── */
-function insertEmoji(data) {
-    const mobile = isMobile();
+/* ══════════════════════════════════════════
+   EMOJI INSERTION
+══════════════════════════════════════════ */
+function insertEmoji(data){
+    const mobile=isMobile();
     restoreCaret(!mobile);
-    const src = (data.isVideo && data.thumbUrl) ? data.thumbUrl : data.url;
-    if (!src) {
-        document.execCommand('insertText', false, data.fallback || '🙂');
+    const src=(data.isVideo&&data.thumbUrl)?data.thumbUrl:data.url;
+    if(!src){
+        document.execCommand('insertText',false,data.fallback||'🙂');
         onEdit(); addToRecent(data); return;
     }
-    const img = document.createElement('img');
-    img.className = 'tg-emoji';
-    img.src       = src;
-    img.alt       = data.fallback || '🙂';
-    img.setAttribute('data-tg-id',       data.id       || '');
-    img.setAttribute('data-tg-fallback', data.fallback || '🙂');
-    img.draggable = false;
-    img.onerror = function() {
-        const txt = document.createTextNode(
-            this.getAttribute('data-tg-fallback') || '🙂');
-        this.replaceWith(txt);
-        onEdit();
+    const img=document.createElement('img');
+    img.className='tg-emoji';
+    img.src=src; img.alt=data.fallback||'🙂';
+    img.setAttribute('data-tg-id',data.id||'');
+    img.setAttribute('data-tg-fallback',data.fallback||'🙂');
+    img.draggable=false;
+    img.onerror=function(){
+        const txt=document.createTextNode(this.getAttribute('data-tg-fallback')||'🙂');
+        this.replaceWith(txt); onEdit();
     };
-    const sel = window.getSelection();
-    if (sel && sel.rangeCount) {
-        const range = sel.getRangeAt(0);
-        range.deleteContents();
-        range.insertNode(img);
+    const sel=window.getSelection();
+    if(sel&&sel.rangeCount){
+        const range=sel.getRangeAt(0);
+        range.deleteContents(); range.insertNode(img);
         placeCursorAfter(img);
-    } else {
-        editor.appendChild(img);
-        placeCursorAfter(img);
+    }else{
+        editor.appendChild(img); placeCursorAfter(img);
     }
-    addToRecent(data);
-    onEdit();
+    addToRecent(data); onEdit();
 }
 
 /* ── Format blocks ── */
-function wrapBlock(type) {
+function wrapBlock(type){
     editor.focus();
-    const sel = window.getSelection();
-    if (!sel.rangeCount) return;
-    let node = sel.anchorNode;
-    while (node && node !== editor) {
-        if (node.nodeType === 1) {
-            const match =
-                (type==='tg-spoiler' && node.classList?.contains('tg-spoiler')) ||
-                (type==='code'       && node.tagName==='CODE') ||
-                (type==='blockquote' && node.tagName==='BLOCKQUOTE');
-            if (match) {
-                const p = node.parentNode;
-                while (node.firstChild) p.insertBefore(node.firstChild, node);
-                p.removeChild(node);
-                onEdit(); return;
-            }
+    const sel=window.getSelection();
+    if(!sel.rangeCount)return;
+    let node=sel.anchorNode;
+    while(node&&node!==editor){
+        if(node.nodeType===1){
+            const match=(type==='tg-spoiler'&&node.classList?.contains('tg-spoiler'))||(type==='code'&&node.tagName==='CODE')||(type==='blockquote'&&node.tagName==='BLOCKQUOTE');
+            if(match){const p=node.parentNode;while(node.firstChild)p.insertBefore(node.firstChild,node);p.removeChild(node);onEdit();return;}
         }
-        node = node.parentNode;
+        node=node.parentNode;
     }
-    const range = sel.getRangeAt(0);
+    const range=sel.getRangeAt(0);
     let wrapper;
-    if (type==='tg-spoiler') {
-        wrapper = document.createElement('span');
-        wrapper.className = 'tg-spoiler';
-    } else {
-        wrapper = document.createElement(type);
-    }
-    try {
-        range.surroundContents(wrapper);
-    } catch {
-        const txt = range.toString();
-        if (txt) {
-            if (type==='tg-spoiler')
-                document.execCommand('insertHTML', false,
-                    `<span class="tg-spoiler">${txt}</span>`);
-            else
-                document.execCommand('insertHTML', false,
-                    `<${type}>${txt}</${type}>`);
+    if(type==='tg-spoiler'){wrapper=document.createElement('span');wrapper.className='tg-spoiler';}
+    else{wrapper=document.createElement(type);}
+    try{range.surroundContents(wrapper);}
+    catch{
+        const txt=range.toString();
+        if(txt){
+            if(type==='tg-spoiler') document.execCommand('insertHTML',false,`<span class="tg-spoiler">${txt}</span>`);
+            else document.execCommand('insertHTML',false,`<${type}>${txt}</${type}>`);
         }
     }
     onEdit();
 }
-function clearFormat() {
+function clearFormat(){
     editor.focus();
-    const sel = window.getSelection();
-    if (sel && !sel.isCollapsed) {
-        document.execCommand('removeFormat');
-        document.execCommand('insertText', false, sel.toString());
-    }
+    const sel=window.getSelection();
+    if(sel&&!sel.isCollapsed){document.execCommand('removeFormat');document.execCommand('insertText',false,sel.toString());}
     onEdit();
 }
-
-/* ── Date ── */
-function insertDate() {
-    const s = new Date().toLocaleString(undefined, {
-        year:'numeric', month:'short', day:'numeric',
-        hour:'2-digit', minute:'2-digit'
-    });
-    editor.focus();
-    document.execCommand('insertText', false, s);
+function insertDate(){
+    const s=new Date().toLocaleString(undefined,{year:'numeric',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});
+    editor.focus(); document.execCommand('insertText',false,s);
 }
 
 /* ── Link modal ── */
-function openLinkModal() {
+function openLinkModal(){
     saveLinkRange();
-    const sel = _savedLinkRange ? _savedLinkRange.toString().trim() : '';
-    const inp = document.getElementById('linkInput');
-    inp.value = sel.startsWith('http') ? sel : '';
+    const sel=_savedLinkRange?_savedLinkRange.toString().trim():'';
+    document.getElementById('linkInput').value=sel.startsWith('http')?sel:'';
     openModal('addLinkModal');
 }
-function confirmLink() {
-    let url = document.getElementById('linkInput').value.trim();
-    if (!url) { showToast('⚠️ Enter a URL'); return; }
-    if (!url.match(/^https?:\/\//i)) url = 'https://' + url;
+function confirmLink(){
+    let url=document.getElementById('linkInput').value.trim();
+    if(!url){showToast('⚠️ Enter a URL');return;}
+    if(!url.match(/^https?:\/\//i))url='https://'+url;
     closeModal('addLinkModal');
-    setTimeout(() => {
+    setTimeout(()=>{
         restoreLinkRange();
-        const sel = window.getSelection();
-        if (sel && sel.toString().trim()) {
-            document.execCommand('createLink', false, url);
-        } else {
-            document.execCommand('insertHTML', false,
-                `<a href="${url}" target="_blank">${url}</a>`);
-        }
+        const sel=window.getSelection();
+        if(sel&&sel.toString().trim()) document.execCommand('createLink',false,url);
+        else document.execCommand('insertHTML',false,`<a href="${url}" target="_blank">${url}</a>`);
         onEdit();
-    }, 300);
+    },300);
 }
 
 /* ── Clear editor ── */
-function clearEditorText() {
-    if (!editor.textContent.trim() && !editor.querySelector('img')) {
-        showToast('ℹ️ Editor is already empty'); return;
-    }
-    showConfirm('Clear Editor?',
-        'All text and formatting will be removed.', '🗑️')
-    .then(ok => {
-        if (!ok) return;
-        editor.innerHTML = '';
-        _savedCaret = null;
+function clearEditorText(){
+    if(!editor.textContent.trim()&&!editor.querySelector('img')){showToast('ℹ️ Editor is already empty');return;}
+    showConfirm('Clear Editor?','All text and formatting will be removed.','🗑️').then(ok=>{
+        if(!ok)return;
+        editor.innerHTML=''; _savedCaret=null;
         localStorage.removeItem('poozter_draft');
-        onEdit();
-        editor.focus();
-        showToast('✅ Editor cleared');
+        onEdit(); editor.focus(); showToast('✅ Editor cleared');
     });
 }
 
-/* ── Copy HTML ── */
-function nodeToTg(node) {
-    if (node.nodeType === Node.TEXT_NODE)    return node.textContent;
-    if (node.nodeType !== Node.ELEMENT_NODE) return '';
-    if (node.nodeName === 'IMG') {
-        const id = node.getAttribute('data-tg-id');
-        const fb = node.getAttribute('data-tg-fallback') || '🙂';
-        return id ? `<tg-emoji emoji-id="${id}">${fb}</tg-emoji>` : fb;
+/* ══════════════════════════════════════════
+   COPY HTML — clean newline handling
+══════════════════════════════════════════ */
+function nodeToTg(node){
+    if(node.nodeType===Node.TEXT_NODE) return node.textContent;
+    if(node.nodeType!==Node.ELEMENT_NODE) return '';
+
+    if(node.nodeName==='IMG'){
+        const id=node.getAttribute('data-tg-id');
+        const fb=node.getAttribute('data-tg-fallback')||'🙂';
+        return id?`<tg-emoji emoji-id="${id}">${fb}</tg-emoji>`:fb;
     }
-    if (node.nodeName === 'BR') return '\n';
-    const inner = [...node.childNodes].map(nodeToTg).join('');
-    switch (node.nodeName) {
-        case 'B': case 'STRONG':              return `<b>${inner}</b>`;
-        case 'I': case 'EM':                  return `<i>${inner}</i>`;
-        case 'U':                             return `<u>${inner}</u>`;
-        case 'S': case 'STRIKE': case 'DEL':  return `<s>${inner}</s>`;
-        case 'A':
-            return `<a href="${node.getAttribute('href')||''}">${inner}</a>`;
-        case 'CODE':                          return `<code>${inner}</code>`;
-        case 'BLOCKQUOTE':                    return `<blockquote>${inner}</blockquote>`;
+    if(node.nodeName==='BR') return '\n';
+
+    const inner=[...node.childNodes].map(nodeToTg).join('');
+
+    switch(node.nodeName){
+        case 'B':case 'STRONG':             return `<b>${inner}</b>`;
+        case 'I':case 'EM':                 return `<i>${inner}</i>`;
+        case 'U':                           return `<u>${inner}</u>`;
+        case 'S':case 'STRIKE':case 'DEL':  return `<s>${inner}</s>`;
+        case 'A':                           return `<a href="${node.getAttribute('href')||''}">${inner}</a>`;
+        case 'CODE':                        return `<code>${inner}</code>`;
+        case 'BLOCKQUOTE':                  return `<blockquote>${inner}</blockquote>`;
         case 'SPAN':
-            return node.classList.contains('tg-spoiler')
-                ? `<tg-spoiler>${inner}</tg-spoiler>` : inner;
-        case 'DIV': case 'P':
-            return inner ? `\n${inner}` : '\n';
+            if(node.classList.contains('tg-spoiler'))
+                return `<tg-spoiler>${inner}</tg-spoiler>`;
+            /* imported tg-emoji placeholder */
+            if(node.classList.contains('tg-emoji-placeholder')){
+                const eid=node.getAttribute('data-tg-id');
+                const fb=node.getAttribute('data-tg-fallback')||inner||'🙂';
+                return eid?`<tg-emoji emoji-id="${eid}">${fb}</tg-emoji>`:fb;
+            }
+            return inner;
+        case 'DIV':case 'P':
+            return inner.trim()?inner+'\n':'';
         default: return inner;
     }
 }
-function copyHTML() {
-    const tmp  = document.createElement('div');
-    tmp.innerHTML = editor.innerHTML;
-    const raw  = [...tmp.childNodes].map(nodeToTg).join('');
-    const html = raw.replace(/^\n+/,'').replace(/\n{3,}/g,'\n\n').trim();
-    if (!html) { showToast('⚠️ Editor is empty'); return; }
-    const fallback = () => {
-        const ta = Object.assign(document.createElement('textarea'),
-            {value:html, style:'position:fixed;opacity:0'});
-        document.body.appendChild(ta);
-        ta.focus(); ta.select();
-        document.execCommand('copy');
-        ta.remove();
+
+function copyHTML(){
+    const tmp=document.createElement('div');
+    tmp.innerHTML=editor.innerHTML;
+    const raw=[...tmp.childNodes].map(nodeToTg).join('');
+    const html=raw
+        .replace(/\n{3,}/g,'\n\n')
+        .replace(/^\n+/,'')
+        .replace(/\n+$/,'')
+        .trim();
+    if(!html){showToast('⚠️ Editor is empty');return;}
+    const fallback=()=>{
+        const ta=Object.assign(document.createElement('textarea'),{value:html,style:'position:fixed;opacity:0'});
+        document.body.appendChild(ta);ta.focus();ta.select();document.execCommand('copy');ta.remove();
     };
-    (navigator.clipboard?.writeText(html) ?? Promise.reject())
+    (navigator.clipboard?.writeText(html)??Promise.reject())
         .catch(fallback)
-        .finally(() => {
-            const btn  = document.getElementById('copyBtn');
-            const orig = btn.innerHTML;
-            btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2.5"
-                stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="20 6 9 17 4 12"/></svg>
-                <span class="btn-label">Copied!</span>`;
+        .finally(()=>{
+            const btn=document.getElementById('copyBtn');
+            const orig=btn.innerHTML;
+            btn.innerHTML=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span class="btn-label">Copied!</span>`;
             btn.classList.add('success');
             showToast('✅ HTML copied!');
-            setTimeout(() => {
-                btn.innerHTML = orig;
-                btn.classList.remove('success');
-            }, 2200);
+            setTimeout(()=>{btn.innerHTML=orig;btn.classList.remove('success');},2200);
         });
 }
 
 /* ── Auto-save + counter ── */
 let _saveTimer;
-function charLen() {
-    const tmp = document.createElement('div');
-    tmp.innerHTML = editor.innerHTML;
-    tmp.querySelectorAll('img[data-tg-fallback]').forEach(img =>
-        img.replaceWith(img.getAttribute('data-tg-fallback')));
-    return (tmp.textContent||'').replace(/\u200B/g,'').length;
+function charLen(){
+    const tmp=document.createElement('div');
+    tmp.innerHTML=editor.innerHTML;
+    tmp.querySelectorAll('img[data-tg-fallback]').forEach(img=>img.replaceWith(img.getAttribute('data-tg-fallback')));
+    tmp.querySelectorAll('.tg-emoji-placeholder').forEach(sp=>sp.replaceWith(sp.getAttribute('data-tg-fallback')||sp.textContent));
+    return(tmp.textContent||'').replace(/\u200B/g,'').length;
 }
-function updateCounter() {
-    const n    = charLen();
-    const fill = document.getElementById('charFill');
-    const ctr  = document.getElementById('charCounter');
-    const MAX  = n<=1024 ? 1024 : 4096;
-    const pct  = Math.min(n/MAX*100,100);
-    const col  = n>4096 ? 'var(--danger)'
-               : n>1024 ? 'var(--warning)' : 'var(--success)';
-    fill.style.width      = pct+'%';
-    fill.style.background = col;
-    ctr.textContent       = `${n} / ${MAX}`;
-    ctr.className = 'char-counter'+(n>4096?' danger':n>1024?' warning':'');
+function updateCounter(){
+    const n=charLen();
+    const fill=document.getElementById('charFill');
+    const ctr=document.getElementById('charCounter');
+    const MAX=n<=1024?1024:4096;
+    const pct=Math.min(n/MAX*100,100);
+    const col=n>4096?'var(--danger)':n>1024?'var(--warning)':'var(--success)';
+    fill.style.width=pct+'%'; fill.style.background=col;
+    ctr.textContent=`${n} / ${MAX}`;
+    ctr.className='char-counter'+(n>4096?' danger':n>1024?' warning':'');
 }
-function onEdit() {
+function onEdit(){
     updateCounter();
-    const st = document.getElementById('saveStatus');
-    st.innerHTML = `<svg viewBox="0 0 24 24" fill="none"
-        stroke="currentColor" stroke-width="2.5"
-        stroke-linecap="round" stroke-linejoin="round"
-        style="width:12px;height:12px;animation:spin 1s linear infinite">
-        <path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg> Saving…`;
-    st.style.color = 'var(--text-3)';
+    const st=document.getElementById('saveStatus');
+    st.innerHTML=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;animation:spin 1s linear infinite"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg> Saving…`;
+    st.style.color='var(--text-3)';
     clearTimeout(_saveTimer);
-    _saveTimer = setTimeout(() => {
-        try { localStorage.setItem('poozter_draft', editor.innerHTML); } catch {}
-        st.innerHTML = `<svg viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" stroke-width="2.5"
-            stroke-linecap="round" stroke-linejoin="round"
-            style="width:12px;height:12px">
-            <polyline points="20 6 9 17 4 12"/></svg> Saved`;
-        st.style.color = 'var(--success)';
-    }, 900);
+    _saveTimer=setTimeout(()=>{
+        try{localStorage.setItem('poozter_draft',editor.innerHTML);}catch{}
+        st.innerHTML=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px"><polyline points="20 6 9 17 4 12"/></svg> Saved`;
+        st.style.color='var(--success)';
+    },900);
 }
-try {
-    const draft = localStorage.getItem('poozter_draft');
-    if (draft) editor.innerHTML = draft;
-} catch {}
+try{const d=localStorage.getItem('poozter_draft');if(d)editor.innerHTML=d;}catch{}
 updateCounter();
 
-editor.addEventListener('input', onEdit);
-editor.addEventListener('paste', e => {
+editor.addEventListener('input',onEdit);
+editor.addEventListener('paste',e=>{
     e.preventDefault();
-    const txt = e.clipboardData.getData('text/plain');
-    if (txt) document.execCommand('insertText', false, txt);
+    const txt=e.clipboardData.getData('text/plain');
+    if(txt)document.execCommand('insertText',false,txt);
 });
-editor.addEventListener('click', e => {
-    const sp = e.target.closest('.tg-spoiler');
-    if (sp) sp.classList.toggle('revealed');
+editor.addEventListener('click',e=>{
+    const sp=e.target.closest('.tg-spoiler');
+    if(sp)sp.classList.toggle('revealed');
 });
-editor.addEventListener('keydown', e => {
-    const mod = e.ctrlKey || e.metaKey;
-    if (!mod) return;
-    const k = e.key.toLowerCase();
-    if (e.shiftKey) {
-        if      (k==='x') { e.preventDefault(); fmt('strikeThrough'); }
-        else if (k==='.') { e.preventDefault(); wrapBlock('blockquote'); }
-        else if (k==='m') { e.preventDefault(); wrapBlock('code'); }
-        else if (k==='p') { e.preventDefault(); wrapBlock('tg-spoiler'); }
-        else if (k==='d') { e.preventDefault(); insertDate(); }
-        else if (k==='n') { e.preventDefault(); clearFormat(); }
-    } else {
-        if      (k==='b') { e.preventDefault(); fmt('bold'); }
-        else if (k==='i') { e.preventDefault(); fmt('italic'); }
-        else if (k==='u') { e.preventDefault(); fmt('underline'); }
-        else if (k==='k') { e.preventDefault(); openLinkModal(); }
+editor.addEventListener('keydown',e=>{
+    const mod=e.ctrlKey||e.metaKey;
+    if(!mod)return;
+    const k=e.key.toLowerCase();
+    if(e.shiftKey){
+        if(k==='x'){e.preventDefault();fmt('strikeThrough');}
+        else if(k==='.'){e.preventDefault();wrapBlock('blockquote');}
+        else if(k==='m'){e.preventDefault();wrapBlock('code');}
+        else if(k==='p'){e.preventDefault();wrapBlock('tg-spoiler');}
+        else if(k==='d'){e.preventDefault();insertDate();}
+        else if(k==='n'){e.preventDefault();clearFormat();}
+    }else{
+        if(k==='b'){e.preventDefault();fmt('bold');}
+        else if(k==='i'){e.preventDefault();fmt('italic');}
+        else if(k==='u'){e.preventDefault();fmt('underline');}
+        else if(k==='k'){e.preventDefault();openLinkModal();}
     }
 });
 
-/* ══════════════════════════════════════════════════════════════════
-   IMPORT HTML — logic
-══════════════════════════════════════════════════════════════════ */
-let _importMode = 'replace'; // 'replace' | 'append' | 'cursor'
+/* ══════════════════════════════════════════
+   IMPORT HTML
+══════════════════════════════════════════ */
+let _importMode='replace';
 
-function setImportMode(mode) {
-    _importMode = mode;
-    document.querySelectorAll('.import-mode-pill').forEach(p =>
-        p.classList.remove('active'));
+function setImportMode(mode){
+    _importMode=mode;
+    document.querySelectorAll('.import-mode-pill').forEach(p=>p.classList.remove('active'));
     document.getElementById(`pill-${mode}`).classList.add('active');
 }
 
-function openImportModal() {
-    /* Save caret BEFORE opening so 'cursor' mode works */
+function openImportModal(){
     saveCaret();
     openModal('importHtmlModal');
-    /* Reset textarea */
-    const ta = document.getElementById('importTextarea');
-    ta.value = '';
+    const ta=document.getElementById('importTextarea');
+    ta.value='';
     updateImportStatus();
     updateLineNumbers();
-    setTimeout(() => ta.focus(), 150);
+    setTimeout(()=>ta.focus(),150);
 }
 
-async function pasteToImport() {
-    try {
-        const text = await navigator.clipboard.readText();
-        const ta   = document.getElementById('importTextarea');
-        ta.value   = text;
-        updateImportStatus();
-        updateLineNumbers();
-        ta.focus();
-    } catch {
-        showToast('⚠️ Clipboard access denied — paste manually');
-    }
+async function pasteToImport(){
+    try{
+        const text=await navigator.clipboard.readText();
+        const ta=document.getElementById('importTextarea');
+        ta.value=text;
+        updateImportStatus(); updateLineNumbers(); ta.focus();
+    }catch{showToast('⚠️ Clipboard access denied — paste manually');}
 }
 
-function clearImportCode() {
-    const ta = document.getElementById('importTextarea');
-    ta.value = '';
-    updateImportStatus();
-    updateLineNumbers();
-    ta.focus();
+function clearImportCode(){
+    const ta=document.getElementById('importTextarea');
+    ta.value=''; updateImportStatus(); updateLineNumbers(); ta.focus();
 }
 
-/**
- * Very simple pretty-printer for Telegram HTML.
- * Adds newlines between tags and indents content.
- */
-function formatImportCode() {
-    const ta  = document.getElementById('importTextarea');
-    let   raw = ta.value.trim();
-    if (!raw) return;
-
-    try {
-        // Normalise: collapse whitespace between tags
-        raw = raw
-            .replace(/>\s+</g, '><')      // remove whitespace between tags
-            .replace(/></g, '>\n<');       // one tag per line
-
-        // Indent block-level tags
-        const BLOCK = ['blockquote','div','p'];
-        let lines  = raw.split('\n');
-        let depth  = 0;
-        let result = [];
-
-        lines.forEach(line => {
-            line = line.trim();
-            if (!line) return;
-
-            // Closing tag → outdent first
-            const closeMatch = line.match(/^<\/(\w[\w-]*)/);
-            if (closeMatch && BLOCK.includes(closeMatch[1].toLowerCase())) {
-                depth = Math.max(0, depth - 1);
-            }
-
-            result.push('  '.repeat(depth) + line);
-
-            // Opening tag (not self-closing) → indent next
-            const openMatch = line.match(/^<(\w[\w-]*)[^/]*>(?!.*<\/\1>)/);
-            if (openMatch && BLOCK.includes(openMatch[1].toLowerCase())) {
-                depth++;
-            }
+function formatImportCode(){
+    const ta=document.getElementById('importTextarea');
+    let raw=ta.value.trim();
+    if(!raw)return;
+    try{
+        raw=raw.replace(/>\s+</g,'><').replace(/></g,'>\n<');
+        const BLOCK=['blockquote','div','p'];
+        let depth=0;
+        const result=raw.split('\n').filter(l=>l.trim()).map(line=>{
+            line=line.trim();
+            const closeMatch=line.match(/^<\/(\w[\w-]*)/);
+            if(closeMatch&&BLOCK.includes(closeMatch[1].toLowerCase()))
+                depth=Math.max(0,depth-1);
+            const out='  '.repeat(depth)+line;
+            const openMatch=line.match(/^<(\w[\w-]*)[^/]*>(?!.*<\/\1>)/);
+            if(openMatch&&BLOCK.includes(openMatch[1].toLowerCase()))depth++;
+            return out;
         });
-
-        ta.value = result.join('\n');
-        updateImportStatus();
-        updateLineNumbers();
-    } catch (e) {
-        showToast('⚠️ Could not format — check your HTML');
-    }
+        ta.value=result.join('\n');
+        updateImportStatus(); updateLineNumbers();
+    }catch{showToast('⚠️ Could not format — check your HTML');}
 }
 
-/** Update status bar (line/col, char count, line count) */
-function updateImportStatus() {
-    const ta   = document.getElementById('importTextarea');
-    const val  = ta.value;
-    const pos  = ta.selectionStart;
-    const before = val.substring(0, pos);
-    const line = (before.match(/\n/g) || []).length + 1;
-    const col  = pos - before.lastIndexOf('\n');
-    const chars = val.length;
-    const lines = val ? val.split('\n').length : 0;
-
-    document.getElementById('importLineCol').textContent =
-        `Ln ${line}, Col ${col}`;
-    document.getElementById('importCharCount').textContent =
-        `${chars} char${chars !== 1 ? 's' : ''}`;
-    document.getElementById('importLineCount').textContent =
-        `${lines} line${lines !== 1 ? 's' : ''}`;
+function updateImportStatus(){
+    const ta=document.getElementById('importTextarea');
+    const val=ta.value;
+    const pos=ta.selectionStart;
+    const before=val.substring(0,pos);
+    const line=(before.match(/\n/g)||[]).length+1;
+    const col=pos-before.lastIndexOf('\n');
+    const chars=val.length;
+    const lines=val?val.split('\n').length:0;
+    document.getElementById('importLineCol').textContent=`Ln ${line}, Col ${col}`;
+    document.getElementById('importCharCount').textContent=`${chars} char${chars!==1?'s':''}`;
+    document.getElementById('importLineCount').textContent=`${lines} line${lines!==1?'s':''}`;
 }
 
-/** Sync line number gutter */
-function updateLineNumbers() {
-    const ta    = document.getElementById('importTextarea');
-    const nums  = document.getElementById('codeLineNums');
-    const count = ta.value ? ta.value.split('\n').length : 1;
-    let   html  = '';
-    for (let i = 1; i <= count; i++) html += i + '\n';
-    nums.textContent = html;
-    /* Sync scroll */
-    nums.scrollTop = ta.scrollTop;
+function updateLineNumbers(){
+    const ta=document.getElementById('importTextarea');
+    const nums=document.getElementById('codeLineNums');
+    const count=ta.value?ta.value.split('\n').length:1;
+    /* Build plain text — CSS white-space:pre keeps each on its own line */
+    let text='';
+    for(let i=1;i<=count;i++) text+=i+'\n';
+    nums.textContent=text;
+    nums.scrollTop=ta.scrollTop;
 }
 
-/**
- * Convert Telegram HTML back to editor-renderable HTML.
- * Handles: <b> <i> <u> <s> <code> <blockquote>
- *          <a href> <tg-spoiler> <tg-emoji emoji-id>
- */
-function tgHtmlToEditorHtml(raw) {
-    // Parse with DOMParser for safety
-    const parser = new DOMParser();
-    const doc    = parser.parseFromString(
-        `<div id="__root">${raw}</div>`, 'text/html');
-    const root   = doc.getElementById('__root');
-    if (!root) return raw;
+/* ══════════════════════════════════════════
+   TG HTML → EDITOR HTML converter
+   - No extra newlines
+   - tg-emoji → placeholder span (no broken img)
+   - Proper inline/block handling
+══════════════════════════════════════════ */
+function tgHtmlToEditorHtml(raw){
+    const parser=new DOMParser();
+    const doc=parser.parseFromString(`<div id="__root">${raw}</div>`,'text/html');
+    const root=doc.getElementById('__root');
+    if(!root)return raw;
 
-    function convert(node) {
-        if (node.nodeType === Node.TEXT_NODE) {
-            return node.textContent;
-        }
-        if (node.nodeType !== Node.ELEMENT_NODE) return '';
-
-        const tag   = node.tagName.toLowerCase();
-        const inner = [...node.childNodes].map(convert).join('');
-
-        switch (tag) {
-            case 'b': case 'strong': return `<b>${inner}</b>`;
-            case 'i': case 'em':     return `<i>${inner}</i>`;
-            case 'u':                return `<u>${inner}</u>`;
-            case 's': case 'strike':
-            case 'del':              return `<s>${inner}</s>`;
-            case 'code':             return `<code>${inner}</code>`;
-            case 'blockquote':       return `<blockquote>${inner}</blockquote>`;
-            case 'a': {
-                const href = node.getAttribute('href') || '#';
+    function convert(node){
+        if(node.nodeType===Node.TEXT_NODE) return node.textContent;
+        if(node.nodeType!==Node.ELEMENT_NODE) return '';
+        const tag=node.tagName.toLowerCase();
+        const inner=[...node.childNodes].map(convert).join('');
+        switch(tag){
+            case 'b':case 'strong': return `<b>${inner}</b>`;
+            case 'i':case 'em':     return `<i>${inner}</i>`;
+            case 'u':               return `<u>${inner}</u>`;
+            case 's':case 'strike':case 'del': return `<s>${inner}</s>`;
+            case 'code':            return `<code>${inner}</code>`;
+            case 'blockquote':      return `<blockquote>${inner}</blockquote>`;
+            case 'a':{
+                const href=node.getAttribute('href')||'#';
                 return `<a href="${href}" target="_blank">${inner}</a>`;
             }
             case 'tg-spoiler':
                 return `<span class="tg-spoiler">${inner}</span>`;
-            case 'tg-emoji': {
-                const eid = node.getAttribute('emoji-id') || '';
-                const fb  = node.textContent || '🙂';
-                if (!eid) return fb; // no ID → just the fallback char
-                /* We can't know the image URL at import time without
-                   an API call, so we render as a placeholder span
-                   that shows the fallback and stores the id.
-                   The Copy HTML button will re-emit the correct tag. */
-                return `<img class="tg-emoji"
-                    src="/api/image?file_id="
-                    data-tg-id="${eid}"
-                    data-tg-fallback="${fb}"
-                    alt="${fb}"
-                    onerror="this.style.display='none'"
-                    style="width:22px;height:22px;
-                           vertical-align:middle;margin:0 1px;
-                           object-fit:contain;pointer-events:none;">`;
+            case 'tg-emoji':{
+                const eid=node.getAttribute('emoji-id')||'';
+                const fb=node.textContent.trim()||'🙂';
+                if(!eid) return fb;
+                /*
+                 * Show fallback emoji as visible text.
+                 * Store emoji-id in data attribute so copyHTML()
+                 * can re-emit the correct <tg-emoji> tag.
+                 * No broken <img> ever appears.
+                 */
+                return `<span class="tg-emoji-placeholder" data-tg-id="${eid}" data-tg-fallback="${fb}" title="Custom Emoji (${fb})">${fb}</span>`;
             }
-            case 'br':  return '<br>';
-            case 'div':
-            case 'p':   return inner ? `\n${inner}` : '\n';
-            default:    return inner;
+            case 'br': return '<br>';
+            case 'div':case 'p':
+                return inner.trim()?inner+'<br>':'';
+            default: return inner;
         }
     }
 
-    return [...root.childNodes].map(convert).join('');
+    const result=[...root.childNodes].map(convert).join('');
+    /* Remove trailing <br> */
+    return result.replace(/(<br\s*\/?>\s*)+$/i,'').trim();
 }
 
-function confirmImport() {
-    const raw = document.getElementById('importTextarea').value.trim();
-    if (!raw) { showToast('⚠️ Nothing to import'); return; }
-
-    const editorHtml = tgHtmlToEditorHtml(raw);
-
-    if (_importMode === 'replace') {
-        const hasContent = editor.textContent.trim() ||
-                           editor.querySelector('img');
-        if (hasContent) {
-            showConfirm(
-                'Replace content?',
-                'This will overwrite all current editor content.',
-                '⚠️'
-            ).then(ok => {
-                if (!ok) return;
-                _doImport(editorHtml);
-            });
-        } else {
-            _doImport(editorHtml);
+function confirmImport(){
+    const raw=document.getElementById('importTextarea').value.trim();
+    if(!raw){showToast('⚠️ Nothing to import');return;}
+    const editorHtml=tgHtmlToEditorHtml(raw);
+    if(_importMode==='replace'){
+        const hasContent=editor.textContent.trim()||editor.querySelector('img,.tg-emoji-placeholder');
+        if(hasContent){
+            showConfirm('Replace content?','This will overwrite all current editor content.','⚠️')
+                .then(ok=>{if(ok)_doImport(editorHtml,'replace');});
+        }else{
+            _doImport(editorHtml,'replace');
         }
-    } else if (_importMode === 'append') {
-        _doImport(editorHtml, 'append');
-    } else {
-        // cursor mode
-        _doImport(editorHtml, 'cursor');
+    }else{
+        _doImport(editorHtml,_importMode);
     }
 }
 
-function _doImport(html, mode = 'replace') {
+function _doImport(html,mode){
     closeModal('importHtmlModal');
-
-    setTimeout(() => {
-        if (mode === 'replace') {
-            editor.innerHTML = html;
-            // Move cursor to end
-            const range = document.createRange();
-            range.selectNodeContents(editor);
-            range.collapse(false);
-            const sel = window.getSelection();
-            sel.removeAllRanges();
-            sel.addRange(range);
-            _savedCaret = range.cloneRange();
-
-        } else if (mode === 'append') {
+    setTimeout(()=>{
+        if(mode==='replace'){
+            editor.innerHTML=html;
+            const range=document.createRange();
+            range.selectNodeContents(editor); range.collapse(false);
+            const sel=window.getSelection();
+            sel.removeAllRanges(); sel.addRange(range);
+            _savedCaret=range.cloneRange();
+        }else if(mode==='append'){
             editor.focus();
-            // Go to end
-            const range = document.createRange();
-            range.selectNodeContents(editor);
-            range.collapse(false);
-            const sel = window.getSelection();
-            sel.removeAllRanges();
-            sel.addRange(range);
-            document.execCommand('insertHTML', false, html);
-
-        } else {
-            // cursor — restore saved position then insert
+            const range=document.createRange();
+            range.selectNodeContents(editor); range.collapse(false);
+            const sel=window.getSelection();
+            sel.removeAllRanges(); sel.addRange(range);
+            document.execCommand('insertHTML',false,html);
+        }else{
             restoreCaret(true);
-            document.execCommand('insertHTML', false, html);
+            document.execCommand('insertHTML',false,html);
         }
-
-        onEdit();
-        editor.focus();
+        onEdit(); editor.focus();
         showToast('✅ HTML imported successfully!');
-    }, 300);
+    },300);
 }
 
-/* Textarea event listeners for the code editor */
-(function setupImportTextarea() {
-    const ta = document.getElementById('importTextarea');
-
-    ta.addEventListener('input', () => {
-        updateImportStatus();
-        updateLineNumbers();
-    });
-    ta.addEventListener('keydown', e => {
-        /* Tab key → insert 2 spaces */
-        if (e.key === 'Tab') {
+/* Textarea listeners */
+(function setupImportTextarea(){
+    const ta=document.getElementById('importTextarea');
+    ta.addEventListener('input',()=>{updateImportStatus();updateLineNumbers();});
+    ta.addEventListener('keydown',e=>{
+        if(e.key==='Tab'){
             e.preventDefault();
-            const start = ta.selectionStart;
-            const end   = ta.selectionEnd;
-            ta.value    = ta.value.substring(0, start) +
-                          '  ' +
-                          ta.value.substring(end);
-            ta.selectionStart = ta.selectionEnd = start + 2;
-            updateImportStatus();
-            updateLineNumbers();
+            const s=ta.selectionStart,en=ta.selectionEnd;
+            ta.value=ta.value.substring(0,s)+'  '+ta.value.substring(en);
+            ta.selectionStart=ta.selectionEnd=s+2;
+            updateImportStatus(); updateLineNumbers();
         }
     });
-    ta.addEventListener('click',   updateImportStatus);
-    ta.addEventListener('keyup',   updateImportStatus);
-    ta.addEventListener('scroll',  () => {
-        document.getElementById('codeLineNums').scrollTop = ta.scrollTop;
+    ta.addEventListener('click',updateImportStatus);
+    ta.addEventListener('keyup',updateImportStatus);
+    ta.addEventListener('scroll',()=>{
+        document.getElementById('codeLineNums').scrollTop=ta.scrollTop;
     });
 })();
 
-/* ── Emoji / Pack system ── */
-const DEFAULT_PACKS = [
-    'NewsEmoji','Udif7rr7_by_fStikBot','OutlineEmoji',
-    'FinanceEmoji','FlameEmoji','PremiumIcons'
-];
-let savedPacks = [];
-try {
-    const r = localStorage.getItem('tg_saved_packs');
-    savedPacks = JSON.parse(r) || [];
-    if (!Array.isArray(savedPacks)) savedPacks = [];
-} catch { savedPacks = []; }
-if (!savedPacks.length) {
-    savedPacks = [...DEFAULT_PACKS];
-    localStorage.setItem('tg_saved_packs', JSON.stringify(savedPacks));
-}
-let recentEmojis = [];
-try {
-    recentEmojis =
-        JSON.parse(localStorage.getItem('tg_recent_emojis')) || [];
-} catch { recentEmojis = []; }
-const loadedPacks = new Map();
-const failedPacks = new Set();
+/* ══════════════════════════════════════════
+   EMOJI / PACK SYSTEM
+══════════════════════════════════════════ */
+const DEFAULT_PACKS=['NewsEmoji','Udif7rr7_by_fStikBot','OutlineEmoji','FinanceEmoji','FlameEmoji','PremiumIcons'];
+let savedPacks=[];
+try{const r=localStorage.getItem('tg_saved_packs');savedPacks=JSON.parse(r)||[];if(!Array.isArray(savedPacks))savedPacks=[];}catch{savedPacks=[];}
+if(!savedPacks.length){savedPacks=[...DEFAULT_PACKS];localStorage.setItem('tg_saved_packs',JSON.stringify(savedPacks));}
+let recentEmojis=[];
+try{recentEmojis=JSON.parse(localStorage.getItem('tg_recent_emojis'))||[];}catch{recentEmojis=[];}
+const loadedPacks=new Map();
+const failedPacks=new Set();
 
-function setActiveTab(id) {
-    document.querySelectorAll('.pack-tab')
-        .forEach(t => t.classList.remove('active'));
-    const t = document.getElementById(`tab-${id}`);
-    if (t) {
-        t.classList.add('active');
-        t.scrollIntoView({inline:'center',block:'nearest'});
-    }
+function setActiveTab(id){
+    document.querySelectorAll('.pack-tab').forEach(t=>t.classList.remove('active'));
+    const t=document.getElementById(`tab-${id}`);
+    if(t){t.classList.add('active');t.scrollIntoView({inline:'center',block:'nearest'});}
 }
-function renderTabs() {
-    const c = document.getElementById('pickerTabs');
-    c.innerHTML = '';
-    c.appendChild(_makeTab('recent','🕒','Recently Used',
-        ()=>showRecentSection()));
-    savedPacks.forEach(name => {
-        const stickers = loadedPacks.get(name);
+function renderTabs(){
+    const c=document.getElementById('pickerTabs');
+    c.innerHTML='';
+    c.appendChild(_makeTab('recent','🕒','Recently Used',()=>showRecentSection()));
+    savedPacks.forEach(name=>{
+        const stickers=loadedPacks.get(name);
         let child;
-        if (stickers?.length) {
-            const d = getStickerDisplay(stickers[0]);
-            if (d) {
-                const img   = document.createElement('img');
-                img.src     = `/api/image?file_id=${d.file_id}`;
-                img.alt     = name.slice(0,2).toUpperCase();
-                img.onerror = ()=>img.replaceWith(
-                    document.createTextNode(name.slice(0,2).toUpperCase()));
-                child = img;
+        if(stickers?.length){
+            const d=getStickerDisplay(stickers[0]);
+            if(d){
+                const img=document.createElement('img');
+                img.src=`/api/image?file_id=${d.file_id}`;
+                img.alt=name.slice(0,2).toUpperCase();
+                img.onerror=()=>img.replaceWith(document.createTextNode(name.slice(0,2).toUpperCase()));
+                child=img;
             }
         }
-        c.appendChild(_makeTab(name,
-            child||name.slice(0,2).toUpperCase(),name,()=>loadPack(name)));
+        c.appendChild(_makeTab(name,child||name.slice(0,2).toUpperCase(),name,()=>loadPack(name)));
     });
 }
-function _makeTab(id, content, title, onclickFn) {
-    const t     = document.createElement('div');
-    t.className = 'pack-tab';
-    t.id        = `tab-${id}`;
-    t.title     = title;
-    if (typeof content==='string') t.textContent = content;
+function _makeTab(id,content,title,onclickFn){
+    const t=document.createElement('div');
+    t.className='pack-tab'; t.id=`tab-${id}`; t.title=title;
+    if(typeof content==='string')t.textContent=content;
     else t.appendChild(content);
-    t.addEventListener('mousedown', e => {
-        if (!isMobile()) e.preventDefault();
-    });
-    t.addEventListener('click', onclickFn);
+    t.addEventListener('mousedown',e=>{if(!isMobile())e.preventDefault();});
+    t.addEventListener('click',onclickFn);
     return t;
 }
 
-function addToRecent(data) {
-    if (!data.id) return;
-    recentEmojis = recentEmojis.filter(e => e.id !== data.id);
+function addToRecent(data){
+    if(!data.id)return;
+    recentEmojis=recentEmojis.filter(e=>e.id!==data.id);
     recentEmojis.unshift(data);
-    if (recentEmojis.length > 32) recentEmojis.pop();
-    try {
-        localStorage.setItem('tg_recent_emojis',
-            JSON.stringify(recentEmojis));
-    } catch {}
-    const g = document.getElementById('grid-recent');
-    if (g) fillRecentGrid(g);
+    if(recentEmojis.length>32)recentEmojis.pop();
+    try{localStorage.setItem('tg_recent_emojis',JSON.stringify(recentEmojis));}catch{}
+    const g=document.getElementById('grid-recent');
+    if(g)fillRecentGrid(g);
 }
-function fillRecentGrid(grid) {
-    grid.innerHTML = '';
-    if (!recentEmojis.length) {
-        const s = document.createElement('span');
-        s.style.cssText =
-            'color:var(--text-3);font-size:12px;grid-column:span 8;padding:8px 0';
-        s.textContent = 'No recent emojis yet.';
-        grid.appendChild(s);
-        return;
+function fillRecentGrid(grid){
+    grid.innerHTML='';
+    if(!recentEmojis.length){
+        const s=document.createElement('span');
+        s.style.cssText='color:var(--text-3);font-size:12px;grid-column:span 8;padding:8px 0';
+        s.textContent='No recent emojis yet.';
+        grid.appendChild(s); return;
     }
-    const frag = document.createDocumentFragment();
-    recentEmojis.forEach(item => frag.appendChild(makeRecentItem(item)));
+    const frag=document.createDocumentFragment();
+    recentEmojis.forEach(item=>frag.appendChild(makeRecentItem(item)));
     grid.appendChild(frag);
 }
-function makeRecentItem(data) {
-    const wrap     = document.createElement('div');
-    wrap.className = 'emoji-grid-item';
-    wrap.title     = data.fallback||'';
-    const img      = document.createElement('img');
-    img.src        = (data.isVideo&&data.thumbUrl) ? data.thumbUrl : data.url;
-    img.alt        = data.fallback||'';
-    img.style.cssText =
-        'width:32px;height:32px;object-fit:contain;pointer-events:none';
-    img.loading = 'lazy';
-    img.onerror = () => {
-        wrap.style.fontSize = '22px';
-        wrap.textContent    = data.fallback||'?';
-    };
+function makeRecentItem(data){
+    const wrap=document.createElement('div');
+    wrap.className='emoji-grid-item'; wrap.title=data.fallback||'';
+    const img=document.createElement('img');
+    img.src=(data.isVideo&&data.thumbUrl)?data.thumbUrl:data.url;
+    img.alt=data.fallback||'';
+    img.style.cssText='width:32px;height:32px;object-fit:contain;pointer-events:none';
+    img.loading='lazy';
+    img.onerror=()=>{wrap.style.fontSize='22px';wrap.textContent=data.fallback||'?';};
     wrap.appendChild(img);
-    wrap.addEventListener('mousedown', e => {
-        if (!isMobile()) e.preventDefault();
-    });
-    wrap.addEventListener('click', ()=>insertEmoji(data));
+    wrap.addEventListener('mousedown',e=>{if(!isMobile())e.preventDefault();});
+    wrap.addEventListener('click',()=>insertEmoji(data));
     return wrap;
 }
-function showRecentSection() {
+function showRecentSection(){
     setActiveTab('recent');
-    const body = document.getElementById('pickerBody');
-    let section = document.getElementById('section-recent');
-    if (!section) {
-        section = makeSection('recent','Recently Used');
-        body.prepend(section);
-    }
+    const body=document.getElementById('pickerBody');
+    let section=document.getElementById('section-recent');
+    if(!section){section=makeSection('recent','Recently Used');body.prepend(section);}
     fillRecentGrid(document.getElementById('grid-recent'));
     section.scrollIntoView({behavior:'smooth',block:'start'});
 }
 
-function getStickerDisplay(sticker) {
-    if (!sticker) return null;
-    if (sticker.is_animated) {
-        return sticker.thumbnail
-            ? {file_id:sticker.thumbnail.file_id,isVideo:false,thumbFile_id:null}
-            : null;
-    }
-    if (sticker.is_video) {
-        return {file_id:sticker.file_id, isVideo:true,
-                thumbFile_id:sticker.thumbnail?.file_id||null};
-    }
-    return {file_id:sticker.file_id,isVideo:false,thumbFile_id:null};
+function getStickerDisplay(sticker){
+    if(!sticker)return null;
+    if(sticker.is_animated)return sticker.thumbnail?{file_id:sticker.thumbnail.file_id,isVideo:false,thumbFile_id:null}:null;
+    if(sticker.is_video)return{file_id:sticker.file_id,isVideo:true,thumbFile_id:sticker.thumbnail?.file_id||null};
+    return{file_id:sticker.file_id,isVideo:false,thumbFile_id:null};
 }
-function makeGridItem(sticker) {
-    const d = getStickerDisplay(sticker);
-    if (!d) return null;
-    const wrap     = document.createElement('div');
-    wrap.className = 'emoji-grid-item';
-    wrap.title     = sticker.emoji||'';
+function makeGridItem(sticker){
+    const d=getStickerDisplay(sticker);
+    if(!d)return null;
+    const wrap=document.createElement('div');
+    wrap.className='emoji-grid-item'; wrap.title=sticker.emoji||'';
     let media;
-    if (d.isVideo) {
-        media             = document.createElement('video');
-        media.src         = `/api/image?file_id=${d.file_id}`;
-        media.autoplay    = true;
-        media.loop        = true;
-        media.muted       = true;
-        media.playsInline = true;
-    } else {
-        media         = document.createElement('img');
-        media.src     = `/api/image?file_id=${d.file_id}`;
-        media.alt     = sticker.emoji||'';
-        media.loading = 'lazy';
-        media.onerror = () => {
-            wrap.style.fontSize = '22px';
-            wrap.textContent    = sticker.emoji||'?';
-        };
+    if(d.isVideo){
+        media=document.createElement('video');
+        media.src=`/api/image?file_id=${d.file_id}`;
+        media.autoplay=true; media.loop=true; media.muted=true; media.playsInline=true;
+    }else{
+        media=document.createElement('img');
+        media.src=`/api/image?file_id=${d.file_id}`;
+        media.alt=sticker.emoji||''; media.loading='lazy';
+        media.onerror=()=>{wrap.style.fontSize='22px';wrap.textContent=sticker.emoji||'?';};
     }
-    media.style.cssText =
-        'width:32px;height:32px;object-fit:contain;pointer-events:none';
+    media.style.cssText='width:32px;height:32px;object-fit:contain;pointer-events:none';
     wrap.appendChild(media);
-    wrap.addEventListener('mousedown', e => {
-        if (!isMobile()) e.preventDefault();
-    });
-    wrap.addEventListener('click', ()=>{
+    wrap.addEventListener('mousedown',e=>{if(!isMobile())e.preventDefault();});
+    wrap.addEventListener('click',()=>{
         insertEmoji({
-            id:       sticker.custom_emoji_id||sticker.file_unique_id||'',
-            url:      `/api/image?file_id=${d.file_id}`,
-            thumbUrl: (d.isVideo&&d.thumbFile_id)
-                        ? `/api/image?file_id=${d.thumbFile_id}` : null,
-            fallback: sticker.emoji||'🙂',
-            isVideo:  d.isVideo
+            id:sticker.custom_emoji_id||sticker.file_unique_id||'',
+            url:`/api/image?file_id=${d.file_id}`,
+            thumbUrl:(d.isVideo&&d.thumbFile_id)?`/api/image?file_id=${d.thumbFile_id}`:null,
+            fallback:sticker.emoji||'🙂',
+            isVideo:d.isVideo
         });
     });
     return wrap;
 }
-function makeSection(id, title) {
-    const sec      = document.createElement('div');
-    sec.className  = 'pack-section';
-    sec.id         = `section-${id}`;
-    const bar      = document.createElement('div');
-    bar.className  = 'pack-title-bar';
-    const left     = document.createElement('div');
-    left.className = 'pack-title-left';
-    left.innerHTML = `<span class="pack-title">${title}</span>
-        <span class="pack-title-count" id="count-${id}"></span>`;
+function makeSection(id,title){
+    const sec=document.createElement('div');
+    sec.className='pack-section'; sec.id=`section-${id}`;
+    const bar=document.createElement('div');
+    bar.className='pack-title-bar';
+    const left=document.createElement('div');
+    left.className='pack-title-left';
+    left.innerHTML=`<span class="pack-title">${title}</span><span class="pack-title-count" id="count-${id}"></span>`;
     bar.appendChild(left);
-    if (id!=='recent') {
-        const acts     = document.createElement('div');
-        acts.className = 'pack-actions';
-        acts.innerHTML = `
+    if(id!=='recent'){
+        const acts=document.createElement('div');
+        acts.className='pack-actions';
+        acts.innerHTML=`
             <button class="view-pack-btn" onclick="viewPack('${id}')">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                   stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                <circle cx="12" cy="12" r="3"/></svg>View
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>View
             </button>
             <button class="remove-pack-btn" onclick="removePack('${id}')">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                   stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="18" y1="6"  x2="6"  y2="18"/>
-                <line x1="6"  y1="6"  x2="18" y2="18"/></svg>Remove
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Remove
             </button>`;
         bar.appendChild(acts);
     }
-    const grid     = document.createElement('div');
-    grid.className = 'emoji-grid';
-    grid.id        = `grid-${id}`;
-    sec.appendChild(bar);
-    sec.appendChild(grid);
+    const grid=document.createElement('div');
+    grid.className='emoji-grid'; grid.id=`grid-${id}`;
+    sec.appendChild(bar); sec.appendChild(grid);
     return sec;
 }
-async function loadPack(name) {
+async function loadPack(name){
     setActiveTab(name);
-    const body = document.getElementById('pickerBody');
-    document.getElementById('welcomeText').style.display = 'none';
-    if (loadedPacks.has(name)) {
-        document.getElementById(`section-${name}`)
-            ?.scrollIntoView({behavior:'smooth',block:'start'});
-        return;
-    }
-    if (failedPacks.has(name)) {
-        document.getElementById(`section-${name}`)?.remove();
-        failedPacks.delete(name);
-    }
-    if (document.getElementById(`section-${name}`)) {
-        document.getElementById(`section-${name}`)
-            ?.scrollIntoView({behavior:'smooth',block:'start'});
-        return;
-    }
-    const section = makeSection(name, name);
+    const body=document.getElementById('pickerBody');
+    document.getElementById('welcomeText').style.display='none';
+    if(loadedPacks.has(name)){document.getElementById(`section-${name}`)?.scrollIntoView({behavior:'smooth',block:'start'});return;}
+    if(failedPacks.has(name)){document.getElementById(`section-${name}`)?.remove();failedPacks.delete(name);}
+    if(document.getElementById(`section-${name}`)){document.getElementById(`section-${name}`)?.scrollIntoView({behavior:'smooth',block:'start'});return;}
+    const section=makeSection(name,name);
     body.appendChild(section);
     section.scrollIntoView({behavior:'smooth',block:'start'});
-    const grid = document.getElementById(`grid-${name}`);
-    const sf   = document.createDocumentFragment();
-    for (let i=0;i<24;i++) {
-        const sk     = document.createElement('div');
-        sk.className = 'skeleton-item';
-        sk.style.animationDelay = `${i*.04}s`;
-        sf.appendChild(sk);
-    }
+    const grid=document.getElementById(`grid-${name}`);
+    const sf=document.createDocumentFragment();
+    for(let i=0;i<24;i++){const sk=document.createElement('div');sk.className='skeleton-item';sk.style.animationDelay=`${i*.04}s`;sf.appendChild(sk);}
     grid.appendChild(sf);
-    try {
-        const ctrl    = new AbortController();
-        const timeout = setTimeout(()=>ctrl.abort(),15000);
-        const res     = await fetch(
-            `/api/getPack?name=${encodeURIComponent(name)}`,
-            {signal:ctrl.signal});
+    try{
+        const ctrl=new AbortController();
+        const timeout=setTimeout(()=>ctrl.abort(),15000);
+        const res=await fetch(`/api/getPack?name=${encodeURIComponent(name)}`,{signal:ctrl.signal});
         clearTimeout(timeout);
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const data = await res.json();
-        if (!data.ok) {
-            showError(grid,name,data.description||'Telegram error');
-            failedPacks.add(name); return;
-        }
-        const stickers = data.result?.stickers||[];
-        grid.innerHTML = '';
-        const countEl  = document.getElementById(`count-${name}`);
-        if (countEl) countEl.textContent = stickers.length;
-        if (!stickers.length) {
-            grid.innerHTML =
-                `<span style="color:var(--text-3);font-size:12px;
-                 grid-column:span 8">Pack is empty.</span>`;
-            return;
-        }
-        const frag = document.createDocumentFragment();
-        stickers.forEach((s,i)=>{
-            const el = makeGridItem(s);
-            if (el) {
-                el.style.animationDelay = `${Math.min(i*.02,.5)}s`;
-                frag.appendChild(el);
-            }
-        });
+        if(!res.ok)throw new Error(`HTTP ${res.status}`);
+        const data=await res.json();
+        if(!data.ok){showError(grid,name,data.description||'Telegram error');failedPacks.add(name);return;}
+        const stickers=data.result?.stickers||[];
+        grid.innerHTML='';
+        const countEl=document.getElementById(`count-${name}`);
+        if(countEl)countEl.textContent=stickers.length;
+        if(!stickers.length){grid.innerHTML=`<span style="color:var(--text-3);font-size:12px;grid-column:span 8">Pack is empty.</span>`;return;}
+        const frag=document.createDocumentFragment();
+        stickers.forEach((s,i)=>{const el=makeGridItem(s);if(el){el.style.animationDelay=`${Math.min(i*.02,.5)}s`;frag.appendChild(el);}});
         grid.appendChild(frag);
         loadedPacks.set(name,stickers);
         renderTabs();
-    } catch(err) {
-        grid.innerHTML = '';
+    }catch(err){
+        grid.innerHTML='';
         failedPacks.add(name);
-        showError(grid,name,
-            err.name==='AbortError'?'Request timed out.':err.message);
+        showError(grid,name,err.name==='AbortError'?'Request timed out.':err.message);
     }
 }
-function showError(grid,name,msg) {
-    grid.innerHTML = '';
-    const d     = document.createElement('div');
-    d.className = 'error-banner';
-    d.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="12" cy="12" r="10"/>
-        <line x1="12" y1="8"  x2="12"    y2="12"/>
-        <line x1="12" y1="16" x2="12.01" y2="16"/>
-        </svg><span>${msg}</span>
-        <button class="retry-btn" onclick="retryPack('${name}')">Retry</button>`;
+function showError(grid,name,msg){
+    grid.innerHTML='';
+    const d=document.createElement('div');
+    d.className='error-banner';
+    d.innerHTML=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><span>${msg}</span><button class="retry-btn" onclick="retryPack('${name}')">Retry</button>`;
     grid.appendChild(d);
 }
-function retryPack(name) {
-    failedPacks.delete(name);
-    document.getElementById(`section-${name}`)?.remove();
-    loadPack(name);
-}
-function viewPack(name) {
-    const url = `https://t.me/addemoji/${name}`;
-    if (tgApp?.openTelegramLink) tgApp.openTelegramLink(url);
-    else window.open(url,'_blank');
-}
-function removePack(name) {
+function retryPack(name){failedPacks.delete(name);document.getElementById(`section-${name}`)?.remove();loadPack(name);}
+function viewPack(name){const url=`https://t.me/addemoji/${name}`;if(tgApp?.openTelegramLink)tgApp.openTelegramLink(url);else window.open(url,'_blank');}
+function removePack(name){
     showConfirm('Remove Pack?',`Remove "${name}"?`,'🗑️').then(ok=>{
-        if (!ok) return;
-        savedPacks = savedPacks.filter(p=>p!==name);
+        if(!ok)return;
+        savedPacks=savedPacks.filter(p=>p!==name);
         localStorage.setItem('tg_saved_packs',JSON.stringify(savedPacks));
-        loadedPacks.delete(name);
-        failedPacks.delete(name);
+        loadedPacks.delete(name);failedPacks.delete(name);
         document.getElementById(`section-${name}`)?.remove();
-        renderTabs();
-        showToast(`✅ "${name}" removed`);
-        if (!savedPacks.length&&!recentEmojis.length)
-            document.getElementById('welcomeText').style.display='block';
+        renderTabs();showToast(`✅ "${name}" removed`);
+        if(!savedPacks.length&&!recentEmojis.length)document.getElementById('welcomeText').style.display='block';
     });
 }
-function clearAllData() {
-    showConfirm('Clear Everything?',
-        'Remove all packs and recent emojis?','⚠️')
-    .then(ok=>{
-        if (!ok) return;
-        savedPacks=[]; recentEmojis=[];
-        loadedPacks.clear(); failedPacks.clear();
+function clearAllData(){
+    showConfirm('Clear Everything?','Remove all packs and recent emojis?','⚠️').then(ok=>{
+        if(!ok)return;
+        savedPacks=[];recentEmojis=[];loadedPacks.clear();failedPacks.clear();
         localStorage.setItem('tg_saved_packs','[]');
         localStorage.removeItem('tg_recent_emojis');
         renderTabs();
-        document.getElementById('pickerBody').innerHTML=`
-            <div id="welcomeText" class="status-text">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                   stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="10"/>
-                <path d="M8 14s1.5 2 4 2 4-2 4-2"/>
-                <line x1="9"  y1="9" x2="9.01"  y2="9"/>
-                <line x1="15" y1="9" x2="15.01" y2="9"/>
-              </svg>No packs added yet.<br>
-              Tap <strong>Add Pack</strong> to get started.</div>`;
+        document.getElementById('pickerBody').innerHTML=`<div id="welcomeText" class="status-text"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>No packs added yet.<br>Tap <strong>Add Pack</strong> to get started.</div>`;
         showToast('🗑️ Cleared');
     });
 }
-function openAddModal() { openModal('addPackModal'); }
-function addNewPack() {
-    const raw = document.getElementById('packInput').value.trim();
-    if (!raw) { showToast('⚠️ Enter a pack name'); return; }
-    let name = raw;
-    if (raw.includes('t.me')||raw.includes('telegram.me'))
-        name = raw.split('/').filter(Boolean).pop();
-    name = name.trim();
-    if (name.length<2) { showToast('⚠️ Invalid pack name'); return; }
-    if (savedPacks.includes(name)) {
-        showToast('ℹ️ Pack already added');
-        closeModal('addPackModal');
-        document.getElementById(`section-${name}`)
-            ?.scrollIntoView({behavior:'smooth',block:'start'});
-        setActiveTab(name); return;
+function openAddModal(){openModal('addPackModal');}
+function addNewPack(){
+    const raw=document.getElementById('packInput').value.trim();
+    if(!raw){showToast('⚠️ Enter a pack name');return;}
+    let name=raw;
+    if(raw.includes('t.me')||raw.includes('telegram.me'))name=raw.split('/').filter(Boolean).pop();
+    name=name.trim();
+    if(name.length<2){showToast('⚠️ Invalid pack name');return;}
+    if(savedPacks.includes(name)){
+        showToast('ℹ️ Pack already added');closeModal('addPackModal');
+        document.getElementById(`section-${name}`)?.scrollIntoView({behavior:'smooth',block:'start'});
+        setActiveTab(name);return;
     }
-    document.getElementById('welcomeText').style.display = 'none';
-    savedPacks.push(name);
-    localStorage.setItem('tg_saved_packs',JSON.stringify(savedPacks));
-    renderTabs();
-    closeModal('addPackModal');
-    loadPack(name);
-    showToast(`📦 Loading "${name}"…`);
+    document.getElementById('welcomeText').style.display='none';
+    savedPacks.push(name);localStorage.setItem('tg_saved_packs',JSON.stringify(savedPacks));
+    renderTabs();closeModal('addPackModal');loadPack(name);showToast(`📦 Loading "${name}"…`);
 }
-function filterPacks(q) {
-    q = q.toLowerCase().trim();
+function filterPacks(q){
+    q=q.toLowerCase().trim();
     document.querySelectorAll('.pack-section').forEach(s=>{
-        if (!q||s.id==='section-recent'){s.style.display='';return;}
-        const n = s.id.replace('section-','').toLowerCase();
-        s.style.display = n.includes(q)?'':'none';
+        if(!q||s.id==='section-recent'){s.style.display='';return;}
+        const n=s.id.replace('section-','').toLowerCase();
+        s.style.display=n.includes(q)?'':'none';
     });
 }
 
 /* ── Modal helpers ── */
-function openModal(id) {
-    const m = document.getElementById(id);
-    m.style.display = 'flex';
-    requestAnimationFrame(()=>{
-        m.classList.add('active');
-        requestAnimationFrame(()=>m.classList.add('visible'));
-    });
-    setTimeout(()=>m.querySelector('input,textarea')?.focus(), 100);
+function openModal(id){
+    const m=document.getElementById(id);
+    m.style.display='flex';
+    requestAnimationFrame(()=>{m.classList.add('active');requestAnimationFrame(()=>m.classList.add('visible'));});
+    setTimeout(()=>m.querySelector('input,textarea')?.focus(),100);
 }
-function closeModal(id) {
-    const m = document.getElementById(id);
+function closeModal(id){
+    const m=document.getElementById(id);
     m.classList.remove('visible');
-    setTimeout(()=>{
-        m.classList.remove('active');
-        m.style.display = 'none';
-        m.querySelectorAll('input').forEach(i=>i.value='');
-    }, 260);
+    setTimeout(()=>{m.classList.remove('active');m.style.display='none';m.querySelectorAll('input').forEach(i=>i.value='');},260);
 }
-function handleOverlayClick(e,id) {
-    if (e.target===document.getElementById(id)) closeModal(id);
+function handleOverlayClick(e,id){if(e.target===document.getElementById(id))closeModal(id);}
+async function pasteClip(inputId){
+    try{const t=await navigator.clipboard.readText();document.getElementById(inputId).value=t;document.getElementById(inputId).focus();}
+    catch{showToast('⚠️ Paste manually');}
 }
-async function pasteClip(inputId) {
-    try {
-        const t = await navigator.clipboard.readText();
-        document.getElementById(inputId).value = t;
-        document.getElementById(inputId).focus();
-    } catch { showToast('⚠️ Paste manually'); }
-}
-document.addEventListener('keydown', e=>{
-    if (e.key!=='Escape') return;
-    closeModal('addPackModal');
-    closeModal('addLinkModal');
-    closeModal('importHtmlModal');
-    closeConfirm(false);
+document.addEventListener('keydown',e=>{
+    if(e.key!=='Escape')return;
+    closeModal('addPackModal');closeModal('addLinkModal');closeModal('importHtmlModal');closeConfirm(false);
 });
 
 /* ── Init ── */
 renderTabs();
-if (recentEmojis.length)    showRecentSection();
-else if (savedPacks.length) loadPack(savedPacks[0]);
-else document.getElementById('welcomeText').style.display = 'block';
+if(recentEmojis.length) showRecentSection();
+else if(savedPacks.length) loadPack(savedPacks[0]);
+else document.getElementById('welcomeText').style.display='block';
 </script>
 </body>
 </html>
