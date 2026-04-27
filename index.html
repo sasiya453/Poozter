@@ -1339,80 +1339,97 @@ function updateLineNumbers() {
    4. Empty lines preserved as blank <br>
    ============================================================ */
 function tgHtmlToEditorHtml(raw) {
+  // Step 1: Pre-process — protect tg-emoji before DOMParser mangles it
+  // Replace <tg-emoji emoji-id="...">fb</tg-emoji> with a placeholder
+  const emojiMap = [];
+  let processed = raw.replace(
+    /<tg-emoji\s+emoji-id="([^"]*)"[^>]*>([\s\S]*?)<\/tg-emoji>/gi,
+    (_, eid, fb) => {
+      const idx = emojiMap.length;
+      emojiMap.push({ eid: eid.trim(), fb: fb.trim() || '⭐' });
+      return `<span data-emoji-idx="${idx}"></span>`;
+    }
+  );
+
+  // Step 2: Also protect <tg-spoiler>
+  const spoilerMap = [];
+  processed = processed.replace(
+    /<tg-spoiler>([\s\S]*?)<\/tg-spoiler>/gi,
+    (_, content) => {
+      const idx = spoilerMap.length;
+      spoilerMap.push(content);
+      return `<span data-spoiler-idx="${idx}"></span>`;
+    }
+  );
+
+  // Step 3: Split on newlines — each line = one editor line
+  const lines = processed.split('\n');
+
   const parser = new DOMParser();
 
   function convertNode(node) {
     if (node.nodeType === Node.TEXT_NODE) return node.textContent;
     if (node.nodeType !== Node.ELEMENT_NODE) return '';
+
     const tag   = node.tagName.toLowerCase();
     const inner = [...node.childNodes].map(convertNode).join('');
+
+    // Restore emoji placeholder
+    if (tag === 'span' && node.hasAttribute('data-emoji-idx')) {
+      const idx  = parseInt(node.getAttribute('data-emoji-idx'));
+      const item = emojiMap[idx];
+      if (!item) return '';
+      return `<span class="tg-emoji-placeholder" data-tg-id="${item.eid}" data-tg-fallback="${item.fb}" contenteditable="false">${item.fb}</span>`;
+    }
+
+    // Restore spoiler placeholder
+    if (tag === 'span' && node.hasAttribute('data-spoiler-idx')) {
+      const idx     = parseInt(node.getAttribute('data-spoiler-idx'));
+      const content = spoilerMap[idx] || '';
+      // Convert content recursively
+      const d2    = parser.parseFromString(`<body>${content}</body>`, 'text/html');
+      const inner2 = [...d2.body.childNodes].map(convertNode).join('');
+      return `<span class="tg-spoiler">${inner2}</span>`;
+    }
+
     switch (tag) {
       case 'b': case 'strong':              return `<b>${inner}</b>`;
       case 'i': case 'em':                  return `<i>${inner}</i>`;
       case 'u':                             return `<u>${inner}</u>`;
       case 's': case 'strike': case 'del': return `<s>${inner}</s>`;
       case 'code':                          return `<code>${inner}</code>`;
+      case 'blockquote':                    return `<blockquote>${inner}</blockquote>`;
       case 'a': {
         const href = node.getAttribute('href') || '#';
         return `<a href="${href}" target="_blank">${inner}</a>`;
       }
-      case 'tg-spoiler':
-        return `<span class="tg-spoiler">${inner}</span>`;
-      case 'tg-emoji': {
-        const eid = node.getAttribute('emoji-id') || '';
-        const fb  = node.textContent.trim() || '⭐';
-        if (!eid) return fb;
-        // Stored as placeholder span so copyHTML() can re-emit <tg-emoji emoji-id="...">
-        return `<span class="tg-emoji-placeholder" data-tg-id="${eid}" data-tg-fallback="${fb}" contenteditable="false">${fb}</span>`;
-      }
-      case 'br':
-        return '[[BR]]';
-      case 'blockquote':
-        // blockquote wraps its content — we keep the tag intact for the editor
-        return `<blockquote>${inner}</blockquote>`;
-      case 'div': case 'p':
-        return inner ? inner + '[[BR]]' : '[[BR]]';
-      default: return inner;
+      case 'br':            return '<br>';
+      case 'p': case 'div': return inner ? inner + '<br>' : '<br>';
+      default:              return inner;
     }
   }
 
-  // Normalize line endings
-  const normalized = raw.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
-  const lines = normalized.split('\n');
-
-  const htmlLines = lines.map(line => {
+  const resultLines = lines.map(line => {
     const trimmed = line.trim();
-    // empty line → null (will become a blank separator)
     if (!trimmed) return null;
-    const doc  = parser.parseFromString(`<div id="__r">${trimmed}</div>`, 'text/html');
-    const root = doc.getElementById('__r');
-    if (!root) return trimmed;
-    let out = [...root.childNodes].map(convertNode).join('');
-    // Replace internal BR sentinel with actual <br>
-    out = out.replace(/\[\[BR\]\]/g, '<br>');
-    // Remove trailing <br> from this line (the join below adds separators)
-    out = out.replace(/(<br\s*\/?>\s*)+$/i, '');
-    return out || null;
+
+    const d = parser.parseFromString(`<body>${trimmed}</body>`, 'text/html');
+    return [...d.body.childNodes].map(convertNode).join('');
   });
 
-  // Join: non-null lines separated by <br>, null lines add an extra <br>
+  // Join with <br>, blank lines add extra spacing
   const parts = [];
-  for (let i = 0; i < htmlLines.length; i++) {
-    const cur  = htmlLines[i];
-    if (cur === null) {
-      // blank line — add extra spacing only if we have content before
-      if (parts.length > 0 && parts[parts.length - 1] !== '<br>') {
-        parts.push('<br>');
-      }
+  for (let i = 0; i < resultLines.length; i++) {
+    const line = resultLines[i];
+    if (line === null) {
+      if (parts.length > 0 && parts[parts.length - 1] !== null) parts.push(null);
     } else {
-      if (parts.length > 0) parts.push('<br>');
-      parts.push(cur);
+      parts.push(line);
     }
   }
 
-  let html = parts.join('');
+  let html = parts.map(p => p === null ? '<br>' : p).join('<br>');
 
-  // Final cleanup
   html = html
     .replace(/(<br\s*\/?>\s*){3,}/gi, '<br><br>')
     .replace(/^(<br\s*\/?>)+/i, '')
