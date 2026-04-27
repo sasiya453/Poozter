@@ -62,15 +62,11 @@
       pointer-events:none; z-index:0;
     }
     button,input,textarea { font-family:inherit; }
-
-    /* Layout */
     .main-wrapper {
       display:flex; gap:20px; width:100%; max-width:1240px;
       padding:20px; height:100%; position:relative; z-index:1;
     }
     .left-column { flex:1; display:flex; flex-direction:column; gap:14px; min-width:0; }
-
-    /* Header */
     .top-header-card {
       background:var(--surface); border-radius:var(--radius-lg);
       padding:14px 20px; display:flex; justify-content:space-between;
@@ -149,8 +145,6 @@
     .btn-copy-html:hover { transform:translateY(-1px); box-shadow:0 6px 20px var(--accent-glow); }
     .btn-copy-html.success { background:linear-gradient(135deg,var(--success),#16a34a); }
     .btn-copy-html svg { width:16px; height:16px; }
-
-    /* Editor */
     .editor-container {
       flex:1; background:var(--surface); border-radius:var(--radius-lg);
       box-shadow:var(--shadow-md); display:flex; flex-direction:column;
@@ -221,8 +215,6 @@
       padding:1px 5px; cursor:pointer; transition:all var(--transition); user-select:none;
     }
     .tg-spoiler.revealed, .tg-spoiler:hover { color:var(--text-1); }
-
-    /* Editor Footer */
     .editor-footer {
       display:flex; justify-content:space-between; align-items:center;
       padding:8px 16px; background:var(--surface-raised);
@@ -240,8 +232,6 @@
     ::-webkit-scrollbar-track { background:transparent; }
     ::-webkit-scrollbar-thumb { background:var(--border-strong); border-radius:10px; }
     ::-webkit-scrollbar-thumb:hover { background:var(--text-3); }
-
-    /* Emoji Picker */
     .emoji-picker-wrapper {
       width:370px; background:var(--surface); border-radius:var(--radius-lg);
       display:flex; flex-direction:column; overflow:hidden;
@@ -369,8 +359,6 @@
       border-radius:6px; font-size:11px; font-weight:600; cursor:pointer;
       margin-left:auto; font-family:inherit;
     }
-
-    /* Modals */
     .modal-overlay {
       position:fixed; inset:0; background:var(--modal-overlay); z-index:1000;
       display:none; justify-content:center; align-items:center;
@@ -423,8 +411,6 @@
       box-shadow:0 4px 12px var(--accent-glow); transition:all var(--transition); letter-spacing:.2px;
     }
     .btn-full:hover { transform:translateY(-1px); box-shadow:0 6px 18px var(--accent-glow); }
-
-    /* Import HTML Modal */
     .import-modal-content {
       background:var(--surface); border-radius:var(--radius-xl);
       width:95%; max-width:680px; box-shadow:var(--shadow-lg);
@@ -529,8 +515,6 @@
     }
     .btn-import-confirm:hover { transform:translateY(-1px); box-shadow:0 6px 18px var(--accent-glow); }
     .btn-import-confirm svg { width:16px; height:16px; }
-
-    /* Confirm dialog */
     .confirm-overlay {
       position:fixed; inset:0; background:var(--modal-overlay); z-index:2000;
       display:none; justify-content:center; align-items:center; backdrop-filter:blur(4px);
@@ -554,8 +538,6 @@
     .confirm-cancel:hover { background:var(--border); }
     .confirm-ok { background:var(--danger)!important; color:#fff!important; border-color:var(--danger)!important; }
     .confirm-ok:hover { opacity:.88; }
-
-    /* Toast */
     .toast {
       position:fixed; bottom:24px; left:50%;
       transform:translateX(-50%) translateY(20px);
@@ -568,8 +550,6 @@
     }
     .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
     @keyframes spin { to{transform:rotate(360deg)} }
-
-    /* Responsive */
     @media(max-width:768px) {
       .main-wrapper { flex-direction:column; padding:0; gap:0; height:100vh; height:100dvh; }
       body::before { display:none; }
@@ -610,7 +590,6 @@
 <body>
 <div class="main-wrapper">
   <div class="left-column">
-    <!-- Header -->
     <div class="top-header-card">
       <div class="header-user-info">
         <div class="user-avatar-wrapper">
@@ -647,7 +626,6 @@
       </div>
     </div>
 
-    <!-- Editor -->
     <div class="editor-container">
       <div class="toolbar">
         <button class="toolbar-btn" onclick="fmt('bold')" title="Bold (Ctrl+B)">
@@ -701,7 +679,6 @@
     </div>
   </div>
 
-  <!-- Emoji Picker -->
   <div class="emoji-picker-wrapper">
     <div class="picker-header">
       <div class="picker-header-title">
@@ -752,7 +729,8 @@
     <p class="modal-subtitle">Enter a pack name or paste a t.me link</p>
     <div class="modal-body">
       <div class="input-group">
-        <input class="pack-input" type="text" id="packInput" placeholder="e.g. NewsEmoji or t.me/addemoji/…"
+        <input class="pack-input" type="text" id="packInput"
+          placeholder="e.g. NewsEmoji or t.me/addemoji/…"
           onkeydown="if(event.key==='Enter')addNewPack()">
         <button class="paste-btn" onclick="pasteClip('packInput')" title="Paste">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg>
@@ -885,23 +863,22 @@
 <script>
 'use strict';
 
-/* Telegram */
 const tgApp = window.Telegram?.WebApp;
 if (tgApp) { tgApp.ready(); tgApp.expand(); }
 
 (function initUser() {
   const user = tgApp?.initDataUnsafe?.user;
-  const avatarImg = document.getElementById('user-avatar');
+  const avatarImg   = document.getElementById('user-avatar');
   const placeholder = document.getElementById('user-avatar-placeholder');
-  const nameEl = document.getElementById('user-name');
-  const greetEl = document.getElementById('greeting-text');
+  const nameEl      = document.getElementById('user-name');
+  const greetEl     = document.getElementById('greeting-text');
   if (!user) return;
   nameEl.textContent = [user.first_name, user.last_name].filter(Boolean).join(' ') || 'Creator';
   const h = new Date().getHours();
   greetEl.textContent = h < 5 ? 'Good night,' : h < 12 ? 'Good morning,' : h < 17 ? 'Good afternoon,' : 'Good evening,';
   if (user.photo_url) {
     avatarImg.src = user.photo_url;
-    avatarImg.onload = () => { avatarImg.style.display = 'block'; placeholder.style.display = 'none'; };
+    avatarImg.onload  = () => { avatarImg.style.display = 'block'; placeholder.style.display = 'none'; };
     avatarImg.onerror = () => { placeholder.textContent = (user.first_name || 'U').charAt(0).toUpperCase(); };
   } else {
     placeholder.textContent = (user.first_name || 'U').charAt(0).toUpperCase();
@@ -923,9 +900,9 @@ let _confirmResolve = null;
 function showConfirm(title, msg, icon = '') {
   return new Promise(res => {
     _confirmResolve = res;
-    document.getElementById('confirmIcon').textContent = icon;
+    document.getElementById('confirmIcon').textContent  = icon;
     document.getElementById('confirmTitle').textContent = title;
-    document.getElementById('confirmMsg').textContent = msg;
+    document.getElementById('confirmMsg').textContent   = msg;
     document.getElementById('confirmOverlay').classList.add('active');
   });
 }
@@ -936,15 +913,12 @@ function closeConfirm(result) {
 }
 
 /* Theme */
-const SUN = `<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>`;
+const SUN  = `<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>`;
 const MOON = `<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>`;
 function _lum(hex) {
   if (!hex?.startsWith('#')) return 255;
-  const c = hex.replace('#', '');
-  const r = parseInt(c.substr(0, 2), 16);
-  const g = parseInt(c.substr(2, 2), 16);
-  const b = parseInt(c.substr(4, 2), 16);
-  return 0.299 * r + 0.587 * g + 0.114 * b;
+  const c = hex.replace('#','');
+  return 0.299*parseInt(c.substr(0,2),16) + 0.587*parseInt(c.substr(2,2),16) + 0.114*parseInt(c.substr(4,2),16);
 }
 const _dark0 = tgApp?.themeParams?.bg_color ? _lum(tgApp.themeParams.bg_color) < 128 : false;
 function applyTheme(t) {
@@ -957,12 +931,11 @@ function toggleTheme() {
 }
 applyTheme(localStorage.getItem('poozter_theme') || (_dark0 ? 'dark' : 'light'));
 
-/* Mobile */
 function isMobile() {
   return window.matchMedia('(max-width:768px)').matches || ('ontouchstart' in window);
 }
 
-/* CARET PERSISTENCE */
+/* CARET */
 const editor = document.getElementById('editor');
 let _savedCaret = null;
 
@@ -973,7 +946,6 @@ function saveCaret() {
   if (editor.contains(range.commonAncestorContainer))
     _savedCaret = range.cloneRange();
 }
-
 function restoreCaret(focusEd = true) {
   if (focusEd) editor.focus();
   if (!_savedCaret) {
@@ -981,21 +953,14 @@ function restoreCaret(focusEd = true) {
     range.selectNodeContents(editor);
     range.collapse(false);
     const sel = window.getSelection();
-    sel.removeAllRanges();
-    sel.addRange(range);
-    _savedCaret = range.cloneRange();
-    return;
+    sel.removeAllRanges(); sel.addRange(range);
+    _savedCaret = range.cloneRange(); return;
   }
   try {
     const sel = window.getSelection();
-    sel.removeAllRanges();
-    sel.addRange(_savedCaret);
-  } catch {
-    _savedCaret = null;
-    restoreCaret(focusEd);
-  }
+    sel.removeAllRanges(); sel.addRange(_savedCaret);
+  } catch { _savedCaret = null; restoreCaret(focusEd); }
 }
-
 document.addEventListener('selectionchange', () => {
   const sel = window.getSelection();
   if (!sel || sel.rangeCount === 0) return;
@@ -1003,7 +968,6 @@ document.addEventListener('selectionchange', () => {
   if (editor.contains(range.commonAncestorContainer))
     _savedCaret = range.cloneRange();
 });
-
 editor.addEventListener('blur', saveCaret);
 
 function fmt(cmd) { editor.focus(); document.execCommand(cmd, false, null); }
@@ -1017,8 +981,7 @@ function restoreLinkRange() {
   if (!_savedLinkRange) return;
   editor.focus();
   const sel = window.getSelection();
-  sel.removeAllRanges();
-  sel.addRange(_savedLinkRange);
+  sel.removeAllRanges(); sel.addRange(_savedLinkRange);
 }
 
 function placeCursorAfter(node) {
@@ -1026,10 +989,8 @@ function placeCursorAfter(node) {
   node.after(zwnj);
   const sel = window.getSelection();
   const r = document.createRange();
-  r.setStartAfter(zwnj);
-  r.collapse(true);
-  sel.removeAllRanges();
-  sel.addRange(r);
+  r.setStartAfter(zwnj); r.collapse(true);
+  sel.removeAllRanges(); sel.addRange(r);
   _savedCaret = r.cloneRange();
 }
 
@@ -1040,9 +1001,7 @@ function insertEmoji(data) {
   const src = (data.isVideo && data.thumbUrl) ? data.thumbUrl : data.url;
   if (!src) {
     document.execCommand('insertText', false, data.fallback || ' ');
-    onEdit();
-    addToRecent(data);
-    return;
+    onEdit(); addToRecent(data); return;
   }
   const img = document.createElement('img');
   img.className = 'tg-emoji';
@@ -1053,21 +1012,17 @@ function insertEmoji(data) {
   img.draggable = false;
   img.onerror = function () {
     const txt = document.createTextNode(this.getAttribute('data-tg-fallback') || ' ');
-    this.replaceWith(txt);
-    onEdit();
+    this.replaceWith(txt); onEdit();
   };
   const sel = window.getSelection();
   if (sel && sel.rangeCount) {
     const range = sel.getRangeAt(0);
-    range.deleteContents();
-    range.insertNode(img);
+    range.deleteContents(); range.insertNode(img);
     placeCursorAfter(img);
   } else {
-    editor.appendChild(img);
-    placeCursorAfter(img);
+    editor.appendChild(img); placeCursorAfter(img);
   }
-  addToRecent(data);
-  onEdit();
+  addToRecent(data); onEdit();
 }
 
 /* Format blocks */
@@ -1083,24 +1038,17 @@ function wrapBlock(type) {
       if (match) {
         const p = node.parentNode;
         while (node.firstChild) p.insertBefore(node.firstChild, node);
-        p.removeChild(node);
-        onEdit();
-        return;
+        p.removeChild(node); onEdit(); return;
       }
     }
     node = node.parentNode;
   }
   const range = sel.getRangeAt(0);
   let wrapper;
-  if (type === 'tg-spoiler') {
-    wrapper = document.createElement('span');
-    wrapper.className = 'tg-spoiler';
-  } else {
-    wrapper = document.createElement(type);
-  }
-  try {
-    range.surroundContents(wrapper);
-  } catch {
+  if (type === 'tg-spoiler') { wrapper = document.createElement('span'); wrapper.className = 'tg-spoiler'; }
+  else { wrapper = document.createElement(type); }
+  try { range.surroundContents(wrapper); }
+  catch {
     const txt = range.toString();
     if (txt) {
       if (type === 'tg-spoiler')
@@ -1115,17 +1063,13 @@ function wrapBlock(type) {
 function clearFormat() {
   editor.focus();
   const sel = window.getSelection();
-  if (sel && !sel.isCollapsed) {
-    document.execCommand('removeFormat');
-    document.execCommand('unlink');
-  }
+  if (sel && !sel.isCollapsed) { document.execCommand('removeFormat'); document.execCommand('unlink'); }
   onEdit();
 }
 
 function insertDate() {
-  const s = new Date().toLocaleString(undefined, { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
-  editor.focus();
-  document.execCommand('insertText', false, s);
+  const s = new Date().toLocaleString(undefined, { year:'numeric', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' });
+  editor.focus(); document.execCommand('insertText', false, s);
 }
 
 /* Link modal */
@@ -1135,7 +1079,6 @@ function openLinkModal() {
   document.getElementById('linkInput').value = sel.startsWith('http') ? sel : '';
   openModal('addLinkModal');
 }
-
 function confirmLink() {
   let url = document.getElementById('linkInput').value.trim();
   if (!url) { showToast('⚠️ Enter a URL'); return; }
@@ -1144,28 +1087,20 @@ function confirmLink() {
   setTimeout(() => {
     restoreLinkRange();
     const sel = window.getSelection();
-    if (sel && sel.toString().trim())
-      document.execCommand('createLink', false, url);
-    else
-      document.execCommand('insertHTML', false, `<a href="${url}" target="_blank">${url}</a>`);
+    if (sel && sel.toString().trim()) document.execCommand('createLink', false, url);
+    else document.execCommand('insertHTML', false, `<a href="${url}" target="_blank">${url}</a>`);
     onEdit();
   }, 300);
 }
 
 /* Clear editor */
 function clearEditorText() {
-  if (!editor.textContent.trim() && !editor.querySelector('img')) {
-    showToast('✨ Editor is already empty');
-    return;
-  }
+  if (!editor.textContent.trim() && !editor.querySelector('img')) { showToast('✨ Editor is already empty'); return; }
   showConfirm('Clear Editor?', 'All text and formatting will be removed.', '🗑️').then(ok => {
     if (!ok) return;
-    editor.innerHTML = '';
-    _savedCaret = null;
+    editor.innerHTML = ''; _savedCaret = null;
     localStorage.removeItem('poozter_draft');
-    onEdit();
-    editor.focus();
-    showToast('✨ Editor cleared');
+    onEdit(); editor.focus(); showToast('✨ Editor cleared');
   });
 }
 
@@ -1181,24 +1116,22 @@ function nodeToTg(node) {
   if (node.nodeName === 'BR') return '\n';
   const inner = [...node.childNodes].map(nodeToTg).join('');
   switch (node.nodeName) {
-    case 'B': case 'STRONG': return `<b>${inner}</b>`;
-    case 'I': case 'EM': return `<i>${inner}</i>`;
-    case 'U': return `<u>${inner}</u>`;
-    case 'S': case 'STRIKE': case 'DEL': return `<s>${inner}</s>`;
-    case 'A': return `<a href="${node.getAttribute('href') || ''}">${inner}</a>`;
-    case 'CODE': return `<code>${inner}</code>`;
-    case 'BLOCKQUOTE': return `<blockquote>${inner}</blockquote>`;
+    case 'B': case 'STRONG':                   return `<b>${inner}</b>`;
+    case 'I': case 'EM':                        return `<i>${inner}</i>`;
+    case 'U':                                   return `<u>${inner}</u>`;
+    case 'S': case 'STRIKE': case 'DEL':        return `<s>${inner}</s>`;
+    case 'A':                                   return `<a href="${node.getAttribute('href')||''}">${inner}</a>`;
+    case 'CODE':                                return `<code>${inner}</code>`;
+    case 'BLOCKQUOTE':                          return `<blockquote>${inner}</blockquote>`;
     case 'SPAN':
-      if (node.classList.contains('tg-spoiler'))
-        return `<tg-spoiler>${inner}</tg-spoiler>`;
+      if (node.classList.contains('tg-spoiler')) return `<tg-spoiler>${inner}</tg-spoiler>`;
       if (node.classList.contains('tg-emoji-placeholder')) {
         const eid = node.getAttribute('data-tg-id');
-        const fb = node.getAttribute('data-tg-fallback') || inner || ' ';
+        const fb  = node.getAttribute('data-tg-fallback') || inner || ' ';
         return eid ? `<tg-emoji emoji-id="${eid}">${fb}</tg-emoji>` : fb;
       }
       return inner;
-    case 'DIV': case 'P':
-      return inner.trim() ? inner + '\n' : '';
+    case 'DIV': case 'P': return inner.trim() ? inner + '\n' : '';
     default: return inner;
   }
 }
@@ -1207,21 +1140,11 @@ function copyHTML() {
   const tmp = document.createElement('div');
   tmp.innerHTML = editor.innerHTML;
   const raw = [...tmp.childNodes].map(nodeToTg).join('');
-  const html = raw
-    .replace(/\n{3,}/g, '\n\n')
-    .replace(/^\n+/, '')
-    .replace(/\n+$/, '')
-    .trim();
+  const html = raw.replace(/\n{3,}/g,'\n\n').replace(/^\n+/,'').replace(/\n+$/,'').trim();
   if (!html) { showToast('✨ Editor is empty'); return; }
   const fallback = () => {
-    const ta = Object.assign(document.createElement('textarea'), {
-      value: html, style: 'position:fixed;opacity:0'
-    });
-    document.body.appendChild(ta);
-    ta.focus();
-    ta.select();
-    document.execCommand('copy');
-    document.body.removeChild(ta);
+    const ta = Object.assign(document.createElement('textarea'), { value: html, style: 'position:fixed;opacity:0' });
+    document.body.appendChild(ta); ta.focus(); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
   };
   (navigator.clipboard?.writeText(html) ?? Promise.reject())
     .catch(fallback)
@@ -1244,20 +1167,17 @@ function charLen() {
   tmp.querySelectorAll('.tg-emoji-placeholder').forEach(sp => sp.replaceWith(sp.getAttribute('data-tg-fallback') || sp.textContent || ' '));
   return (tmp.textContent || '').replace(/\u200B/g, '').length;
 }
-
 function updateCounter() {
   const n = charLen();
   const fill = document.getElementById('charFill');
-  const ctr = document.getElementById('charCounter');
-  const MAX = n <= 1024 ? 1024 : 4096;
-  const pct = Math.min(n / MAX * 100, 100);
-  const col = n > 4096 ? 'var(--danger)' : n > 1024 ? 'var(--warning)' : 'var(--success)';
-  fill.style.width = pct + '%';
-  fill.style.background = col;
-  ctr.textContent = `${n} / ${MAX}`;
-  ctr.className = 'char-counter' + (n > 4096 ? ' danger' : n > 1024 ? ' warning' : '');
+  const ctr  = document.getElementById('charCounter');
+  const MAX  = n <= 1024 ? 1024 : 4096;
+  const pct  = Math.min(n / MAX * 100, 100);
+  const col  = n > 4096 ? 'var(--danger)' : n > 1024 ? 'var(--warning)' : 'var(--success)';
+  fill.style.width = pct + '%'; fill.style.background = col;
+  ctr.textContent  = `${n} / ${MAX}`;
+  ctr.className    = 'char-counter' + (n > 4096 ? ' danger' : n > 1024 ? ' warning' : '');
 }
-
 function onEdit() {
   updateCounter();
   const st = document.getElementById('saveStatus');
@@ -1276,11 +1196,11 @@ updateCounter();
 
 editor.addEventListener('input', onEdit);
 
-/* FIXED PASTE — preserves line breaks */
+/* FIXED PASTE */
 editor.addEventListener('paste', e => {
   e.preventDefault();
   const html = e.clipboardData.getData('text/html');
-  const txt = e.clipboardData.getData('text/plain');
+  const txt  = e.clipboardData.getData('text/plain');
   if (html) {
     const clean = html
       .replace(/<br\s*\/?>/gi, '\n')
@@ -1345,8 +1265,7 @@ function openImportModal() {
   openModal('importHtmlModal');
   const ta = document.getElementById('importTextarea');
   ta.value = '';
-  updateImportStatus();
-  updateLineNumbers();
+  updateImportStatus(); updateLineNumbers();
   setTimeout(() => ta.focus(), 150);
 }
 
@@ -1355,20 +1274,13 @@ async function pasteToImport() {
     const text = await navigator.clipboard.readText();
     const ta = document.getElementById('importTextarea');
     ta.value = text;
-    updateImportStatus();
-    updateLineNumbers();
-    ta.focus();
-  } catch {
-    showToast('⚠️ Clipboard access denied — paste manually');
-  }
+    updateImportStatus(); updateLineNumbers(); ta.focus();
+  } catch { showToast('⚠️ Clipboard access denied — paste manually'); }
 }
 
 function clearImportCode() {
   const ta = document.getElementById('importTextarea');
-  ta.value = '';
-  updateImportStatus();
-  updateLineNumbers();
-  ta.focus();
+  ta.value = ''; updateImportStatus(); updateLineNumbers(); ta.focus();
 }
 
 function formatImportCode() {
@@ -1390,56 +1302,56 @@ function formatImportCode() {
       return out;
     });
     ta.value = result.join('\n');
-    updateImportStatus();
-    updateLineNumbers();
-  } catch {
-    showToast('⚠️ Could not format — check your HTML');
-  }
+    updateImportStatus(); updateLineNumbers();
+  } catch { showToast('⚠️ Could not format — check your HTML'); }
 }
 
 function updateImportStatus() {
-  const ta = document.getElementById('importTextarea');
+  const ta  = document.getElementById('importTextarea');
   const val = ta.value;
   const pos = ta.selectionStart;
   const before = val.substring(0, pos);
-  const line = (before.match(/\n/g) || []).length + 1;
-  const col = pos - before.lastIndexOf('\n');
+  const line  = (before.match(/\n/g) || []).length + 1;
+  const col   = pos - before.lastIndexOf('\n');
   const chars = val.length;
   const lines = val ? val.split('\n').length : 0;
-  document.getElementById('importLineCol').textContent = `Ln ${line}, Col ${col}`;
+  document.getElementById('importLineCol').textContent   = `Ln ${line}, Col ${col}`;
   document.getElementById('importCharCount').textContent = `${chars} char${chars !== 1 ? 's' : ''}`;
   document.getElementById('importLineCount').textContent = `${lines} line${lines !== 1 ? 's' : ''}`;
 }
 
 function updateLineNumbers() {
-  const ta = document.getElementById('importTextarea');
+  const ta   = document.getElementById('importTextarea');
   const nums = document.getElementById('codeLineNums');
   const count = ta.value ? ta.value.split('\n').length : 1;
   let text = '';
   for (let i = 1; i <= count; i++) text += i + '\n';
   nums.textContent = text;
-  nums.scrollTop = ta.scrollTop;
+  nums.scrollTop   = ta.scrollTop;
 }
 
-/* TG HTML → Editor HTML converter — FIXED tg-emoji handling */
+/* ============================================================
+   TG HTML → EDITOR HTML  — FULLY FIXED
+   Key fixes:
+   1. Split raw on \n → each line converted independently
+   2. blockquote handled as a BLOCK (not inline)
+   3. tg-emoji → placeholder span (correct re-export via copyHTML)
+   4. Empty lines preserved as blank <br>
+   ============================================================ */
 function tgHtmlToEditorHtml(raw) {
   const parser = new DOMParser();
-  const doc = parser.parseFromString(`<div id="__root">${raw}</div>`, 'text/html');
-  const root = doc.getElementById('__root');
-  if (!root) return raw;
 
-  function convert(node) {
+  function convertNode(node) {
     if (node.nodeType === Node.TEXT_NODE) return node.textContent;
     if (node.nodeType !== Node.ELEMENT_NODE) return '';
-    const tag = node.tagName.toLowerCase();
-    const inner = [...node.childNodes].map(convert).join('');
+    const tag   = node.tagName.toLowerCase();
+    const inner = [...node.childNodes].map(convertNode).join('');
     switch (tag) {
-      case 'b': case 'strong': return `<b>${inner}</b>`;
-      case 'i': case 'em': return `<i>${inner}</i>`;
-      case 'u': return `<u>${inner}</u>`;
+      case 'b': case 'strong':              return `<b>${inner}</b>`;
+      case 'i': case 'em':                  return `<i>${inner}</i>`;
+      case 'u':                             return `<u>${inner}</u>`;
       case 's': case 'strike': case 'del': return `<s>${inner}</s>`;
-      case 'code': return `<code>${inner}</code>`;
-      case 'blockquote': return `<blockquote>${inner}</blockquote>`;
+      case 'code':                          return `<code>${inner}</code>`;
       case 'a': {
         const href = node.getAttribute('href') || '#';
         return `<a href="${href}" target="_blank">${inner}</a>`;
@@ -1448,26 +1360,66 @@ function tgHtmlToEditorHtml(raw) {
         return `<span class="tg-spoiler">${inner}</span>`;
       case 'tg-emoji': {
         const eid = node.getAttribute('emoji-id') || '';
-        const fb = node.textContent.trim() || '⭐';
+        const fb  = node.textContent.trim() || '⭐';
         if (!eid) return fb;
-        /*
-         * Render as <img> using the picker's /api/image endpoint is NOT possible
-         * because tg-emoji custom_emoji_id != file_id.
-         * Instead render as a styled placeholder span that:
-         *   - shows the fallback unicode emoji visually
-         *   - stores the emoji-id so copyHTML() re-emits correct <tg-emoji> tag
-         */
+        // Stored as placeholder span so copyHTML() can re-emit <tg-emoji emoji-id="...">
         return `<span class="tg-emoji-placeholder" data-tg-id="${eid}" data-tg-fallback="${fb}" contenteditable="false">${fb}</span>`;
       }
-      case 'br': return '<br>';
+      case 'br':
+        return '[[BR]]';
+      case 'blockquote':
+        // blockquote wraps its content — we keep the tag intact for the editor
+        return `<blockquote>${inner}</blockquote>`;
       case 'div': case 'p':
-        return inner.trim() ? inner + '<br>' : '';
+        return inner ? inner + '[[BR]]' : '[[BR]]';
       default: return inner;
     }
   }
 
-  const result = [...root.childNodes].map(convert).join('');
-  return result.replace(/(<br\s*\/?>\s*)+$/i, '').trim();
+  // Normalize line endings
+  const normalized = raw.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+  const lines = normalized.split('\n');
+
+  const htmlLines = lines.map(line => {
+    const trimmed = line.trim();
+    // empty line → null (will become a blank separator)
+    if (!trimmed) return null;
+    const doc  = parser.parseFromString(`<div id="__r">${trimmed}</div>`, 'text/html');
+    const root = doc.getElementById('__r');
+    if (!root) return trimmed;
+    let out = [...root.childNodes].map(convertNode).join('');
+    // Replace internal BR sentinel with actual <br>
+    out = out.replace(/\[\[BR\]\]/g, '<br>');
+    // Remove trailing <br> from this line (the join below adds separators)
+    out = out.replace(/(<br\s*\/?>\s*)+$/i, '');
+    return out || null;
+  });
+
+  // Join: non-null lines separated by <br>, null lines add an extra <br>
+  const parts = [];
+  for (let i = 0; i < htmlLines.length; i++) {
+    const cur  = htmlLines[i];
+    if (cur === null) {
+      // blank line — add extra spacing only if we have content before
+      if (parts.length > 0 && parts[parts.length - 1] !== '<br>') {
+        parts.push('<br>');
+      }
+    } else {
+      if (parts.length > 0) parts.push('<br>');
+      parts.push(cur);
+    }
+  }
+
+  let html = parts.join('');
+
+  // Final cleanup
+  html = html
+    .replace(/(<br\s*\/?>\s*){3,}/gi, '<br><br>')
+    .replace(/^(<br\s*\/?>)+/i, '')
+    .replace(/(<br\s*\/?>)+$/i, '')
+    .trim();
+
+  return html;
 }
 
 function confirmImport() {
@@ -1493,27 +1445,22 @@ function _doImport(html, mode) {
     if (mode === 'replace') {
       editor.innerHTML = html;
       const range = document.createRange();
-      range.selectNodeContents(editor);
-      range.collapse(false);
+      range.selectNodeContents(editor); range.collapse(false);
       const sel = window.getSelection();
-      sel.removeAllRanges();
-      sel.addRange(range);
+      sel.removeAllRanges(); sel.addRange(range);
       _savedCaret = range.cloneRange();
     } else if (mode === 'append') {
       editor.focus();
       const range = document.createRange();
-      range.selectNodeContents(editor);
-      range.collapse(false);
+      range.selectNodeContents(editor); range.collapse(false);
       const sel = window.getSelection();
-      sel.removeAllRanges();
-      sel.addRange(range);
+      sel.removeAllRanges(); sel.addRange(range);
       document.execCommand('insertHTML', false, html);
     } else {
       restoreCaret(true);
       document.execCommand('insertHTML', false, html);
     }
-    onEdit();
-    editor.focus();
+    onEdit(); editor.focus();
     showToast('✅ HTML imported successfully!');
   }, 300);
 }
@@ -1521,26 +1468,25 @@ function _doImport(html, mode) {
 /* Textarea listeners */
 (function setupImportTextarea() {
   const ta = document.getElementById('importTextarea');
-  ta.addEventListener('input', () => { updateImportStatus(); updateLineNumbers(); });
+  ta.addEventListener('input',  () => { updateImportStatus(); updateLineNumbers(); });
   ta.addEventListener('keydown', e => {
     if (e.key === 'Tab') {
       e.preventDefault();
       const s = ta.selectionStart, en = ta.selectionEnd;
       ta.value = ta.value.substring(0, s) + '  ' + ta.value.substring(en);
       ta.selectionStart = ta.selectionEnd = s + 2;
-      updateImportStatus();
-      updateLineNumbers();
+      updateImportStatus(); updateLineNumbers();
     }
   });
-  ta.addEventListener('click', updateImportStatus);
-  ta.addEventListener('keyup', updateImportStatus);
+  ta.addEventListener('click',  updateImportStatus);
+  ta.addEventListener('keyup',  updateImportStatus);
   ta.addEventListener('scroll', () => {
     document.getElementById('codeLineNums').scrollTop = ta.scrollTop;
   });
 })();
 
 /* EMOJI / PACK SYSTEM */
-const DEFAULT_PACKS = ['NewsEmoji', 'Udif7rr7_by_fStikBot', 'OutlineEmoji', 'FinanceEmoji'];
+const DEFAULT_PACKS = ['NewsEmoji','Udif7rr7_by_fStikBot','OutlineEmoji','FinanceEmoji'];
 let savedPacks = [];
 try {
   const r = localStorage.getItem('tg_saved_packs');
@@ -1561,7 +1507,7 @@ const failedPacks = new Set();
 function setActiveTab(id) {
   document.querySelectorAll('.pack-tab').forEach(t => t.classList.remove('active'));
   const t = document.getElementById(`tab-${id}`);
-  if (t) { t.classList.add('active'); t.scrollIntoView({ inline: 'center', block: 'nearest' }); }
+  if (t) { t.classList.add('active'); t.scrollIntoView({ inline:'center', block:'nearest' }); }
 }
 
 function renderTabs() {
@@ -1587,9 +1533,7 @@ function renderTabs() {
 
 function _makeTab(id, content, title, onclickFn) {
   const t = document.createElement('div');
-  t.className = 'pack-tab';
-  t.id = `tab-${id}`;
-  t.title = title;
+  t.className = 'pack-tab'; t.id = `tab-${id}`; t.title = title;
   if (typeof content === 'string') t.textContent = content;
   else t.appendChild(content);
   t.addEventListener('mousedown', e => { if (!isMobile()) e.preventDefault(); });
@@ -1613,8 +1557,7 @@ function fillRecentGrid(grid) {
     const s = document.createElement('span');
     s.style.cssText = 'color:var(--text-3);font-size:12px;grid-column:span 8;padding:8px 0;display:block';
     s.textContent = 'No recent emojis yet.';
-    grid.appendChild(s);
-    return;
+    grid.appendChild(s); return;
   }
   const frag = document.createDocumentFragment();
   recentEmojis.forEach(item => frag.appendChild(makeRecentItem(item)));
@@ -1623,8 +1566,7 @@ function fillRecentGrid(grid) {
 
 function makeRecentItem(data) {
   const wrap = document.createElement('div');
-  wrap.className = 'emoji-grid-item';
-  wrap.title = data.fallback || '';
+  wrap.className = 'emoji-grid-item'; wrap.title = data.fallback || '';
   const img = document.createElement('img');
   img.src = (data.isVideo && data.thumbUrl) ? data.thumbUrl : data.url;
   img.alt = data.fallback || '';
@@ -1641,18 +1583,15 @@ function showRecentSection() {
   setActiveTab('recent');
   const body = document.getElementById('pickerBody');
   let section = document.getElementById('section-recent');
-  if (!section) {
-    section = makeSection('recent', 'Recently Used');
-    body.prepend(section);
-  }
+  if (!section) { section = makeSection('recent', 'Recently Used'); body.prepend(section); }
   fillRecentGrid(document.getElementById('grid-recent'));
-  section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  section.scrollIntoView({ behavior:'smooth', block:'start' });
 }
 
 function getStickerDisplay(sticker) {
   if (!sticker) return null;
   if (sticker.is_animated) return sticker.thumbnail ? { file_id: sticker.thumbnail.file_id, isVideo: false, thumbFile_id: null } : null;
-  if (sticker.is_video) return { file_id: sticker.file_id, isVideo: true, thumbFile_id: sticker.thumbnail?.file_id || null };
+  if (sticker.is_video)    return { file_id: sticker.file_id, isVideo: true,  thumbFile_id: sticker.thumbnail?.file_id || null };
   return { file_id: sticker.file_id, isVideo: false, thumbFile_id: null };
 }
 
@@ -1660,21 +1599,16 @@ function makeGridItem(sticker) {
   const d = getStickerDisplay(sticker);
   if (!d) return null;
   const wrap = document.createElement('div');
-  wrap.className = 'emoji-grid-item';
-  wrap.title = sticker.emoji || '';
+  wrap.className = 'emoji-grid-item'; wrap.title = sticker.emoji || '';
   let media;
   if (d.isVideo) {
     media = document.createElement('video');
     media.src = `/api/image?file_id=${d.file_id}`;
-    media.autoplay = true;
-    media.loop = true;
-    media.muted = true;
-    media.playsInline = true;
+    media.autoplay = true; media.loop = true; media.muted = true; media.playsInline = true;
   } else {
     media = document.createElement('img');
     media.src = `/api/image?file_id=${d.file_id}`;
-    media.alt = sticker.emoji || '';
-    media.loading = 'lazy';
+    media.alt = sticker.emoji || ''; media.loading = 'lazy';
     media.onerror = () => { wrap.style.fontSize = '22px'; wrap.textContent = sticker.emoji || '?'; };
   }
   media.style.cssText = 'width:32px;height:32px;object-fit:contain;pointer-events:none';
@@ -1682,11 +1616,11 @@ function makeGridItem(sticker) {
   wrap.addEventListener('mousedown', e => { if (!isMobile()) e.preventDefault(); });
   wrap.addEventListener('click', () => {
     insertEmoji({
-      id: sticker.custom_emoji_id || sticker.file_unique_id || '',
-      url: `/api/image?file_id=${d.file_id}`,
+      id:       sticker.custom_emoji_id || sticker.file_unique_id || '',
+      url:      `/api/image?file_id=${d.file_id}`,
       thumbUrl: (d.isVideo && d.thumbFile_id) ? `/api/image?file_id=${d.thumbFile_id}` : null,
       fallback: sticker.emoji || ' ',
-      isVideo: d.isVideo
+      isVideo:  d.isVideo
     });
   });
   return wrap;
@@ -1694,8 +1628,7 @@ function makeGridItem(sticker) {
 
 function makeSection(id, title) {
   const sec = document.createElement('div');
-  sec.className = 'pack-section';
-  sec.id = `section-${id}`;
+  sec.className = 'pack-section'; sec.id = `section-${id}`;
   const bar = document.createElement('div');
   bar.className = 'pack-title-bar';
   const left = document.createElement('div');
@@ -1715,10 +1648,8 @@ function makeSection(id, title) {
     bar.appendChild(acts);
   }
   const grid = document.createElement('div');
-  grid.className = 'emoji-grid';
-  grid.id = `grid-${id}`;
-  sec.appendChild(bar);
-  sec.appendChild(grid);
+  grid.className = 'emoji-grid'; grid.id = `grid-${id}`;
+  sec.appendChild(bar); sec.appendChild(grid);
   return sec;
 }
 
@@ -1727,7 +1658,7 @@ async function loadPack(name) {
   const body = document.getElementById('pickerBody');
   document.getElementById('welcomeText').style.display = 'none';
   if (loadedPacks.has(name)) {
-    document.getElementById(`section-${name}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    document.getElementById(`section-${name}`)?.scrollIntoView({ behavior:'smooth', block:'start' });
     return;
   }
   if (failedPacks.has(name)) {
@@ -1735,47 +1666,33 @@ async function loadPack(name) {
     failedPacks.delete(name);
   }
   if (document.getElementById(`section-${name}`)) {
-    document.getElementById(`section-${name}`).scrollIntoView({ behavior: 'smooth', block: 'start' });
+    document.getElementById(`section-${name}`).scrollIntoView({ behavior:'smooth', block:'start' });
     return;
   }
   const section = makeSection(name, name);
   body.appendChild(section);
-  section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  section.scrollIntoView({ behavior:'smooth', block:'start' });
   const grid = document.getElementById(`grid-${name}`);
   const sf = document.createDocumentFragment();
-  for (let i = 0; i < 24; i++) {
-    const sk = document.createElement('div');
-    sk.className = 'skeleton-item';
-    sf.appendChild(sk);
-  }
+  for (let i = 0; i < 24; i++) { const sk = document.createElement('div'); sk.className = 'skeleton-item'; sf.appendChild(sk); }
   grid.appendChild(sf);
   try {
-    const ctrl = new AbortController();
+    const ctrl    = new AbortController();
     const timeout = setTimeout(() => ctrl.abort(), 15000);
-    const res = await fetch(`/api/getPack?name=${encodeURIComponent(name)}`, { signal: ctrl.signal });
+    const res     = await fetch(`/api/getPack?name=${encodeURIComponent(name)}`, { signal: ctrl.signal });
     clearTimeout(timeout);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
-    if (!data.ok) {
-      showError(grid, name, data.description || 'Telegram error');
-      failedPacks.add(name);
-      return;
-    }
+    if (!data.ok) { showError(grid, name, data.description || 'Telegram error'); failedPacks.add(name); return; }
     const stickers = data.result?.stickers || [];
     grid.innerHTML = '';
     const countEl = document.getElementById(`count-${name}`);
     if (countEl) countEl.textContent = stickers.length;
-    if (!stickers.length) {
-      grid.innerHTML = `<span style="color:var(--text-3);font-size:12px;grid-column:span 8">No stickers found</span>`;
-      return;
-    }
+    if (!stickers.length) { grid.innerHTML = `<span style="color:var(--text-3);font-size:12px;grid-column:span 8">No stickers found</span>`; return; }
     const frag = document.createDocumentFragment();
     stickers.forEach((s, i) => {
       const el = makeGridItem(s);
-      if (el) {
-        el.style.animationDelay = `${Math.min(i * 0.02, 0.5)}s`;
-        frag.appendChild(el);
-      }
+      if (el) { el.style.animationDelay = `${Math.min(i * 0.02, 0.5)}s`; frag.appendChild(el); }
     });
     grid.appendChild(frag);
     loadedPacks.set(name, stickers);
@@ -1795,16 +1712,11 @@ function showError(grid, name, msg) {
   grid.appendChild(d);
 }
 
-function retryPack(name) {
-  failedPacks.delete(name);
-  document.getElementById(`section-${name}`)?.remove();
-  loadPack(name);
-}
+function retryPack(name) { failedPacks.delete(name); document.getElementById(`section-${name}`)?.remove(); loadPack(name); }
 
 function viewPack(name) {
   const url = `https://t.me/addemoji/${name}`;
-  if (tgApp?.openLink) tgApp.openLink(url);
-  else window.open(url, '_blank');
+  if (tgApp?.openLink) tgApp.openLink(url); else window.open(url, '_blank');
 }
 
 function removePack(name) {
@@ -1812,11 +1724,9 @@ function removePack(name) {
     if (!ok) return;
     savedPacks = savedPacks.filter(p => p !== name);
     localStorage.setItem('tg_saved_packs', JSON.stringify(savedPacks));
-    loadedPacks.delete(name);
-    failedPacks.delete(name);
+    loadedPacks.delete(name); failedPacks.delete(name);
     document.getElementById(`section-${name}`)?.remove();
-    renderTabs();
-    showToast(`✅ "${name}" removed`);
+    renderTabs(); showToast(`✅ "${name}" removed`);
     if (!savedPacks.length && !recentEmojis.length)
       document.getElementById('welcomeText').style.display = 'block';
   });
@@ -1825,17 +1735,13 @@ function removePack(name) {
 function clearAllData() {
   showConfirm('Clear Everything?', 'Remove all packs and recent emojis?', '🗑️').then(ok => {
     if (!ok) return;
-    savedPacks = [];
-    recentEmojis = [];
-    loadedPacks.clear();
-    failedPacks.clear();
+    savedPacks = []; recentEmojis = []; loadedPacks.clear(); failedPacks.clear();
     localStorage.setItem('tg_saved_packs', '[]');
     localStorage.removeItem('tg_recent_emojis');
     renderTabs();
     document.getElementById('pickerBody').innerHTML = `<div id="welcomeText" class="status-text">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
-      No packs added yet.<br>Tap <strong>Add Pack</strong> to get started.
-    </div>`;
+      No packs added yet.<br>Tap <strong>Add Pack</strong> to get started.</div>`;
     showToast('✅ Cleared');
   });
 }
@@ -1851,18 +1757,14 @@ function addNewPack() {
   name = name.trim();
   if (name.length < 2) { showToast('⚠️ Invalid pack name'); return; }
   if (savedPacks.includes(name)) {
-    showToast('⚠️ Pack already added');
-    closeModal('addPackModal');
-    document.getElementById(`section-${name}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    setActiveTab(name);
-    return;
+    showToast('⚠️ Pack already added'); closeModal('addPackModal');
+    document.getElementById(`section-${name}`)?.scrollIntoView({ behavior:'smooth', block:'start' });
+    setActiveTab(name); return;
   }
   document.getElementById('welcomeText').style.display = 'none';
   savedPacks.push(name);
   localStorage.setItem('tg_saved_packs', JSON.stringify(savedPacks));
-  renderTabs();
-  closeModal('addPackModal');
-  loadPack(name);
+  renderTabs(); closeModal('addPackModal'); loadPack(name);
   showToast(`⏳ Loading "${name}"…`);
 }
 
@@ -1879,42 +1781,24 @@ function filterPacks(q) {
 function openModal(id) {
   const m = document.getElementById(id);
   m.style.display = 'flex';
-  requestAnimationFrame(() => {
-    m.classList.add('active');
-    requestAnimationFrame(() => m.classList.add('visible'));
-  });
+  requestAnimationFrame(() => { m.classList.add('active'); requestAnimationFrame(() => m.classList.add('visible')); });
   setTimeout(() => m.querySelector('input,textarea')?.focus(), 100);
 }
-
 function closeModal(id) {
   const m = document.getElementById(id);
   m.classList.remove('visible');
-  setTimeout(() => {
-    m.classList.remove('active');
-    m.style.display = 'none';
-    m.querySelector('input,textarea[id="packInput"],input[id="linkInput"]') &&
-      (m.querySelector('input,textarea[id="packInput"],input[id="linkInput"]').value = '');
-  }, 220);
+  setTimeout(() => { m.classList.remove('active'); m.style.display = 'none'; }, 220);
 }
-
-function handleOverlayClick(e, id) {
-  if (e.target === document.getElementById(id)) closeModal(id);
-}
+function handleOverlayClick(e, id) { if (e.target === document.getElementById(id)) closeModal(id); }
 
 async function pasteClip(inputId) {
-  try {
-    const t = await navigator.clipboard.readText();
-    document.getElementById(inputId).value = t;
-  } catch {
-    showToast('⚠️ Paste manually');
-  }
+  try { const t = await navigator.clipboard.readText(); document.getElementById(inputId).value = t; }
+  catch { showToast('⚠️ Paste manually'); }
 }
 
 document.addEventListener('keydown', e => {
   if (e.key !== 'Escape') return;
-  closeModal('addPackModal');
-  closeModal('addLinkModal');
-  closeModal('importHtmlModal');
+  closeModal('addPackModal'); closeModal('addLinkModal'); closeModal('importHtmlModal');
 });
 
 /* Init */
