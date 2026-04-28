@@ -1401,42 +1401,31 @@ function extractAndConvertTgHtml(raw) {
     }
   }
 
-  // Split by newlines → convert each line → rejoin with <br>
-  const normalized = processed.replace(/\r\n/g,'\n').replace(/\r/g,'\n');
-  const lines      = normalized.split('\n');
+  // 1. Normalize newlines
+  let normalized = processed.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
 
-  const htmlLines = lines.map(line => {
-    const trimmed = line.trim();
-    if (!trimmed) return null;
-    const doc  = parser.parseFromString(`<body>${trimmed}</body>`, 'text/html');
-    let out = [...doc.body.childNodes].map(convertNode).join('');
-    out = out.replace(/(<br\s*\/?>\s*)+$/i, '');
-    return out || null;
-  });
+  // 2. Convert raw newlines to <br> tags so DOMParser treats them as line breaks
+  normalized = normalized.replace(/\n/g, '<br>');
 
-  // Build final HTML
-  const parts = [];
-  for (let i = 0; i < htmlLines.length; i++) {
-    const cur = htmlLines[i];
-    if (cur === null) {
-      if (parts.length > 0 && parts[parts.length-1] !== null) parts.push(null);
-    } else {
-      parts.push(cur);
-    }
-  }
+  // 3. Parse the ENTIRE document at once to preserve HTML structure (like blockquotes)
+  const doc = parser.parseFromString(`<body>${normalized}</body>`, 'text/html');
 
-  let html = parts.map(p => p === null ? '<br>' : p).join('<br>');
+  // 4. Convert nodes
+  let html = [...doc.body.childNodes].map(convertNode).join('');
+
+  // 5. Clean up excess <br> tags and formatting quirks
   html = html
-    .replace(/(<br\s*\/?>\s*){3,}/gi,'<br><br>')
-    .replace(/^(<br\s*\/?>)+/i,'')
-    .replace(/(<br\s*\/?>)+$/i,'')
+    .replace(/<blockquote>\s*(?:<br\s*\/?>\s*)+/gi, '<blockquote>') // Clean breaks at start of blockquote
+    .replace(/(?:<br\s*\/?>\s*)+<\/blockquote>/gi, '</blockquote>') // Clean breaks at end of blockquote
+    .replace(/(<br\s*\/?>\s*){3,}/gi, '<br><br>')                    // Limit max consecutive breaks to 2
+    .replace(/^(<br\s*\/?>)+/i, '')                                  // Trim leading breaks
+    .replace(/(<br\s*\/?>)+$/i, '')                                  // Trim trailing breaks
     .trim();
 
   return {
     editorHtml: html,
     emojis: [...emojiMap.entries()].map(([id, fallback]) => ({ id, fallback }))
   };
-}
 
 async function confirmImport() {
   const raw = document.getElementById('importTextarea').value.trim();
