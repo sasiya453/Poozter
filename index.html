@@ -1426,7 +1426,8 @@ function extractAndConvertTgHtml(raw) {
     editorHtml: html,
     emojis: [...emojiMap.entries()].map(([id, fallback]) => ({ id, fallback }))
   };
-
+}
+  
 async function confirmImport() {
   const raw = document.getElementById('importTextarea').value.trim();
   if (!raw) { showToast('⚠️ Nothing to import'); return; }
