@@ -1027,7 +1027,10 @@ function wrapBlock(type) {
   editor.focus();
   const sel = window.getSelection();
   if (!sel.rangeCount) return;
+  
   let node = sel.anchorNode;
+  
+  // 1. Check if we are already inside the target block to unwrap it
   while (node && node !== editor) {
     if (node.nodeType === 1) {
       const match = (type === 'tg-spoiler' && node.classList?.contains('tg-spoiler')) ||
@@ -1035,23 +1038,41 @@ function wrapBlock(type) {
       if (match) {
         const p = node.parentNode;
         while (node.firstChild) p.insertBefore(node.firstChild, node);
-        p.removeChild(node); onEdit(); return;
+        p.removeChild(node); 
+        onEdit(); 
+        return;
       }
     }
     node = node.parentNode;
   }
+  
+  // 2. Wrap the selection
   const range = sel.getRangeAt(0);
   let wrapper;
-  if (type === 'tg-spoiler') { wrapper = document.createElement('span'); wrapper.className = 'tg-spoiler'; }
-  else { wrapper = document.createElement(type); }
-  try { range.surroundContents(wrapper); }
-  catch {
-    const txt = range.toString();
-    if (txt) {
-      if (type === 'tg-spoiler')
-        document.execCommand('insertHTML', false, `<span class="tg-spoiler">${txt}</span>`);
-      else
-        document.execCommand('insertHTML', false, `<${type}>${txt}</${type}>`);
+  if (type === 'tg-spoiler') { 
+    wrapper = document.createElement('span'); 
+    wrapper.className = 'tg-spoiler'; 
+  } else { 
+    wrapper = document.createElement(type); 
+  }
+  
+  try {
+    // Try the standard DOM way first (works for simple selections)
+    range.surroundContents(wrapper);
+  } catch {
+    // Fallback for complex/multi-line selections
+    // Extract the actual HTML to preserve <br> tags, emojis, and inline styles
+    const frag = range.cloneContents();
+    const tmp = document.createElement('div');
+    tmp.appendChild(frag);
+    const htmlContent = tmp.innerHTML;
+    
+    if (htmlContent) {
+      if (type === 'tg-spoiler') {
+        document.execCommand('insertHTML', false, `<span class="tg-spoiler">${htmlContent}</span>`);
+      } else {
+        document.execCommand('insertHTML', false, `<${type}>${htmlContent}</${type}>`);
+      }
     }
   }
   onEdit();
