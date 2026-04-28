@@ -1417,11 +1417,46 @@ function extractAndConvertTgHtml(raw) {
   };
 }
 
-function confirmImport() {
+async function confirmImport() {
   const raw = document.getElementById('importTextarea').value.trim();
   if (!raw) { showToast('⚠️ Nothing to import'); return; }
 
-  const { editorHtml, emojis } = extractAndConvertTgHtml(raw);
+  let { editorHtml, emojis } = extractAndConvertTgHtml(raw);
+
+  // --- NEW: Fetch Image URLs for Premium Emojis ---
+  if (emojis.length > 0) {
+    showToast('⏳ Fetching premium emojis...');
+    try {
+      const ids = emojis.map(e => e.id).join(',');
+      const res = await fetch(`/api/customEmoji?ids=${ids}`);
+      const data = await res.json();
+
+      if (data.ok && data.result) {
+        data.result.forEach(sticker => {
+          const target = emojis.find(e => e.id === sticker.custom_emoji_id);
+          if (target) {
+            const d = getStickerDisplay(sticker); // Use your existing helper
+            if (d) {
+              target.url = `/api/image?file_id=${d.file_id}`;
+              target.thumbUrl = (d.isVideo && d.thumbFile_id) ? `/api/image?file_id=${d.thumbFile_id}` : null;
+              target.isVideo = d.isVideo;
+
+              // Replace the temporary text placeholder with the actual image tag
+              const placeholderRegex = new RegExp(`<span class="tg-emoji-placeholder" data-tg-id="${target.id}"[^>]*>[^<]*<\\/span>`, 'g');
+              const imgSrc = (target.isVideo && target.thumbUrl) ? target.thumbUrl : target.url;
+              const imgTag = `<img class="tg-emoji" src="${imgSrc}" alt="${target.fallback}" data-tg-id="${target.id}" data-tg-fallback="${target.fallback}" draggable="false">`;
+              
+              editorHtml = editorHtml.replace(placeholderRegex, imgTag);
+            }
+          }
+        });
+      }
+    } catch (e) {
+      console.error('Failed to fetch custom emoji data:', e);
+      showToast('⚠️ Some emoji images failed to load');
+    }
+  }
+  // ------------------------------------------------
 
   const doIt = (mode) => {
     _doImport(editorHtml, mode, emojis);
@@ -1537,14 +1572,42 @@ function makeImportedSection() {
 
 function makeImportedEmojiItem(data) {
   const wrap = document.createElement('div');
-  wrap.className = 'emoji-grid-item imported-emoji';
+  wrap.className = 'emoji-grid-item';
   wrap.title = `${data.fallback} (id: ${data.id})`;
-  wrap.textContent = data.fallback;
+
+  // If we successfully fetched the image URL, render media
+  if (data.url) {
+    let media;
+    if (data.isVideo) {
+      media = document.createElement('video');
+      media.src = data.url;
+      media.autoplay = true; media.loop = true; media.muted = true; media.playsInline = true;
+    } else {
+      media = document.createElement('img');
+      media.src = data.url;
+      media.alt = data.fallback || ' ';
+      media.loading = 'lazy';
+    }
+    media.style.cssText = 'width:32px;height:32px;object-fit:contain;pointer-events:none';
+    
+    // Fallback to text if the image fails to load
+    media.onerror = () => { 
+      wrap.classList.add('imported-emoji'); 
+      wrap.textContent = data.fallback || '?'; 
+      media.remove(); 
+    };
+    wrap.appendChild(media);
+  } else {
+    // If no URL exists (API failed), fall back to unicode text
+    wrap.classList.add('imported-emoji');
+    wrap.textContent = data.fallback;
+  }
+
   wrap.addEventListener('mousedown', e => { if (!isMobile()) e.preventDefault(); });
   wrap.addEventListener('click', () => {
-    // Insert as tg-emoji-placeholder (no image URL available for custom emoji)
-    insertEmoji({ id: data.id, fallback: data.fallback, url: null, isVideo: false });
+    insertEmoji(data); // Your insertEmoji function already handles data.url automatically!
   });
+  
   return wrap;
 }
 
