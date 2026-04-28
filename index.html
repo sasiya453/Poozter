@@ -75,8 +75,7 @@
       animation:slideDown .4s cubic-bezier(.34,1.56,.64,1) both;
     }
     @keyframes slideDown {
-      from{opacity:0;transform:translateY(-12px)}
-      to{opacity:1;transform:translateY(0)}
+      from{opacity:0;transform:translateY(-12px)} to{opacity:1;transform:translateY(0)}
     }
     .header-user-info { display:flex; align-items:center; gap:14px; overflow:hidden; }
     .user-avatar-wrapper { position:relative; flex-shrink:0; }
@@ -97,8 +96,7 @@
       animation:pulse-dot 2s ease infinite;
     }
     @keyframes pulse-dot {
-      0%,100%{box-shadow:0 0 0 0 rgba(34,197,94,.4)}
-      50%{box-shadow:0 0 0 4px rgba(34,197,94,0)}
+      0%,100%{box-shadow:0 0 0 0 rgba(34,197,94,.4)} 50%{box-shadow:0 0 0 4px rgba(34,197,94,0)}
     }
     .header-text-block { display:flex; flex-direction:column; gap:1px; overflow:hidden; }
     .app-title { font-size:10px; font-weight:700; color:var(--accent); text-transform:uppercase; letter-spacing:1px; }
@@ -154,8 +152,7 @@
     }
     .editor-container:focus-within { border-color:var(--accent); box-shadow:var(--shadow-md),0 0 0 3px var(--accent-glow); }
     @keyframes slideUp {
-      from{opacity:0;transform:translateY(12px)}
-      to{opacity:1;transform:translateY(0)}
+      from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)}
     }
     .toolbar {
       display:flex; gap:3px; padding:8px 14px;
@@ -200,7 +197,7 @@
       cursor:default; user-select:none; -webkit-user-select:none;
     }
     .editor blockquote {
-      border-left:3px solid var(--accent); padding:8px 14px; margin:8px 0;
+      border-left:3px solid var(--accent); padding:8px 14px; margin:4px 0;
       color:var(--text-2); font-style:italic; background:var(--accent-glow);
       border-radius:0 var(--radius-sm) var(--radius-sm) 0;
     }
@@ -240,8 +237,7 @@
       -webkit-user-select:none; user-select:none;
     }
     @keyframes slideLeft {
-      from{opacity:0;transform:translateX(16px)}
-      to{opacity:1;transform:translateX(0)}
+      from{opacity:0;transform:translateX(16px)} to{opacity:1;transform:translateX(0)}
     }
     .picker-header {
       padding:12px 16px; border-bottom:1px solid var(--border);
@@ -283,8 +279,7 @@
     .picker-body { flex:1; overflow-y:auto; padding:14px 16px; }
     .pack-section { margin-bottom:22px; animation:fadeInUp .3s ease both; }
     @keyframes fadeInUp {
-      from{opacity:0;transform:translateY(8px)}
-      to{opacity:1;transform:translateY(0)}
+      from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)}
     }
     .pack-title-bar {
       display:flex; justify-content:space-between; align-items:center;
@@ -321,6 +316,8 @@
     .emoji-grid-item:hover { transform:scale(1.2); background:var(--toolbar-hover); border-color:var(--accent); }
     .emoji-grid-item:active { transform:scale(.93); }
     .emoji-grid-item img,.emoji-grid-item video { width:32px; height:32px; object-fit:contain; pointer-events:none; }
+    /* Imported emoji item — shows as unicode text */
+    .emoji-grid-item.imported-emoji { font-size:22px; }
     .skeleton-item {
       width:100%; aspect-ratio:1; border-radius:var(--radius-sm);
       background:linear-gradient(90deg,var(--border) 25%,var(--toolbar-btn) 50%,var(--border) 75%);
@@ -436,10 +433,7 @@
     .code-dot.red { background:#ff5f57; }
     .code-dot.yellow { background:#febc2e; }
     .code-dot.green { background:#28c840; }
-    .code-topbar-label {
-      font-family:'JetBrains Mono',monospace; font-size:11px;
-      color:var(--code-comment); flex:1; text-align:center; letter-spacing:.5px;
-    }
+    .code-topbar-label { font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--code-comment); flex:1; text-align:center; letter-spacing:.5px; }
     .code-topbar-actions { display:flex; gap:8px; }
     .code-topbar-btn {
       background:rgba(255,255,255,.06); border:1px solid var(--code-border);
@@ -449,10 +443,7 @@
     }
     .code-topbar-btn:hover { color:var(--code-text); background:rgba(255,255,255,.1); }
     .code-topbar-btn svg { width:12px; height:12px; }
-    .code-editor-body {
-      display:flex; background:var(--code-bg);
-      min-height:260px; max-height:45vh; overflow:hidden;
-    }
+    .code-editor-body { display:flex; background:var(--code-bg); min-height:260px; max-height:45vh; overflow:hidden; }
     .code-line-nums {
       width:48px; min-width:48px; flex-shrink:0; padding:14px 0;
       background:var(--code-surface); border-right:1px solid var(--code-border);
@@ -479,11 +470,7 @@
       font-size:11px; color:var(--code-comment);
     }
     .code-status-left { display:flex; gap:14px; align-items:center; }
-    .code-status-badge {
-      background:rgba(79,142,247,.15); color:#4f8ef7;
-      border-radius:4px; padding:1px 7px; font-size:10px;
-      font-weight:600; letter-spacing:.5px;
-    }
+    .code-status-badge { background:rgba(79,142,247,.15); color:#4f8ef7; border-radius:4px; padding:1px 7px; font-size:10px; font-weight:600; letter-spacing:.5px; }
     .code-status-right { display:flex; gap:10px; }
     .import-mode-row { display:flex; gap:8px; padding:0 22px 16px; }
     .import-mode-pill {
@@ -491,8 +478,7 @@
       border:1.5px solid var(--border-strong); background:var(--surface-raised);
       color:var(--text-2); font-size:12px; font-weight:600; cursor:pointer;
       text-align:center; transition:all var(--transition);
-      display:flex; align-items:center; justify-content:center; gap:6px;
-      font-family:inherit;
+      display:flex; align-items:center; justify-content:center; gap:6px; font-family:inherit;
     }
     .import-mode-pill svg { width:13px; height:13px; }
     .import-mode-pill.active { border-color:var(--accent); background:var(--toolbar-hover); color:var(--accent); }
@@ -501,8 +487,7 @@
     .btn-import-cancel {
       flex:1; padding:11px; background:var(--toolbar-btn); color:var(--text-2);
       border:1.5px solid var(--border-strong); border-radius:var(--radius-sm);
-      cursor:pointer; font-weight:600; font-size:14px; font-family:inherit;
-      transition:all var(--transition);
+      cursor:pointer; font-weight:600; font-size:14px; font-family:inherit; transition:all var(--transition);
     }
     .btn-import-cancel:hover { background:var(--border); color:var(--text-1); }
     .btn-import-confirm {
@@ -582,9 +567,7 @@
       .modal-overlay.visible .import-modal-content { transform:translateY(0)!important; }
       .code-editor-body { min-height:180px; max-height:32vh; }
     }
-    @media(max-width:380px) {
-      .emoji-grid { grid-template-columns:repeat(6,1fr); }
-    }
+    @media(max-width:380px) { .emoji-grid { grid-template-columns:repeat(6,1fr); } }
   </style>
 </head>
 <body>
@@ -857,7 +840,6 @@
     </div>
   </div>
 </div>
-
 <div class="toast" id="toast"></div>
 
 <script>
@@ -867,7 +849,7 @@ const tgApp = window.Telegram?.WebApp;
 if (tgApp) { tgApp.ready(); tgApp.expand(); }
 
 (function initUser() {
-  const user = tgApp?.initDataUnsafe?.user;
+  const user        = tgApp?.initDataUnsafe?.user;
   const avatarImg   = document.getElementById('user-avatar');
   const placeholder = document.getElementById('user-avatar-placeholder');
   const nameEl      = document.getElementById('user-name');
@@ -877,7 +859,7 @@ if (tgApp) { tgApp.ready(); tgApp.expand(); }
   const h = new Date().getHours();
   greetEl.textContent = h < 5 ? 'Good night,' : h < 12 ? 'Good morning,' : h < 17 ? 'Good afternoon,' : 'Good evening,';
   if (user.photo_url) {
-    avatarImg.src = user.photo_url;
+    avatarImg.src     = user.photo_url;
     avatarImg.onload  = () => { avatarImg.style.display = 'block'; placeholder.style.display = 'none'; };
     avatarImg.onerror = () => { placeholder.textContent = (user.first_name || 'U').charAt(0).toUpperCase(); };
   } else {
@@ -889,8 +871,7 @@ if (tgApp) { tgApp.ready(); tgApp.expand(); }
 let _toastTimer;
 function showToast(msg, ms = 2400) {
   const el = document.getElementById('toast');
-  el.textContent = msg;
-  el.classList.add('show');
+  el.textContent = msg; el.classList.add('show');
   clearTimeout(_toastTimer);
   _toastTimer = setTimeout(() => el.classList.remove('show'), ms);
 }
@@ -908,8 +889,7 @@ function showConfirm(title, msg, icon = '') {
 }
 function closeConfirm(result) {
   document.getElementById('confirmOverlay').classList.remove('active');
-  _confirmResolve?.(result);
-  _confirmResolve = null;
+  _confirmResolve?.(result); _confirmResolve = null;
 }
 
 /* Theme */
@@ -918,7 +898,7 @@ const MOON = `<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>`;
 function _lum(hex) {
   if (!hex?.startsWith('#')) return 255;
   const c = hex.replace('#','');
-  return 0.299*parseInt(c.substr(0,2),16) + 0.587*parseInt(c.substr(2,2),16) + 0.114*parseInt(c.substr(4,2),16);
+  return 0.299*parseInt(c.substr(0,2),16)+0.587*parseInt(c.substr(2,2),16)+0.114*parseInt(c.substr(4,2),16);
 }
 const _dark0 = tgApp?.themeParams?.bg_color ? _lum(tgApp.themeParams.bg_color) < 128 : false;
 function applyTheme(t) {
@@ -943,15 +923,13 @@ function saveCaret() {
   const sel = window.getSelection();
   if (!sel || sel.rangeCount === 0) return;
   const range = sel.getRangeAt(0);
-  if (editor.contains(range.commonAncestorContainer))
-    _savedCaret = range.cloneRange();
+  if (editor.contains(range.commonAncestorContainer)) _savedCaret = range.cloneRange();
 }
 function restoreCaret(focusEd = true) {
   if (focusEd) editor.focus();
   if (!_savedCaret) {
     const range = document.createRange();
-    range.selectNodeContents(editor);
-    range.collapse(false);
+    range.selectNodeContents(editor); range.collapse(false);
     const sel = window.getSelection();
     sel.removeAllRanges(); sel.addRange(range);
     _savedCaret = range.cloneRange(); return;
@@ -965,8 +943,7 @@ document.addEventListener('selectionchange', () => {
   const sel = window.getSelection();
   if (!sel || sel.rangeCount === 0) return;
   const range = sel.getRangeAt(0);
-  if (editor.contains(range.commonAncestorContainer))
-    _savedCaret = range.cloneRange();
+  if (editor.contains(range.commonAncestorContainer)) _savedCaret = range.cloneRange();
 });
 editor.addEventListener('blur', saveCaret);
 
@@ -983,7 +960,6 @@ function restoreLinkRange() {
   const sel = window.getSelection();
   sel.removeAllRanges(); sel.addRange(_savedLinkRange);
 }
-
 function placeCursorAfter(node) {
   const zwnj = document.createTextNode('\u200B');
   node.after(zwnj);
@@ -999,20 +975,41 @@ function insertEmoji(data) {
   const mobile = isMobile();
   restoreCaret(!mobile);
   const src = (data.isVideo && data.thumbUrl) ? data.thumbUrl : data.url;
+
+  // If no image URL (imported emoji — only has id+fallback), insert as placeholder span
   if (!src) {
-    document.execCommand('insertText', false, data.fallback || ' ');
-    onEdit(); addToRecent(data); return;
+    const span = document.createElement('span');
+    span.className = 'tg-emoji-placeholder';
+    span.setAttribute('data-tg-id', data.id || '');
+    span.setAttribute('data-tg-fallback', data.fallback || ' ');
+    span.setAttribute('contenteditable', 'false');
+    span.textContent = data.fallback || ' ';
+    const sel = window.getSelection();
+    if (sel && sel.rangeCount) {
+      const range = sel.getRangeAt(0);
+      range.deleteContents(); range.insertNode(span);
+      placeCursorAfter(span);
+    } else {
+      editor.appendChild(span); placeCursorAfter(span);
+    }
+    addToRecent(data); onEdit(); return;
   }
+
   const img = document.createElement('img');
   img.className = 'tg-emoji';
-  img.src = src;
-  img.alt = data.fallback || ' ';
+  img.src = src; img.alt = data.fallback || ' ';
   img.setAttribute('data-tg-id', data.id || '');
   img.setAttribute('data-tg-fallback', data.fallback || ' ');
   img.draggable = false;
   img.onerror = function () {
-    const txt = document.createTextNode(this.getAttribute('data-tg-fallback') || ' ');
-    this.replaceWith(txt); onEdit();
+    // Fallback to placeholder span on image load failure
+    const span = document.createElement('span');
+    span.className = 'tg-emoji-placeholder';
+    span.setAttribute('data-tg-id', this.getAttribute('data-tg-id') || '');
+    span.setAttribute('data-tg-fallback', this.getAttribute('data-tg-fallback') || ' ');
+    span.setAttribute('contenteditable', 'false');
+    span.textContent = this.getAttribute('data-tg-fallback') || ' ';
+    this.replaceWith(span); onEdit();
   };
   const sel = window.getSelection();
   if (sel && sel.rangeCount) {
@@ -1066,7 +1063,6 @@ function clearFormat() {
   if (sel && !sel.isCollapsed) { document.execCommand('removeFormat'); document.execCommand('unlink'); }
   onEdit();
 }
-
 function insertDate() {
   const s = new Date().toLocaleString(undefined, { year:'numeric', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' });
   editor.focus(); document.execCommand('insertText', false, s);
@@ -1095,7 +1091,9 @@ function confirmLink() {
 
 /* Clear editor */
 function clearEditorText() {
-  if (!editor.textContent.trim() && !editor.querySelector('img')) { showToast('✨ Editor is already empty'); return; }
+  if (!editor.textContent.trim() && !editor.querySelector('img,.tg-emoji-placeholder')) {
+    showToast('✨ Editor is already empty'); return;
+  }
   showConfirm('Clear Editor?', 'All text and formatting will be removed.', '🗑️').then(ok => {
     if (!ok) return;
     editor.innerHTML = ''; _savedCaret = null;
@@ -1116,13 +1114,13 @@ function nodeToTg(node) {
   if (node.nodeName === 'BR') return '\n';
   const inner = [...node.childNodes].map(nodeToTg).join('');
   switch (node.nodeName) {
-    case 'B': case 'STRONG':                   return `<b>${inner}</b>`;
-    case 'I': case 'EM':                        return `<i>${inner}</i>`;
-    case 'U':                                   return `<u>${inner}</u>`;
-    case 'S': case 'STRIKE': case 'DEL':        return `<s>${inner}</s>`;
-    case 'A':                                   return `<a href="${node.getAttribute('href')||''}">${inner}</a>`;
-    case 'CODE':                                return `<code>${inner}</code>`;
-    case 'BLOCKQUOTE':                          return `<blockquote>${inner}</blockquote>`;
+    case 'B': case 'STRONG':            return `<b>${inner}</b>`;
+    case 'I': case 'EM':                return `<i>${inner}</i>`;
+    case 'U':                           return `<u>${inner}</u>`;
+    case 'S': case 'STRIKE': case 'DEL': return `<s>${inner}</s>`;
+    case 'A':                           return `<a href="${node.getAttribute('href')||''}">${inner}</a>`;
+    case 'CODE':                        return `<code>${inner}</code>`;
+    case 'BLOCKQUOTE':                  return `<blockquote>${inner}</blockquote>`;
     case 'SPAN':
       if (node.classList.contains('tg-spoiler')) return `<tg-spoiler>${inner}</tg-spoiler>`;
       if (node.classList.contains('tg-emoji-placeholder')) {
@@ -1135,15 +1133,14 @@ function nodeToTg(node) {
     default: return inner;
   }
 }
-
 function copyHTML() {
   const tmp = document.createElement('div');
   tmp.innerHTML = editor.innerHTML;
-  const raw = [...tmp.childNodes].map(nodeToTg).join('');
+  const raw  = [...tmp.childNodes].map(nodeToTg).join('');
   const html = raw.replace(/\n{3,}/g,'\n\n').replace(/^\n+/,'').replace(/\n+$/,'').trim();
   if (!html) { showToast('✨ Editor is empty'); return; }
   const fallback = () => {
-    const ta = Object.assign(document.createElement('textarea'), { value: html, style: 'position:fixed;opacity:0' });
+    const ta = Object.assign(document.createElement('textarea'),{value:html,style:'position:fixed;opacity:0'});
     document.body.appendChild(ta); ta.focus(); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
   };
   (navigator.clipboard?.writeText(html) ?? Promise.reject())
@@ -1152,31 +1149,30 @@ function copyHTML() {
       const btn = document.getElementById('copyBtn');
       const orig = btn.innerHTML;
       btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><polyline points="20 6 9 17 4 12"/></svg><span class="btn-label">Copied!</span>`;
-      btn.classList.add('success');
-      showToast('✅ HTML copied!');
+      btn.classList.add('success'); showToast('✅ HTML copied!');
       setTimeout(() => { btn.innerHTML = orig; btn.classList.remove('success'); }, 2200);
     });
 }
 
-/* Auto-save + counter */
+/* Counter + autosave */
 let _saveTimer;
 function charLen() {
   const tmp = document.createElement('div');
   tmp.innerHTML = editor.innerHTML;
-  tmp.querySelectorAll('img[data-tg-fallback]').forEach(img => img.replaceWith(img.getAttribute('data-tg-fallback') || ' '));
-  tmp.querySelectorAll('.tg-emoji-placeholder').forEach(sp => sp.replaceWith(sp.getAttribute('data-tg-fallback') || sp.textContent || ' '));
-  return (tmp.textContent || '').replace(/\u200B/g, '').length;
+  tmp.querySelectorAll('img[data-tg-fallback]').forEach(img => img.replaceWith(img.getAttribute('data-tg-fallback')||' '));
+  tmp.querySelectorAll('.tg-emoji-placeholder').forEach(sp => sp.replaceWith(sp.getAttribute('data-tg-fallback')||sp.textContent||' '));
+  return (tmp.textContent||'').replace(/\u200B/g,'').length;
 }
 function updateCounter() {
-  const n = charLen();
+  const n    = charLen();
   const fill = document.getElementById('charFill');
   const ctr  = document.getElementById('charCounter');
   const MAX  = n <= 1024 ? 1024 : 4096;
-  const pct  = Math.min(n / MAX * 100, 100);
-  const col  = n > 4096 ? 'var(--danger)' : n > 1024 ? 'var(--warning)' : 'var(--success)';
-  fill.style.width = pct + '%'; fill.style.background = col;
+  const pct  = Math.min(n/MAX*100,100);
+  const col  = n>4096?'var(--danger)':n>1024?'var(--warning)':'var(--success)';
+  fill.style.width = pct+'%'; fill.style.background = col;
   ctr.textContent  = `${n} / ${MAX}`;
-  ctr.className    = 'char-counter' + (n > 4096 ? ' danger' : n > 1024 ? ' warning' : '');
+  ctr.className    = 'char-counter'+(n>4096?' danger':n>1024?' warning':'');
 }
 function onEdit() {
   updateCounter();
@@ -1190,7 +1186,6 @@ function onEdit() {
     st.style.color = 'var(--success)';
   }, 900);
 }
-
 try { const d = localStorage.getItem('poozter_draft'); if (d) editor.innerHTML = d; } catch {}
 updateCounter();
 
@@ -1203,17 +1198,11 @@ editor.addEventListener('paste', e => {
   const txt  = e.clipboardData.getData('text/plain');
   if (html) {
     const clean = html
-      .replace(/<br\s*\/?>/gi, '\n')
-      .replace(/<\/p>/gi, '\n')
-      .replace(/<\/div>/gi, '\n')
-      .replace(/<\/li>/gi, '\n')
-      .replace(/<[^>]+>/g, '')
-      .replace(/&nbsp;/g, ' ')
-      .replace(/&amp;/g, '&')
-      .replace(/&lt;/g, '<')
-      .replace(/&gt;/g, '>')
-      .replace(/&quot;/g, '"')
-      .replace(/&#39;/g, "'");
+      .replace(/<br\s*\/?>/gi,'\n').replace(/<\/p>/gi,'\n')
+      .replace(/<\/div>/gi,'\n').replace(/<\/li>/gi,'\n')
+      .replace(/<[^>]+>/g,'').replace(/&nbsp;/g,' ')
+      .replace(/&amp;/g,'&').replace(/&lt;/g,'<')
+      .replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#39;/g,"'");
     const lines = clean.split('\n');
     lines.forEach((line, i) => {
       document.execCommand('insertText', false, line);
@@ -1238,28 +1227,29 @@ editor.addEventListener('keydown', e => {
   if (!mod) return;
   const k = e.key.toLowerCase();
   if (e.shiftKey) {
-    if (k === 'x') { e.preventDefault(); fmt('strikeThrough'); }
-    else if (k === '.') { e.preventDefault(); wrapBlock('blockquote'); }
-    else if (k === 'm') { e.preventDefault(); wrapBlock('code'); }
-    else if (k === 'p') { e.preventDefault(); wrapBlock('tg-spoiler'); }
-    else if (k === 'd') { e.preventDefault(); insertDate(); }
-    else if (k === 'n') { e.preventDefault(); clearFormat(); }
+    if (k==='x'){e.preventDefault();fmt('strikeThrough');}
+    else if(k==='.'){e.preventDefault();wrapBlock('blockquote');}
+    else if(k==='m'){e.preventDefault();wrapBlock('code');}
+    else if(k==='p'){e.preventDefault();wrapBlock('tg-spoiler');}
+    else if(k==='d'){e.preventDefault();insertDate();}
+    else if(k==='n'){e.preventDefault();clearFormat();}
   } else {
-    if (k === 'b') { e.preventDefault(); fmt('bold'); }
-    else if (k === 'i') { e.preventDefault(); fmt('italic'); }
-    else if (k === 'u') { e.preventDefault(); fmt('underline'); }
-    else if (k === 'k') { e.preventDefault(); openLinkModal(); }
+    if(k==='b'){e.preventDefault();fmt('bold');}
+    else if(k==='i'){e.preventDefault();fmt('italic');}
+    else if(k==='u'){e.preventDefault();fmt('underline');}
+    else if(k==='k'){e.preventDefault();openLinkModal();}
   }
 });
 
-/* IMPORT HTML */
+/* ================================================================
+   IMPORT HTML — with tg-emoji extraction to picker section
+   ================================================================ */
 let _importMode = 'replace';
 function setImportMode(mode) {
   _importMode = mode;
   document.querySelectorAll('.import-mode-pill').forEach(p => p.classList.remove('active'));
   document.getElementById(`pill-${mode}`).classList.add('active');
 }
-
 function openImportModal() {
   saveCaret();
   openModal('importHtmlModal');
@@ -1268,35 +1258,31 @@ function openImportModal() {
   updateImportStatus(); updateLineNumbers();
   setTimeout(() => ta.focus(), 150);
 }
-
 async function pasteToImport() {
   try {
     const text = await navigator.clipboard.readText();
     const ta = document.getElementById('importTextarea');
-    ta.value = text;
-    updateImportStatus(); updateLineNumbers(); ta.focus();
+    ta.value = text; updateImportStatus(); updateLineNumbers(); ta.focus();
   } catch { showToast('⚠️ Clipboard access denied — paste manually'); }
 }
-
 function clearImportCode() {
   const ta = document.getElementById('importTextarea');
   ta.value = ''; updateImportStatus(); updateLineNumbers(); ta.focus();
 }
-
 function formatImportCode() {
   const ta = document.getElementById('importTextarea');
   let raw = ta.value.trim();
   if (!raw) return;
   try {
-    raw = raw.replace(/>\s+</g, '><').replace(/></g, '>\n<');
-    const BLOCK = ['blockquote', 'div', 'p'];
+    raw = raw.replace(/>\s+</g,'><').replace(/></g,'>\n<');
+    const BLOCK = ['blockquote','div','p'];
     let depth = 0;
-    const result = raw.split('\n').filter(l => l.trim()).map(line => {
+    const result = raw.split('\n').filter(l=>l.trim()).map(line => {
       line = line.trim();
       const closeMatch = line.match(/^<\/(\w[\w-]*)/);
       if (closeMatch && BLOCK.includes(closeMatch[1].toLowerCase()))
-        depth = Math.max(0, depth - 1);
-      const out = '  '.repeat(depth) + line;
+        depth = Math.max(0, depth-1);
+      const out = '  '.repeat(depth)+line;
       const openMatch = line.match(/^<(\w[\w-]*)[^/]*>(?!.*<\/\1>)/);
       if (openMatch && BLOCK.includes(openMatch[1].toLowerCase())) depth++;
       return out;
@@ -1305,91 +1291,76 @@ function formatImportCode() {
     updateImportStatus(); updateLineNumbers();
   } catch { showToast('⚠️ Could not format — check your HTML'); }
 }
-
 function updateImportStatus() {
   const ta  = document.getElementById('importTextarea');
   const val = ta.value;
   const pos = ta.selectionStart;
-  const before = val.substring(0, pos);
-  const line  = (before.match(/\n/g) || []).length + 1;
-  const col   = pos - before.lastIndexOf('\n');
+  const before = val.substring(0,pos);
+  const line  = (before.match(/\n/g)||[]).length+1;
+  const col   = pos-before.lastIndexOf('\n');
   const chars = val.length;
   const lines = val ? val.split('\n').length : 0;
   document.getElementById('importLineCol').textContent   = `Ln ${line}, Col ${col}`;
-  document.getElementById('importCharCount').textContent = `${chars} char${chars !== 1 ? 's' : ''}`;
-  document.getElementById('importLineCount').textContent = `${lines} line${lines !== 1 ? 's' : ''}`;
+  document.getElementById('importCharCount').textContent = `${chars} char${chars!==1?'s':''}`;
+  document.getElementById('importLineCount').textContent = `${lines} line${lines!==1?'s':''}`;
 }
-
 function updateLineNumbers() {
   const ta   = document.getElementById('importTextarea');
   const nums = document.getElementById('codeLineNums');
   const count = ta.value ? ta.value.split('\n').length : 1;
   let text = '';
-  for (let i = 1; i <= count; i++) text += i + '\n';
-  nums.textContent = text;
-  nums.scrollTop   = ta.scrollTop;
+  for (let i = 1; i <= count; i++) text += i+'\n';
+  nums.textContent = text; nums.scrollTop = ta.scrollTop;
 }
 
-/* ============================================================
-   TG HTML → EDITOR HTML  — FULLY FIXED
-   Key fixes:
-   1. Split raw on \n → each line converted independently
-   2. blockquote handled as a BLOCK (not inline)
-   3. tg-emoji → placeholder span (correct re-export via copyHTML)
-   4. Empty lines preserved as blank <br>
-   ============================================================ */
-function tgHtmlToEditorHtml(raw) {
-  // Step 1: Pre-process — protect tg-emoji before DOMParser mangles it
-  // Replace <tg-emoji emoji-id="...">fb</tg-emoji> with a placeholder
-  const emojiMap = [];
+/* ================================================================
+   STEP 1: Extract all tg-emoji from raw HTML using regex
+   (DOMParser drops unknown tags like <tg-emoji>)
+   Returns: { editorHtml, emojis: [{id, fallback}] }
+   ================================================================ */
+function extractAndConvertTgHtml(raw) {
+  // Extract all unique tg-emoji before any parsing
+  const emojiMap = new Map(); // id -> fallback
+  const emojiRegex = /<tg-emoji\s+emoji-id="([^"]+)"[^>]*>([\s\S]*?)<\/tg-emoji>/gi;
+  let m;
+  while ((m = emojiRegex.exec(raw)) !== null) {
+    const eid = m[1].trim();
+    const fb  = m[2].trim() || '⭐';
+    if (eid && !emojiMap.has(eid)) emojiMap.set(eid, fb);
+  }
+
+  // Replace tg-emoji tags with safe placeholder spans
   let processed = raw.replace(
-    /<tg-emoji\s+emoji-id="([^"]*)"[^>]*>([\s\S]*?)<\/tg-emoji>/gi,
+    /<tg-emoji\s+emoji-id="([^"]+)"[^>]*>([\s\S]*?)<\/tg-emoji>/gi,
     (_, eid, fb) => {
-      const idx = emojiMap.length;
-      emojiMap.push({ eid: eid.trim(), fb: fb.trim() || '⭐' });
-      return `<span data-emoji-idx="${idx}"></span>`;
+      const safeFb = (fb.trim() || '⭐').replace(/"/g, '&quot;');
+      return `<span data-tg-eid="${eid.trim()}" data-tg-fb="${safeFb}"></span>`;
     }
   );
 
-  // Step 2: Also protect <tg-spoiler>
-  const spoilerMap = [];
+  // Replace tg-spoiler tags with safe spans
   processed = processed.replace(
     /<tg-spoiler>([\s\S]*?)<\/tg-spoiler>/gi,
-    (_, content) => {
-      const idx = spoilerMap.length;
-      spoilerMap.push(content);
-      return `<span data-spoiler-idx="${idx}"></span>`;
-    }
+    (_, content) => `<span data-tg-spoiler="1">${content}</span>`
   );
-
-  // Step 3: Split on newlines — each line = one editor line
-  const lines = processed.split('\n');
 
   const parser = new DOMParser();
 
   function convertNode(node) {
     if (node.nodeType === Node.TEXT_NODE) return node.textContent;
     if (node.nodeType !== Node.ELEMENT_NODE) return '';
-
     const tag   = node.tagName.toLowerCase();
     const inner = [...node.childNodes].map(convertNode).join('');
 
-    // Restore emoji placeholder
-    if (tag === 'span' && node.hasAttribute('data-emoji-idx')) {
-      const idx  = parseInt(node.getAttribute('data-emoji-idx'));
-      const item = emojiMap[idx];
-      if (!item) return '';
-      return `<span class="tg-emoji-placeholder" data-tg-id="${item.eid}" data-tg-fallback="${item.fb}" contenteditable="false">${item.fb}</span>`;
+    // Restored tg-emoji
+    if (tag === 'span' && node.hasAttribute('data-tg-eid')) {
+      const eid = node.getAttribute('data-tg-eid') || '';
+      const fb  = node.getAttribute('data-tg-fb')  || '⭐';
+      return `<span class="tg-emoji-placeholder" data-tg-id="${eid}" data-tg-fallback="${fb}" contenteditable="false">${fb}</span>`;
     }
-
-    // Restore spoiler placeholder
-    if (tag === 'span' && node.hasAttribute('data-spoiler-idx')) {
-      const idx     = parseInt(node.getAttribute('data-spoiler-idx'));
-      const content = spoilerMap[idx] || '';
-      // Convert content recursively
-      const d2    = parser.parseFromString(`<body>${content}</body>`, 'text/html');
-      const inner2 = [...d2.body.childNodes].map(convertNode).join('');
-      return `<span class="tg-spoiler">${inner2}</span>`;
+    // Restored tg-spoiler
+    if (tag === 'span' && node.hasAttribute('data-tg-spoiler')) {
+      return `<span class="tg-spoiler">${inner}</span>`;
     }
 
     switch (tag) {
@@ -1403,60 +1374,73 @@ function tgHtmlToEditorHtml(raw) {
         const href = node.getAttribute('href') || '#';
         return `<a href="${href}" target="_blank">${inner}</a>`;
       }
-      case 'br':            return '<br>';
+      case 'br':   return '<br>';
       case 'p': case 'div': return inner ? inner + '<br>' : '<br>';
-      default:              return inner;
+      default: return inner;
     }
   }
 
-  const resultLines = lines.map(line => {
+  // Split by newlines → convert each line → rejoin with <br>
+  const normalized = processed.replace(/\r\n/g,'\n').replace(/\r/g,'\n');
+  const lines      = normalized.split('\n');
+
+  const htmlLines = lines.map(line => {
     const trimmed = line.trim();
     if (!trimmed) return null;
-
-    const d = parser.parseFromString(`<body>${trimmed}</body>`, 'text/html');
-    return [...d.body.childNodes].map(convertNode).join('');
+    const doc  = parser.parseFromString(`<body>${trimmed}</body>`, 'text/html');
+    let out = [...doc.body.childNodes].map(convertNode).join('');
+    out = out.replace(/(<br\s*\/?>\s*)+$/i, '');
+    return out || null;
   });
 
-  // Join with <br>, blank lines add extra spacing
+  // Build final HTML
   const parts = [];
-  for (let i = 0; i < resultLines.length; i++) {
-    const line = resultLines[i];
-    if (line === null) {
-      if (parts.length > 0 && parts[parts.length - 1] !== null) parts.push(null);
+  for (let i = 0; i < htmlLines.length; i++) {
+    const cur = htmlLines[i];
+    if (cur === null) {
+      if (parts.length > 0 && parts[parts.length-1] !== null) parts.push(null);
     } else {
-      parts.push(line);
+      parts.push(cur);
     }
   }
 
   let html = parts.map(p => p === null ? '<br>' : p).join('<br>');
-
   html = html
-    .replace(/(<br\s*\/?>\s*){3,}/gi, '<br><br>')
-    .replace(/^(<br\s*\/?>)+/i, '')
-    .replace(/(<br\s*\/?>)+$/i, '')
+    .replace(/(<br\s*\/?>\s*){3,}/gi,'<br><br>')
+    .replace(/^(<br\s*\/?>)+/i,'')
+    .replace(/(<br\s*\/?>)+$/i,'')
     .trim();
 
-  return html;
+  return {
+    editorHtml: html,
+    emojis: [...emojiMap.entries()].map(([id, fallback]) => ({ id, fallback }))
+  };
 }
 
 function confirmImport() {
   const raw = document.getElementById('importTextarea').value.trim();
   if (!raw) { showToast('⚠️ Nothing to import'); return; }
-  const editorHtml = tgHtmlToEditorHtml(raw);
+
+  const { editorHtml, emojis } = extractAndConvertTgHtml(raw);
+
+  const doIt = (mode) => {
+    _doImport(editorHtml, mode, emojis);
+  };
+
   if (_importMode === 'replace') {
     const hasContent = editor.textContent.trim() || editor.querySelector('img,.tg-emoji-placeholder');
     if (hasContent) {
-      showConfirm('Replace content?', 'This will overwrite all current editor content.', '⚠️')
-        .then(ok => { if (ok) _doImport(editorHtml, 'replace'); });
+      showConfirm('Replace content?','This will overwrite all current editor content.','⚠️')
+        .then(ok => { if (ok) doIt('replace'); });
     } else {
-      _doImport(editorHtml, 'replace');
+      doIt('replace');
     }
   } else {
-    _doImport(editorHtml, _importMode);
+    doIt(_importMode);
   }
 }
 
-function _doImport(html, mode) {
+function _doImport(html, mode, emojis = []) {
   closeModal('importHtmlModal');
   setTimeout(() => {
     if (mode === 'replace') {
@@ -1478,8 +1462,101 @@ function _doImport(html, mode) {
       document.execCommand('insertHTML', false, html);
     }
     onEdit(); editor.focus();
-    showToast('✅ HTML imported successfully!');
+
+    // Add extracted emojis to picker
+    if (emojis.length > 0) {
+      addImportedEmojisToPicker(emojis);
+      showToast(`✅ Imported! Found ${emojis.length} emoji${emojis.length!==1?'s':''}`);
+    } else {
+      showToast('✅ HTML imported successfully!');
+    }
   }, 300);
+}
+
+/* ================================================================
+   IMPORTED EMOJIS SECTION in the picker
+   ================================================================ */
+// Persisted imported emojis: [{id, fallback}]
+let importedEmojis = [];
+try { importedEmojis = JSON.parse(localStorage.getItem('tg_imported_emojis')) || []; } catch { importedEmojis = []; }
+
+function addImportedEmojisToPicker(newEmojis) {
+  // Merge — avoid duplicates by id
+  newEmojis.forEach(e => {
+    if (!importedEmojis.find(x => x.id === e.id)) importedEmojis.push(e);
+  });
+  try { localStorage.setItem('tg_imported_emojis', JSON.stringify(importedEmojis)); } catch {}
+  renderImportedSection();
+  renderTabs();
+}
+
+function renderImportedSection() {
+  if (!importedEmojis.length) {
+    document.getElementById('section-imported')?.remove();
+    return;
+  }
+  const body = document.getElementById('pickerBody');
+  let section = document.getElementById('section-imported');
+  if (!section) {
+    section = makeImportedSection();
+    // Insert after recent section or at top
+    const recent = document.getElementById('section-recent');
+    if (recent && recent.nextSibling) body.insertBefore(section, recent.nextSibling);
+    else body.insertBefore(section, body.firstChild);
+  }
+  const grid    = document.getElementById('grid-imported');
+  const countEl = document.getElementById('count-imported');
+  if (countEl) countEl.textContent = importedEmojis.length;
+  grid.innerHTML = '';
+  const frag = document.createDocumentFragment();
+  importedEmojis.forEach(e => frag.appendChild(makeImportedEmojiItem(e)));
+  grid.appendChild(frag);
+}
+
+function makeImportedSection() {
+  const sec = document.createElement('div');
+  sec.className = 'pack-section'; sec.id = 'section-imported';
+  const bar = document.createElement('div');
+  bar.className = 'pack-title-bar';
+  const left = document.createElement('div');
+  left.className = 'pack-title-left';
+  left.innerHTML = `<span class="pack-title">✨ Imported Emojis</span><span class="pack-title-count" id="count-imported"></span>`;
+  bar.appendChild(left);
+  const acts = document.createElement('div');
+  acts.className = 'pack-actions';
+  acts.innerHTML = `
+    <button class="remove-pack-btn" onclick="clearImportedEmojis()" title="Clear imported emojis">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg>
+    </button>`;
+  bar.appendChild(acts);
+  const grid = document.createElement('div');
+  grid.className = 'emoji-grid'; grid.id = 'grid-imported';
+  sec.appendChild(bar); sec.appendChild(grid);
+  return sec;
+}
+
+function makeImportedEmojiItem(data) {
+  const wrap = document.createElement('div');
+  wrap.className = 'emoji-grid-item imported-emoji';
+  wrap.title = `${data.fallback} (id: ${data.id})`;
+  wrap.textContent = data.fallback;
+  wrap.addEventListener('mousedown', e => { if (!isMobile()) e.preventDefault(); });
+  wrap.addEventListener('click', () => {
+    // Insert as tg-emoji-placeholder (no image URL available for custom emoji)
+    insertEmoji({ id: data.id, fallback: data.fallback, url: null, isVideo: false });
+  });
+  return wrap;
+}
+
+function clearImportedEmojis() {
+  showConfirm('Clear Imported Emojis?', 'Remove all emojis extracted from imports?', '🗑️').then(ok => {
+    if (!ok) return;
+    importedEmojis = [];
+    try { localStorage.removeItem('tg_imported_emojis'); } catch {}
+    document.getElementById('section-imported')?.remove();
+    renderTabs();
+    showToast('✅ Imported emojis cleared');
+  });
 }
 
 /* Textarea listeners */
@@ -1490,19 +1567,19 @@ function _doImport(html, mode) {
     if (e.key === 'Tab') {
       e.preventDefault();
       const s = ta.selectionStart, en = ta.selectionEnd;
-      ta.value = ta.value.substring(0, s) + '  ' + ta.value.substring(en);
-      ta.selectionStart = ta.selectionEnd = s + 2;
+      ta.value = ta.value.substring(0,s)+'  '+ta.value.substring(en);
+      ta.selectionStart = ta.selectionEnd = s+2;
       updateImportStatus(); updateLineNumbers();
     }
   });
   ta.addEventListener('click',  updateImportStatus);
   ta.addEventListener('keyup',  updateImportStatus);
-  ta.addEventListener('scroll', () => {
-    document.getElementById('codeLineNums').scrollTop = ta.scrollTop;
-  });
+  ta.addEventListener('scroll', () => { document.getElementById('codeLineNums').scrollTop = ta.scrollTop; });
 })();
 
-/* EMOJI / PACK SYSTEM */
+/* ================================================================
+   EMOJI / PACK SYSTEM
+   ================================================================ */
 const DEFAULT_PACKS = ['NewsEmoji','Udif7rr7_by_fStikBot','OutlineEmoji','FinanceEmoji'];
 let savedPacks = [];
 try {
@@ -1524,13 +1601,21 @@ const failedPacks = new Set();
 function setActiveTab(id) {
   document.querySelectorAll('.pack-tab').forEach(t => t.classList.remove('active'));
   const t = document.getElementById(`tab-${id}`);
-  if (t) { t.classList.add('active'); t.scrollIntoView({ inline:'center', block:'nearest' }); }
+  if (t) { t.classList.add('active'); t.scrollIntoView({inline:'center',block:'nearest'}); }
 }
 
 function renderTabs() {
   const c = document.getElementById('pickerTabs');
   c.innerHTML = '';
-  c.appendChild(_makeTab('recent', '🕓', 'Recently Used', () => showRecentSection()));
+  c.appendChild(_makeTab('recent','🕓','Recently Used',() => showRecentSection()));
+  // Imported emojis tab
+  if (importedEmojis.length) {
+    c.appendChild(_makeTab('imported','✨','Imported Emojis',() => {
+      setActiveTab('imported');
+      renderImportedSection();
+      document.getElementById('section-imported')?.scrollIntoView({behavior:'smooth',block:'start'});
+    }));
+  }
   savedPacks.forEach(name => {
     const stickers = loadedPacks.get(name);
     let child;
@@ -1539,12 +1624,12 @@ function renderTabs() {
       if (d) {
         const img = document.createElement('img');
         img.src = `/api/image?file_id=${d.file_id}`;
-        img.alt = name.slice(0, 2).toUpperCase();
-        img.onerror = () => img.replaceWith(document.createTextNode(name.slice(0, 2).toUpperCase()));
+        img.alt = name.slice(0,2).toUpperCase();
+        img.onerror = () => img.replaceWith(document.createTextNode(name.slice(0,2).toUpperCase()));
         child = img;
       }
     }
-    c.appendChild(_makeTab(name, child || name.slice(0, 2).toUpperCase(), name, () => loadPack(name)));
+    c.appendChild(_makeTab(name, child||name.slice(0,2).toUpperCase(), name, () => loadPack(name)));
   });
 }
 
@@ -1583,14 +1668,18 @@ function fillRecentGrid(grid) {
 
 function makeRecentItem(data) {
   const wrap = document.createElement('div');
-  wrap.className = 'emoji-grid-item'; wrap.title = data.fallback || '';
-  const img = document.createElement('img');
-  img.src = (data.isVideo && data.thumbUrl) ? data.thumbUrl : data.url;
-  img.alt = data.fallback || '';
-  img.style.cssText = 'width:32px;height:32px;object-fit:contain;pointer-events:none';
-  img.loading = 'lazy';
-  img.onerror = () => { wrap.style.fontSize = '22px'; wrap.textContent = data.fallback || '?'; };
-  wrap.appendChild(img);
+  wrap.className = 'emoji-grid-item'; wrap.title = data.fallback||'';
+  if (data.url) {
+    const img = document.createElement('img');
+    img.src = data.url; img.alt = data.fallback||''; img.loading = 'lazy';
+    img.style.cssText = 'width:32px;height:32px;object-fit:contain;pointer-events:none';
+    img.onerror = () => { wrap.classList.add('imported-emoji'); wrap.textContent = data.fallback||'?'; img.remove(); };
+    wrap.appendChild(img);
+  } else {
+    // imported emoji — no image, show unicode
+    wrap.classList.add('imported-emoji');
+    wrap.textContent = data.fallback || '⭐';
+  }
   wrap.addEventListener('mousedown', e => { if (!isMobile()) e.preventDefault(); });
   wrap.addEventListener('click', () => insertEmoji(data));
   return wrap;
@@ -1600,23 +1689,23 @@ function showRecentSection() {
   setActiveTab('recent');
   const body = document.getElementById('pickerBody');
   let section = document.getElementById('section-recent');
-  if (!section) { section = makeSection('recent', 'Recently Used'); body.prepend(section); }
+  if (!section) { section = makeSection('recent','Recently Used'); body.prepend(section); }
   fillRecentGrid(document.getElementById('grid-recent'));
-  section.scrollIntoView({ behavior:'smooth', block:'start' });
+  section.scrollIntoView({behavior:'smooth',block:'start'});
 }
 
 function getStickerDisplay(sticker) {
   if (!sticker) return null;
-  if (sticker.is_animated) return sticker.thumbnail ? { file_id: sticker.thumbnail.file_id, isVideo: false, thumbFile_id: null } : null;
-  if (sticker.is_video)    return { file_id: sticker.file_id, isVideo: true,  thumbFile_id: sticker.thumbnail?.file_id || null };
-  return { file_id: sticker.file_id, isVideo: false, thumbFile_id: null };
+  if (sticker.is_animated) return sticker.thumbnail ? {file_id:sticker.thumbnail.file_id,isVideo:false,thumbFile_id:null} : null;
+  if (sticker.is_video)    return {file_id:sticker.file_id,isVideo:true,thumbFile_id:sticker.thumbnail?.file_id||null};
+  return {file_id:sticker.file_id,isVideo:false,thumbFile_id:null};
 }
 
 function makeGridItem(sticker) {
   const d = getStickerDisplay(sticker);
   if (!d) return null;
   const wrap = document.createElement('div');
-  wrap.className = 'emoji-grid-item'; wrap.title = sticker.emoji || '';
+  wrap.className = 'emoji-grid-item'; wrap.title = sticker.emoji||'';
   let media;
   if (d.isVideo) {
     media = document.createElement('video');
@@ -1625,18 +1714,18 @@ function makeGridItem(sticker) {
   } else {
     media = document.createElement('img');
     media.src = `/api/image?file_id=${d.file_id}`;
-    media.alt = sticker.emoji || ''; media.loading = 'lazy';
-    media.onerror = () => { wrap.style.fontSize = '22px'; wrap.textContent = sticker.emoji || '?'; };
+    media.alt = sticker.emoji||''; media.loading = 'lazy';
+    media.onerror = () => { wrap.style.fontSize='22px'; wrap.textContent=sticker.emoji||'?'; };
   }
   media.style.cssText = 'width:32px;height:32px;object-fit:contain;pointer-events:none';
   wrap.appendChild(media);
   wrap.addEventListener('mousedown', e => { if (!isMobile()) e.preventDefault(); });
   wrap.addEventListener('click', () => {
     insertEmoji({
-      id:       sticker.custom_emoji_id || sticker.file_unique_id || '',
+      id:       sticker.custom_emoji_id||sticker.file_unique_id||'',
       url:      `/api/image?file_id=${d.file_id}`,
-      thumbUrl: (d.isVideo && d.thumbFile_id) ? `/api/image?file_id=${d.thumbFile_id}` : null,
-      fallback: sticker.emoji || ' ',
+      thumbUrl: (d.isVideo&&d.thumbFile_id)?`/api/image?file_id=${d.thumbFile_id}`:null,
+      fallback: sticker.emoji||' ',
       isVideo:  d.isVideo
     });
   });
@@ -1675,88 +1764,79 @@ async function loadPack(name) {
   const body = document.getElementById('pickerBody');
   document.getElementById('welcomeText').style.display = 'none';
   if (loadedPacks.has(name)) {
-    document.getElementById(`section-${name}`)?.scrollIntoView({ behavior:'smooth', block:'start' });
-    return;
+    document.getElementById(`section-${name}`)?.scrollIntoView({behavior:'smooth',block:'start'}); return;
   }
-  if (failedPacks.has(name)) {
-    document.getElementById(`section-${name}`)?.remove();
-    failedPacks.delete(name);
-  }
+  if (failedPacks.has(name)) { document.getElementById(`section-${name}`)?.remove(); failedPacks.delete(name); }
   if (document.getElementById(`section-${name}`)) {
-    document.getElementById(`section-${name}`).scrollIntoView({ behavior:'smooth', block:'start' });
-    return;
+    document.getElementById(`section-${name}`).scrollIntoView({behavior:'smooth',block:'start'}); return;
   }
   const section = makeSection(name, name);
   body.appendChild(section);
-  section.scrollIntoView({ behavior:'smooth', block:'start' });
+  section.scrollIntoView({behavior:'smooth',block:'start'});
   const grid = document.getElementById(`grid-${name}`);
   const sf = document.createDocumentFragment();
-  for (let i = 0; i < 24; i++) { const sk = document.createElement('div'); sk.className = 'skeleton-item'; sf.appendChild(sk); }
+  for (let i = 0; i < 24; i++) { const sk = document.createElement('div'); sk.className='skeleton-item'; sf.appendChild(sk); }
   grid.appendChild(sf);
   try {
     const ctrl    = new AbortController();
     const timeout = setTimeout(() => ctrl.abort(), 15000);
-    const res     = await fetch(`/api/getPack?name=${encodeURIComponent(name)}`, { signal: ctrl.signal });
+    const res     = await fetch(`/api/getPack?name=${encodeURIComponent(name)}`,{signal:ctrl.signal});
     clearTimeout(timeout);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
-    if (!data.ok) { showError(grid, name, data.description || 'Telegram error'); failedPacks.add(name); return; }
-    const stickers = data.result?.stickers || [];
+    if (!data.ok) { showError(grid,name,data.description||'Telegram error'); failedPacks.add(name); return; }
+    const stickers = data.result?.stickers||[];
     grid.innerHTML = '';
     const countEl = document.getElementById(`count-${name}`);
     if (countEl) countEl.textContent = stickers.length;
-    if (!stickers.length) { grid.innerHTML = `<span style="color:var(--text-3);font-size:12px;grid-column:span 8">No stickers found</span>`; return; }
+    if (!stickers.length) { grid.innerHTML=`<span style="color:var(--text-3);font-size:12px;grid-column:span 8">No stickers found</span>`; return; }
     const frag = document.createDocumentFragment();
-    stickers.forEach((s, i) => {
+    stickers.forEach((s,i) => {
       const el = makeGridItem(s);
-      if (el) { el.style.animationDelay = `${Math.min(i * 0.02, 0.5)}s`; frag.appendChild(el); }
+      if (el) { el.style.animationDelay=`${Math.min(i*0.02,0.5)}s`; frag.appendChild(el); }
     });
     grid.appendChild(frag);
     loadedPacks.set(name, stickers);
     renderTabs();
-  } catch (err) {
-    grid.innerHTML = '';
-    failedPacks.add(name);
-    showError(grid, name, err.name === 'AbortError' ? 'Request timed out.' : err.message);
+  } catch(err) {
+    grid.innerHTML=''; failedPacks.add(name);
+    showError(grid,name,err.name==='AbortError'?'Request timed out.':err.message);
   }
 }
 
 function showError(grid, name, msg) {
-  grid.innerHTML = '';
+  grid.innerHTML='';
   const d = document.createElement('div');
   d.className = 'error-banner';
   d.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> ${msg} <button class="retry-btn" onclick="retryPack('${name}')">Retry</button>`;
   grid.appendChild(d);
 }
-
 function retryPack(name) { failedPacks.delete(name); document.getElementById(`section-${name}`)?.remove(); loadPack(name); }
-
 function viewPack(name) {
   const url = `https://t.me/addemoji/${name}`;
-  if (tgApp?.openLink) tgApp.openLink(url); else window.open(url, '_blank');
+  if (tgApp?.openLink) tgApp.openLink(url); else window.open(url,'_blank');
 }
-
 function removePack(name) {
-  showConfirm('Remove Pack?', `Remove "${name}"?`, '🗑️').then(ok => {
+  showConfirm('Remove Pack?',`Remove "${name}"?`,'🗑️').then(ok => {
     if (!ok) return;
-    savedPacks = savedPacks.filter(p => p !== name);
-    localStorage.setItem('tg_saved_packs', JSON.stringify(savedPacks));
+    savedPacks = savedPacks.filter(p=>p!==name);
+    localStorage.setItem('tg_saved_packs',JSON.stringify(savedPacks));
     loadedPacks.delete(name); failedPacks.delete(name);
     document.getElementById(`section-${name}`)?.remove();
     renderTabs(); showToast(`✅ "${name}" removed`);
-    if (!savedPacks.length && !recentEmojis.length)
-      document.getElementById('welcomeText').style.display = 'block';
+    if (!savedPacks.length && !recentEmojis.length && !importedEmojis.length)
+      document.getElementById('welcomeText').style.display='block';
   });
 }
-
 function clearAllData() {
-  showConfirm('Clear Everything?', 'Remove all packs and recent emojis?', '🗑️').then(ok => {
+  showConfirm('Clear Everything?','Remove all packs and recent emojis?','🗑️').then(ok => {
     if (!ok) return;
-    savedPacks = []; recentEmojis = []; loadedPacks.clear(); failedPacks.clear();
-    localStorage.setItem('tg_saved_packs', '[]');
+    savedPacks=[]; recentEmojis=[]; importedEmojis=[]; loadedPacks.clear(); failedPacks.clear();
+    localStorage.setItem('tg_saved_packs','[]');
     localStorage.removeItem('tg_recent_emojis');
+    localStorage.removeItem('tg_imported_emojis');
     renderTabs();
-    document.getElementById('pickerBody').innerHTML = `<div id="welcomeText" class="status-text">
+    document.getElementById('pickerBody').innerHTML=`<div id="welcomeText" class="status-text">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
       No packs added yet.<br>Tap <strong>Add Pack</strong> to get started.</div>`;
     showToast('✅ Cleared');
@@ -1764,65 +1844,62 @@ function clearAllData() {
 }
 
 function openAddModal() { openModal('addPackModal'); }
-
 function addNewPack() {
   const raw = document.getElementById('packInput').value.trim();
   if (!raw) { showToast('⚠️ Enter a pack name'); return; }
   let name = raw;
-  if (raw.includes('t.me') || raw.includes('telegram.me'))
+  if (raw.includes('t.me')||raw.includes('telegram.me'))
     name = raw.split('/').filter(Boolean).pop();
   name = name.trim();
-  if (name.length < 2) { showToast('⚠️ Invalid pack name'); return; }
+  if (name.length<2) { showToast('⚠️ Invalid pack name'); return; }
   if (savedPacks.includes(name)) {
     showToast('⚠️ Pack already added'); closeModal('addPackModal');
-    document.getElementById(`section-${name}`)?.scrollIntoView({ behavior:'smooth', block:'start' });
+    document.getElementById(`section-${name}`)?.scrollIntoView({behavior:'smooth',block:'start'});
     setActiveTab(name); return;
   }
-  document.getElementById('welcomeText').style.display = 'none';
+  document.getElementById('welcomeText').style.display='none';
   savedPacks.push(name);
-  localStorage.setItem('tg_saved_packs', JSON.stringify(savedPacks));
+  localStorage.setItem('tg_saved_packs',JSON.stringify(savedPacks));
   renderTabs(); closeModal('addPackModal'); loadPack(name);
   showToast(`⏳ Loading "${name}"…`);
 }
-
 function filterPacks(q) {
   q = q.toLowerCase().trim();
   document.querySelectorAll('.pack-section').forEach(s => {
-    if (!q || s.id === 'section-recent') { s.style.display = ''; return; }
-    const n = s.id.replace('section-', '').toLowerCase();
-    s.style.display = n.includes(q) ? '' : 'none';
+    if (!q||s.id==='section-recent'||s.id==='section-imported'){s.style.display='';return;}
+    const n = s.id.replace('section-','').toLowerCase();
+    s.style.display = n.includes(q)?'':'none';
   });
 }
 
 /* Modal helpers */
 function openModal(id) {
   const m = document.getElementById(id);
-  m.style.display = 'flex';
-  requestAnimationFrame(() => { m.classList.add('active'); requestAnimationFrame(() => m.classList.add('visible')); });
-  setTimeout(() => m.querySelector('input,textarea')?.focus(), 100);
+  m.style.display='flex';
+  requestAnimationFrame(()=>{m.classList.add('active');requestAnimationFrame(()=>m.classList.add('visible'));});
+  setTimeout(()=>m.querySelector('input,textarea')?.focus(),100);
 }
 function closeModal(id) {
   const m = document.getElementById(id);
   m.classList.remove('visible');
-  setTimeout(() => { m.classList.remove('active'); m.style.display = 'none'; }, 220);
+  setTimeout(()=>{m.classList.remove('active');m.style.display='none';},220);
 }
-function handleOverlayClick(e, id) { if (e.target === document.getElementById(id)) closeModal(id); }
-
+function handleOverlayClick(e,id){if(e.target===document.getElementById(id))closeModal(id);}
 async function pasteClip(inputId) {
-  try { const t = await navigator.clipboard.readText(); document.getElementById(inputId).value = t; }
-  catch { showToast('⚠️ Paste manually'); }
+  try{const t=await navigator.clipboard.readText();document.getElementById(inputId).value=t;}
+  catch{showToast('⚠️ Paste manually');}
 }
-
-document.addEventListener('keydown', e => {
-  if (e.key !== 'Escape') return;
-  closeModal('addPackModal'); closeModal('addLinkModal'); closeModal('importHtmlModal');
+document.addEventListener('keydown',e=>{
+  if(e.key!=='Escape')return;
+  closeModal('addPackModal');closeModal('addLinkModal');closeModal('importHtmlModal');
 });
 
 /* Init */
 renderTabs();
+if (importedEmojis.length) renderImportedSection();
 if (recentEmojis.length) showRecentSection();
 else if (savedPacks.length) loadPack(savedPacks[0]);
-else document.getElementById('welcomeText').style.display = 'block';
+else document.getElementById('welcomeText').style.display='block';
 </script>
 </body>
 </html>
