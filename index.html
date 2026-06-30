@@ -3,87 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rich Message Sender</title>
+    <title>Simple Rich Message</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        body { 
-            font-family: sans-serif; 
-            padding: 15px; 
-            background: var(--tg-theme-bg-color, #ffffff); 
-            color: var(--tg-theme-text-color, #000000); 
-            margin: 0;
-        }
-        textarea { 
-            width: 100%; 
-            height: 350px; 
-            padding: 10px; 
-            margin-bottom: 15px; 
-            box-sizing: border-box; 
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            font-family: monospace;
-            font-size: 13px;
-        }
-        button { 
-            width: 100%; 
-            padding: 14px; 
-            background: var(--tg-theme-button-color, #3390ec); 
-            color: var(--tg-theme-button-text-color, #ffffff); 
-            border: none; 
-            border-radius: 8px; 
-            font-size: 16px; 
-            font-weight: bold;
-            cursor: pointer; 
-        }
-        button:disabled { background: #a1a1a1; }
-        #status { margin-top: 15px; font-weight: bold; text-align: center; }
+        body { font-family: sans-serif; padding: 20px; text-align: center; }
+        textarea { width: 100%; height: 120px; margin-bottom: 15px; padding: 10px; font-size: 14px; }
+        button { width: 100%; padding: 12px; background: #3390ec; color: white; border: none; border-radius: 5px; font-size: 16px; cursor: pointer; }
+        button:disabled { background: #ccc; }
+        #status { margin-top: 15px; font-weight: bold; }
     </style>
 </head>
 <body>
 
-    <h3>Rich Message Editor</h3>
+    <h3>Send a Message</h3>
     
     <textarea id="postText">
-<figure>
-  <tg-slideshow>
-    <img src="https://i.ibb.co/9Hk80rSh/x.jpg"/>
-    <img src="https://i.ibb.co/prKyz7QT/x.jpg"/>
-    <img src="https://i.ibb.co/twt4PZq4/x.jpg"/>
-    <img src="https://i.ibb.co/Cp3wN9mF/x.jpg"/>
-    <img src="https://i.ibb.co/rGQ3bh7Z/x.jpg"/>
-    <img src="https://i.ibb.co/RtpcfBj/x.jpg"/>
-    <img src="https://i.ibb.co/1J836CFb/x.jpg"/>
-    <img src="https://i.ibb.co/3yLVQBNx/x.jpg"/>
-  </tg-slideshow>
-  <figcaption>June 26, 2026 | openai.com</figcaption>
-</figure>
-
-<h2>🚀 OpenAI වෙතින් නවතම GPT-5.6 Sol මාදිලිය: 'Ultra' Mode සමඟින් AI තාක්ෂණයේ දැවැන්ත පෙරළියක්!</h2>
-<hr/>
-
-<p>
-  <b>OpenAI සමාගම විසින් ඔවුන්ගේ නවතම AI මාදිලි මාලාව වන GPT-5.6 (Sol, Terra සහ Luna) නිල වශයෙන් හඳුන්වා දී තිබෙනවා. නවතම 'max' reasoning සහ 'ultra' mode විශේෂාංග සමඟින් කේතකරණය සහ සයිබර් ආරක්ෂණ අංශවලින් මෙම මාදිලි පෙරළිකාරී කාර්යසාධනයක් පෙන්නුම් කරයි.</b>
-</p>
-
-<details>
-  <summary>📰 වැඩිදුර විස්තර</summary>
-  <p><b>OpenAI</b> විසින් ඔවුන්ගේ මීළඟ පරම්පරාවේ AI මාදිලිය වන GPT-5.6 series හි සීමිත පෙරදසුනක් (preview) මේ වනවිට ආරම්භ කර තිබෙනවා. මෙහි ප්‍රධානතම මාදිලිය ලෙස Sol ද, GPT-5.5 ට වඩා <i>දෙගුණයක්</i> ලාභදායී සමබර මාදිලියක් ලෙස Terra ද, සහ ඉතා අඩු පිරිවැයකින් ලබාගත හැකි Luna ද හඳුන්වා දී ඇත.</p>
-  
-  <p>මෙහි ඇති සුවිශේෂීම තාක්ෂණික අංගය වන්නේ ගැඹුරු ලෙස කරුණු විශ්ලේෂණය කිරීම සඳහා හඳුන්වා දී ඇති <mark>'max' reasoning effort</mark> සහ සංකීර්ණ කාර්යයන් වේගවත් කිරීම සඳහා උප-නියෝජිතයන් (subagents) භාවිත කරන <mark>'ultra' mode</mark> විශේෂාංගයයි.</p>
-  
-  <p>දැනට API හරහා තෝරාගත් ආයතන සඳහා පමණක් ලබා දී ඇති මෙම GPT-5.6 මාදිලි නුදුරේදීම <b>ChatGPT</b>, Codex සහ පොදු API පාරිභෝගිකයන් වෙත නිකුත් කිරීමට නියමිතයි.</p>
-</details>
-
-<details>
-  <summary>🇬🇧 Read in English</summary>
-  <blockquote>
-    <b>🚀 OpenAI Unveils GPT-5.6 Sol: Next-Gen Reasoning and Subagents at 750 Tokens/Sec!</b>
-    <p><b>OpenAI</b> has officially announced the GPT-5.6 series, featuring the flagship Sol, the balanced Terra, and the cost-effective Luna models. The update introduces a groundbreaking <mark>'ultra' mode</mark> that leverages multiple subagents for complex tasks and a new 'max' reasoning effort.</p>
-  </blockquote>
-</details>
-<hr/>
-
-<mark><a href="https://openai.com/index/previewing-gpt-5-6-sol/">🔗 Read Full Article</a></mark>
+<b>Hello World! 👋</b>
+<p>This is a very <i>simple</i> rich message.</p>
+<a href="https://telegram.org">Click here to visit Telegram</a>
 </textarea>
     
     <button id="sendBtn" onclick="sendPost()">Send to Bot</button>
@@ -99,48 +36,42 @@
             const btn = document.getElementById("sendBtn");
 
             if (!text) {
-                status.innerText = "Text එක හිස්ව තියන්න බැහැ!";
+                status.innerText = "Please enter some text!";
                 status.style.color = "red";
                 return;
             }
 
             const userId = tg.initDataUnsafe?.user?.id;
-
             if (!userId) {
-                status.innerText = "User ID එක හමුවුණේ නැහැ. Telegram Web App එකක් විදියට Open කරන්න.";
+                status.innerText = "User ID not found! Open via Telegram.";
                 status.style.color = "red";
                 return;
             }
 
             btn.disabled = true;
-            btn.innerText = "Sending Rich Message...";
+            btn.innerText = "Sending...";
             status.innerText = "";
 
-            // ⚠️ OYAGE CLOUDFLARE WORKER URL EKA METHANATA DANNA
+            // ⚠️ ඔයාගේ Cloudflare Worker URL එක මෙතනට දෙන්න
             const workerUrl = "https://poozter.sasindulasith00.workers.dev"; 
 
             try {
                 const response = await fetch(workerUrl, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        action: "send_preview",
-                        text: text,
-                        chat_id: userId
-                    })
+                    body: JSON.stringify({ action: "send_preview", text: text, chat_id: userId })
                 });
 
                 const result = await response.json();
-
                 if (result.success) {
-                    status.innerText = "✅ සාර්ථකයි! Bot ගේ Chat එක බලන්න.";
+                    status.innerText = "✅ Sent successfully!";
                     status.style.color = "green";
                 } else {
-                    status.innerText = "❌ Error: " + (result.error || "Unknown error");
+                    status.innerText = "❌ Error: " + (result.error || "Unknown");
                     status.style.color = "red";
                 }
             } catch (error) {
-                status.innerText = "❌ Network Error! Worker URL එක හරිද බලන්න.";
+                status.innerText = "❌ Network Error!";
                 status.style.color = "red";
             }
 
@@ -148,6 +79,5 @@
             btn.innerText = "Send to Bot";
         }
     </script>
-
 </body>
 </html>
